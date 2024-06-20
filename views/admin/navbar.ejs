@@ -1,0 +1,56 @@
+<style>
+    .navbar-light {
+        background: #C3BAA9;
+    }
+
+    .navbar-light .navbar-nav .nav-link {
+        color: #000;
+    }
+</style>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light py-3">
+    <div class="container">
+        <a class="navbar-brand" href="/admin/dashboard"><img id="MDB-logo" src="../../images/LOGO scented serenade.jpeg"
+                draggable="false" height="40" class="rounded" /></a>
+        <button class="navbar-toggler" type="button" data-mdb-toggle="collapse"
+            data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="/admin/dashboard"><i class="fas fa-tachometer-alt pe-2"></i>Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="/admin/products"><i class="fas fa-boxes pe-2"></i>Products</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="/admin/category"><i class="fas fa-boxes pe-2"></i>Category</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="/admin/customers"><i class="fas fa-users pe-2"></i>Customers</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="/admin/orders"><i class="fas fa-shopping-cart pe-2"></i>Orders</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="/admin/coupons"><i class="fas fa-tags pe-2"></i>Coupons</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="/admin/banner"><i class="fas fa-images pe-2"></i>Banner</a>
+                </li>
+                    <li class="nav-item ms-3">
+                        <a class="btn btn-black btn-rounded" href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Log out</a>
+                    </li>
+                
+                
+                
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Navbar -->
+
+<%- include('alert')%>

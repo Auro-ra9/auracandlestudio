@@ -1,0 +1,197 @@
+<%- include('navbar') %>
+
+  <!-- Section: Design Block -->
+  <section>
+    <!-- Jumbotron -->
+    <div class="px-4 py-5 px-md-5  text-lg-start" style="background-color: hsl(0, 0%, 96%)">
+      <div class="container">
+        <div class="row gx-lg-5 align-items-center">
+          <div class="col-lg-6 mb-5 mb-lg-0">
+            <h1 class="my-5 display-3 fw-bold ls-tight">
+              Enchant Your <br />
+              <span class="major-color">Ambiance</span>
+            </h1>
+            <p style="color: hsl(217, 10%, 50.8%)">
+              "Explore our exquisite range of handcrafted candles and transform any room into a haven of warmth and
+              serenity."
+            </p>
+          </div>
+
+          <div class="col-lg-6 mb-5 mb-lg-0">
+            <div class="card">
+              <div class="card-body py-5 px-md-5">
+                <form action="/register" method="post" id="register-form">
+                  <!-- 2 column grid layout with text inputs for the first and last names -->
+                  <!-- <div class="row">
+                    <div class="col-md-12 mb-4">
+                      <div data-mdb-input-init class="form-outline">
+                        <input type="text" id="form3Example1" class="form-control" />
+                        <label class="form-label" for="form3Example1">Full name</label>
+                      </div>
+                    </div>
+                    <div class="col-md-12 mb-4">
+                      <div data-mdb-input-init class="form-outline">
+                        <input type="text" id="form3Example2" class="form-control" />
+                        <label class="form-label" for="form3Example2">Phone number</label>
+                      </div>
+                    </div>
+                  </div> -->
+
+                  <!-- Name input -->
+                  <div data-mdb-input-init class="form-outline">
+                    <label class="form-label" for="form3Example1">Full name</label>
+                    <input type="text" id="form3Example1" class="form-control" name="name"
+                      placeholder="Enter Full name" />
+                    <label for="" class="text-danger registerValidate"></label>
+                  </div>
+                  <!-- Phone number input -->
+                  <div data-mdb-input-init class="form-outline">
+                    <label class="form-label" for="form3Example2">Phone number</label>
+                    <input type="text" id="form3Example2" class="form-control" name="phone"
+                      placeholder="Enter phone number" />
+                    <label for="" class="text-danger registerValidate"></label>
+                  </div>
+                  <!-- Email input -->
+                  <div data-mdb-input-init class="form-outline">
+                    <label class="form-label" for="form3Example3">Email address</label>
+                    <input type="email" id="form3Example3" class="form-control" name="email"
+                      placeholder="Enter an Email-address" />
+                    <label for="" class="text-danger registerValidate"></label>
+                  </div>
+
+                  <!-- Password input -->
+                  <div data-mdb-input-init class="form-outline">
+                    <label class="form-label" for="form3Example4">Password</label>
+                    <input type="password" id="form3Example4" class="form-control" name="password"
+                      placeholder="Enter a password" />
+                    <label for="" class="text-danger registerValidate"></label>
+                  </div>
+
+                  <!-- Password input -->
+                  <div data-mdb-input-init class="form-outline">
+                    <label class="form-label" for="form3Example4">Confirm Password</label>
+                    <input type="password" id="form3Example5" class="form-control" name="confirmPassword"
+                      placeholder="Confirm the password" />
+                    <label for="" class="text-danger registerValidate"></label>
+                  </div>
+
+
+                  <!-- Submit button -->
+                  <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-block mb-4"
+                    id="register-btn">
+                    Sign up
+                  </button>
+
+                  <!-- Register buttons -->
+                  <div class="text-center">
+                    <p>Already have an account then: <a href="/login">Login</a></p>
+                    <hr>
+                    <p>Or continue with</p>
+                    <!-- <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
+                      <i class="fab fa-facebook-f"></i>
+                    </button> -->
+
+                    <button onclick="window.location.href='/auth/google'" data-mdb-button-init data-mdb-ripple-init
+                      class="btn btn-link btn-floating mx-1">
+                      <i class="fab fa-google"></i>
+                    </button>
+
+
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Jumbotron -->
+  </section>
+  <!-- Section: Design Block -->
+
+  <%- include('footer') %>
+
+    <script>
+
+      const registerForm = document.getElementById('register-form')
+      const name = document.getElementsByName('name')[0]
+      const phone = document.getElementsByName('phone')[0]
+      const email = document.getElementsByName('email')[0]
+      const password = document.getElementsByName('password')[0]
+      const confirmPassword = document.getElementsByName('confirmPassword')[0]
+      const signUpButton = document.getElementById('register-btn')
+
+     
+
+
+      function checkEmail(email) {
+        const re = /\S+@\S+\.\s+/;
+        return re.test(email)
+      }
+
+      function validatePassword(password) {
+        if (password.length < 8) {
+          console.log("password length");
+          return true
+        }
+        if (!/[A-Z]/.test(password)) {
+          console.log("password A");
+          return true
+        }
+        if (!/[a-z]/.test(password)) {
+          console.log("password a");
+          return true
+        }
+        if (!/\d/.test(password)) {
+          console.log("password @");
+          return true
+        }
+
+        return false
+      }
+
+      registerForm.addEventListener('submit', (e) => {
+
+        e.preventDefault()
+        let validate = true
+
+        document.getElementsByClassName('registerValidate')[0].innerHTML = ""
+      document.getElementsByClassName('registerValidate')[1].innerHTML = ""
+      document.getElementsByClassName('registerValidate')[2].innerHTML = ""
+      document.getElementsByClassName('registerValidate')[3].innerHTML = ""
+      document.getElementsByClassName('registerValidate')[4].innerHTML = ""
+
+
+        if (name.value.trim() === "" || name.value.length > 30 || !isNaN(name.value)) {
+          validate = false
+          document.getElementsByClassName('registerValidate')[0].innerHTML = "Must have at least 7 characters";
+
+        }
+
+        if (phone.value.length != 10 || isNaN(phone.value)) {
+          validate = false
+          document.getElementsByClassName('registerValidate')[1].innerHTML = "Number must not be less than 10"
+        }
+
+        if (checkEmail(email.value) || email.value.trim==='' || email.value.length===0) {
+          validate = false
+          document.getElementsByClassName('registerValidate')[2].innerHTML = "Email must be valid"
+        }
+
+        if (validatePassword(password.value)) {
+          validate = false
+          document.getElementsByClassName('registerValidate')[3].innerHTML = "Enter a strong password"
+        }
+
+        if (password.value != confirmPassword.value || confirmPassword.value.length===0)  {
+          validate = false
+          document.getElementsByClassName('registerValidate')[4].innerHTML = "Passwords do not match "
+        }
+
+        if (validate) {
+          registerForm.submit()
+        }
+      })
+
+
+    </script>

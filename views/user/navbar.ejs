@@ -1,0 +1,54 @@
+<style>
+    .navbar-light {
+        background: #C3BAA9;
+    }
+
+    .navbar-light .navbar-nav .nav-link {
+        color: #000;
+    }
+</style>
+
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light py-3">
+    <div class="container">
+        <a class="navbar-brand" href="/home"><img id="MDB-logo" src="../../images/LOGO scented serenade.jpeg"
+                draggable="false" height="50" class="rounded" /></a>
+        <button class="navbar-toggler" type="button" data-mdb-toggle="collapse"
+            data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto align-items-center">
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="/home">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="#!">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link mx-2" href="#!">Contact</a>
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-heart pe-2"></i>
+                </li>
+                <li class="nav-item">
+                    <i class="fa-solid fa-bag-shopping"></i>        
+                <% if(user) {%>
+                    <li class="nav-item ms-3">
+                        <a class="btn btn-black btn-rounded" href="/logout">Log out</a>
+                    </li>
+                    <%}else{%>
+                        <li class="nav-item ms-3">
+                            <a class="btn btn-black btn-rounded" href="/login"><i class="fa-solid fa-right-to-bracket" style="color: #111212;"></i></a>
+                        </li>
+                        <%}%>
+
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- Navbar -->
+
+<%- include('alert')%>
