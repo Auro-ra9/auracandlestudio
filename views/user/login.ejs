@@ -1,89 +1,80 @@
-
-
-
-
 <%- include('navbar') %>
 
-<section class="vh-90" style="background-color: #E9E9E9;">
+  <section class="vh-90" style="background-color: #E9E9E9;">
     <div class="container py-3 h-100">
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col col-xl-11">
           <!--div class="card" style="border-radius: 1rem;"-->
-            <div class="row g-0">
-              <div class="col-md-6 col-lg-5 d-none d-md-block" style="margin-top: 55px;">
-                <img src="/images/loginbanner.jpeg"
-                  alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem;" />
-              </div>
-              <div class="col-md-6 col-lg-7 d-flex align-items-center">
-                <div class="card-body p-4 p-lg-5 text-black">
-  
-                  <form action="/login" method="post">
-  
-                    <div class="d-flex align-items-center mb-3 pb-1">
-                      <i class="fas fa-cubes fa-2x me-3" style="color: #927466;"></i>
-                      <span class="h1 fw-bold mb-0">Sign in</span>
-                    </div>
-  
-                    <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your account</h5>
-  
-                    <div data-mdb-input-init class="form-outline mb-4">
-                      <input type="email" id="form2Example17" class="form-control form-control-lg" name="email"/>
-                      <label class="form-label" for="form2Example17">Email address</label>
-                    </div>
-  
-                    <div data-mdb-input-init class="form-outline mb-4">
-                      <input type="password" id="form2Example27" class="form-control form-control-lg" name="password"/>
-                      <label class="form-label" for="form2Example27">Password</label>
-                    </div>
-  
-                    <div class="pt-1 mb-4">
-                      <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-lg btn-block" >Login</button>
-                    </div>
-  
-                    <a class="small text-muted" href="#!">Forgot password?</a>
-                    <p class="mb-5 pb-lg-2" style="color: #393f81;">Don't have an account? <a href="/register"
-                        style="color: #050505;font-weight: bold;">Register here</a></p>
+          <div class="row g-0">
+            <div class="col-md-6 col-lg-5 d-none d-md-block" style="margin-top: 55px;">
+              <img src="/images/loginbanner.jpeg" alt="login form" class="img-fluid"
+                style="border-radius: 1rem 0 0 1rem;" />
+            </div>
+            <div class="col-md-6 col-lg-7 d-flex align-items-center">
+              <div class="card-body p-4 p-lg-5 text-black">
 
-                        <div class="divider d-flex align-items-center justify-content-center my-4">
-                        <p class="text-center fw-bold mx-3 mb-0">Or</p>
-                        </div>
-                        <div class="divide d-flex justify-content-center my-4">
+                <form action="/login" method="post">
 
-    
-                            <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
-                                <button onclick="window.location.href='/auth/google'" class="btn btn-outline-danger btn-floating mx-1">
-                                  <i class="fa-brands fa-google"></i> Sign in with Google
-                              </button>
-                              <a href="/auth/google" class="btn btn-outline-danger"> <i class="fa-brands fa-google"></i> Sign in with Google</a>
-                              
-                            </div>
-                        </div>
+                  <div class="d-flex align-items-center mb-3 pb-1">
+                    <i class="fas fa-cubes fa-2x me-3" style="color: #927466;"></i>
+                    <span class="h1 fw-bold mb-0">Sign in</span>
+                  </div>
+
+                  <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your account</h5>
+
+                  <div data-mdb-input-init class="form-outline mb-4">
+                    <input type="email" id="form2Example17" class="form-control form-control-lg" name="email" />
+                    <label class="form-label" for="form2Example17">Email address</label>
+                  </div>
+
+                  <div data-mdb-input-init class="form-outline mb-4">
+                    <input type="password" id="form2Example27" class="form-control form-control-lg" name="password" />
+                    <label class="form-label" for="form2Example27">Password</label>
+                  </div>
+
+                  <div class="pt-1 mb-4">
+                    <button type="submit" data-mdb-button-init data-mdb-ripple-init
+                      class="btn btn-dark btn-lg btn-block">Login</button>
+                  </div>
+
+                  <a class="small text-muted" href="#!">Forgot password?</a>
+                  <p class="mb-5 pb-lg-2" style="color: #393f81;">Don't have an account? <a href="/register"
+                      style="color: #050505;font-weight: bold;">Register here</a></p>
+
+                  <div class="divider d-flex align-items-center justify-content-center my-4">
+                    <p class="text-center fw-bold mx-3 mb-0">Or</p>
+                  </div>
+                  <div class="divide d-flex justify-content-center my-4">
 
 
-                    <!--a href="#!" class="small text-muted">Terms of use.</a>
-                    <a href="#!" class="small text-muted">Privacy policy</a-->
-                  </form>
-  
-                </div>
+                    <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
+                      <a href="/auth/google" class="btn btn-outline-danger"> <i class="fa-brands fa-google"></i> Sign in
+                        with Google</a>
+
+                    </div>
+                  </div>
+                </form>
+
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    </div>
   </section>
 
 
 
-<%- include('footer') %>
-<script>
-    document.getElementById('login-form').addEventListener('submit', function(event) {
+  <%- include('footer') %>
+    <script>
+      document.getElementById('login-form').addEventListener('submit', function (event) {
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value.trim();
 
         if (!email || !password) {
-            alert('Please fill out both email and password fields.');
-            event.preventDefault();
+          alert('Please fill out both email and password fields.');
+          event.preventDefault();
         }
-    });
-</script>
+      });
+    </script>

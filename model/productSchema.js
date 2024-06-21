@@ -19,13 +19,13 @@ const schema=new mongoose.Schema({
         ref: 'category',
 
     },
-    discout:{
+    discount:{
         type:Number
     },
     image:{
         type:[]
     },
-    Brand:{
+    brand:{
         type:String
     },
     isAvailable:{

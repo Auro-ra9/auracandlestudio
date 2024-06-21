@@ -1,8 +1,6 @@
 <%- include('navbar') %>
 
-  <!-- Section: Design Block -->
   <section>
-    <!-- Jumbotron -->
     <div class="px-4 py-5 px-md-5  text-lg-start" style="background-color: hsl(0, 0%, 96%)">
       <div class="container">
         <div class="row gx-lg-5 align-items-center">
@@ -21,21 +19,6 @@
             <div class="card">
               <div class="card-body py-5 px-md-5">
                 <form action="/register" method="post" id="register-form">
-                  <!-- 2 column grid layout with text inputs for the first and last names -->
-                  <!-- <div class="row">
-                    <div class="col-md-12 mb-4">
-                      <div data-mdb-input-init class="form-outline">
-                        <input type="text" id="form3Example1" class="form-control" />
-                        <label class="form-label" for="form3Example1">Full name</label>
-                      </div>
-                    </div>
-                    <div class="col-md-12 mb-4">
-                      <div data-mdb-input-init class="form-outline">
-                        <input type="text" id="form3Example2" class="form-control" />
-                        <label class="form-label" for="form3Example2">Phone number</label>
-                      </div>
-                    </div>
-                  </div> -->
 
                   <!-- Name input -->
                   <div data-mdb-input-init class="form-outline">
@@ -87,16 +70,10 @@
                     <p>Already have an account then: <a href="/login">Login</a></p>
                     <hr>
                     <p>Or continue with</p>
-                    <!-- <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-link btn-floating mx-1">
-                      <i class="fab fa-facebook-f"></i>
-                    </button> -->
-
                     <button onclick="window.location.href='/auth/google'" data-mdb-button-init data-mdb-ripple-init
                       class="btn btn-link btn-floating mx-1">
                       <i class="fab fa-google"></i>
                     </button>
-
-
                   </div>
                 </form>
               </div>
@@ -105,9 +82,7 @@
         </div>
       </div>
     </div>
-    <!-- Jumbotron -->
   </section>
-  <!-- Section: Design Block -->
 
   <%- include('footer') %>
 

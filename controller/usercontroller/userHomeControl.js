@@ -1,6 +1,19 @@
-const homeRender = (req, res) => {
+const productSchema=require('../../model/productSchema')
+
+
+const homeRender =async (req, res) => {
     try {
-        res.render('user/home', { title: 'home', alertMessage: req.flash('errorMessage'), user:req.session.user })
+
+        // find all the products
+        const products=await productSchema.find({isAvailable:true})
+
+
+        res.render('user/home', { 
+            title: 'home', 
+            alertMessage: req.flash('errorMessage'), 
+            user:req.session.user,
+            products 
+        })
     } catch (err) {
         console.log(`Error on home render get ${err}`);
     }

@@ -3,14 +3,14 @@ const productSchema= require('../../model/productSchema')
 
 const productRender = async (req, res) => {
     try {
-        const products=await productSchema.find().populate('category')
-        console.log(products);
 
+        const products=await productSchema.find().sort({createdAt:-1}).populate('category')
         res.render('admin/product', {
             title:'product', 
             alertMessage: req.flash('errorMessage'),
             products,
         })
+        
     } catch (err) {
         console.log(`Error on dashboard render: ${err}`);
     }
@@ -145,110 +145,77 @@ const unblockProduct=async(req,res)=>{
     }
 }
 
-//showing edit product page
 
-const editProductRender=async (req,res)=>{
+// Render edit product page
+const editProductRender = async (req, res) => {
     try {
-        const productID=req.params.productID;
+        const productID = req.params.productID;
 
-        if(!productID){
-            req.flash("errorMessage","cannot find the product  ID");
-            return res.redirect('/admin/products')
+        if (!productID) {
+            req.flash("errorMessage", "Product ID not provided.");
+            return res.redirect('/admin/products');
         }
 
-        const productDetails=await productSchema.findById(productID).populate('category')
+        const productDetails = await productSchema.findById(productID).populate('category');
 
-        if(!productDetails){
-            req.flash("errorMessage","cannot find the product details");
-            return res.redirect('/admin/products')
+        if (!productDetails) {
+            req.flash("errorMessage", "Product not found.");
+            return res.redirect('/admin/products');
         }
 
-        res.render('admin/editProduct',{title:"editProduct",alertMessage:req.flash('errorMessage'),productDetails})
-
+        res.render('admin/editProduct', { title: "Edit Product", alertMessage: req.flash('errorMessage'), productDetails });
     } catch (err) {
-        console.log("error on rendering edit product page",err);
+        console.error("Error on rendering edit product page:", err);
+        req.flash("errorMessage", "An error occurred while rendering the edit product page.");
+        res.redirect('/admin/products');
     }
-}
+};
 
-//allowing edit on product page
-
-const editProduct=async (req,res)=>{
+// Handle edit product form submission
+const editProduct = async (req, res) => {
     try {
-        let productBody= req.body.product_name.trim()
-        let actualProduct=productBody
-        let actualPrice=req.body.product_price
-        let actualBrand=req.body.available_brand.trim()
-        let actualCategory=req.body.product_categorie.trim()
-        let actualQuantity=req.body.available_quantity
-        let actualdescription=req.body.product_description.trim()
-        let actualDiscount=req.body.percentage_discount
-        //check the fields
+        const productID = req.params.productID;
+        const {
+            'edit-product_name': productName,
+            'edit-product_price': productPrice,
+            'product_categorie': category,
+            'edit-available_quantity': quantity,
+            'edit-available_brand': brand,
+            'product_description': description,
+            'edit-percentage_discount': discount
+        } = req.body;
 
-        if(!actualProduct && !actualPrice && !actualBrand && !actualCategory && !actualQuantity && !actualdescription && !actualDiscount) {
-            req.flash('errorMessage', 'Product not found')
-            return res.redirect('/admin/products')
+        // Check if required fields are missing
+        if (!productName || !productPrice || !category || !quantity || !brand || !description || !discount) {
+            req.flash('errorMessage', 'All fields are required.');
+            return res.redirect(`/admin/edit-product/${productID}`);
         }
 
-        //already exist or not
+        // Update product details
+        const updatedProduct = await productSchema.findByIdAndUpdate(productID, {
+            productName,
+            productPrice,
+            category,
+            productQuantity: quantity,
+            brand,
+            productDescription: description,
+            discount
+        }, { new: true });
 
-        const productDetails=await productSchema.findOne({productName:actualProduct,productPrice:actualPrice,band:actualBrand})
-        if(productDetails){
-            req.flash('errorMessage', 'Product already exists')
-            return res.redirect('/admin/products')
+        if (updatedProduct) {
+            req.flash('successMessage', 'Product details updated successfully.');
+            return res.redirect('/admin/products');
+        } else {
+            req.flash('errorMessage', 'Failed to update product details.');
+            return res.redirect(`/admin/edit-product/${productID}`);
         }
-
-        //editing and saving the updated data 
-
-        //edit name of the product
-        const editedProductName=await productSchema.findByIdAndUpdate(productID,{productName:actualProduct})
-        
-        if(editedProductName){
-            req.flash('errorMessage',"Product name edited")
-            return res.redirect('/admin/addProduct')
-        }
-
-        //edit price of the product
-        const editedProductPrice= await productSchema.findByIdAndUpdate(productID, {productPrice:actualPrice})
-
-        if(editedProductPrice){
-            req.flash('errorMessage',"Product price edited")
-            return res.redirect('/admin/addProduct')
-        }
-        //edit brand
-        const editedProductBrand= await productSchema.findByIdAndUpdate(productID,{brand:actualBrand})
-        
-        if(editedProductBrand){
-            req.flash('errorMessage',"Product brand edited")
-            return res.redirect('/admin/addProduct')
-        }
-
-        //edit quantity of the product
-        const editedProductQuantity= await productSchema.findByIdAndUpdate(productID,{productQuantity:actualQuantity})
-        
-        if(editedProductQuantity){
-        req.flash('errorMessage',"Product brand edited")
-            return res.redirect('/admin/addProduct')
-        }
-        //edit description
-        const editedProductDescription= await productSchema.findByIdAndUpdate(productID,{productDescription:actualdescription})
-
-        if(editedProductDescription){
-            req.flash('errorMessage',"Product Description edited")
-            return res.redirect('/admin/addProduct')
-        }
-
-        //edit discount of the product
-        const editedProductDiscount= await productSchema.findByIdAndUpdate(productID,{discout:actualDiscount})
-
-        if(editedProductDiscount){
-            req.flash('errorMessage',"Product Discount edited")
-            return res.redirect('/admin/addProduct')
-        }
-        
     } catch (err) {
-        console.log(`error on edit product post ${err}`);
+        console.error(`Error on edit product post: ${err}`);
+        req.flash('errorMessage', 'An error occurred while updating the product.');
+        res.redirect(`/admin/edit-product/${req.params.productID}`);
     }
-}
+};
+
 
 module.exports={
     productRender,

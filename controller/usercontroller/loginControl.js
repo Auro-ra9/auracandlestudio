@@ -21,6 +21,12 @@ const loginPost = async (req, res) => {
             req.flash('errorMessage', 'We could not find the user credentials');
             return res.redirect('/login');
         }
+        
+        if(checkUser.isBlocked===true){
+            req.flash('errorMessage', "Your account is blocked by admin. please contact for further details");
+            return res.redirect('/login');
+
+        }
 
         const comparePassword = await bcrypt.compare(req.body.password, checkUser.password);
 
@@ -97,15 +103,13 @@ const registerPost = async (req, res) => {
         }
     }
 
-
-
     //google auth callback   
     const googleCallback = (req, res, next) => {
         try {
             passport.authenticate('google', (err, user, info) => {
                 if (err) {
                     console.log(`Error on google Auth callback: ${err}`);
-                    return next(err);  // Pass error to the next middleware
+                    return next(err);  // Passimg err to next middleware
                 }
                 // failure 
                 if (!user) {

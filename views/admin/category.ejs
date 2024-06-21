@@ -80,10 +80,10 @@
 
 
               <% if(category.isBlocked){ %>
-                <button class="btn text-success" onclick="unblockCategory('<%= category._id %>')"><i
+                <button class="btn text-danger" onclick="unblockCategory('<%= category._id %>')"><i
                     class="fa-solid fa-lock"></i></button>
                 <% }else{ %>
-                  <button class="btn text-danger" onclick="blockCategory('<%= category._id %>')"><i
+                  <button class="btn text-success" onclick="blockCategory('<%= category._id %>')"><i
                       class="fa-solid fa-lock-open"></i></button>
                   <% } %>
                     <button class="btn text-primary" onclick="deleteCategory('<%= category._id %>')"><i
@@ -246,6 +246,8 @@
           }
         })
       }
+
+      //edit category
 
       const editCategoryButton = document.querySelectorAll('.edit-category-name')
       editCategoryButton.forEach((button) => {

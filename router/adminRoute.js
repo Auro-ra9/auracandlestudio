@@ -5,6 +5,7 @@ const loginControl=require('../controller/admincontroller/loginControl')
 const dashboardControl=require('../controller/admincontroller/dashboardControl')
 const categoryControl=require('../controller/admincontroller/categoryControl')
 const productControl=require('../controller/admincontroller/productControl')//named export, above are default
+const userControl=require('../controller/admincontroller/userControl')
 
 
 admin.get('/',loginControl.admin)
@@ -31,6 +32,12 @@ admin.post('/edit-product/:productID', productControl.editProduct)
 admin.delete('/delete-product/:productID',productControl.deleteProduct)
 admin.put('/block-product/:productID', productControl.blockProduct)
 admin.put('/unblock-product/:productID', productControl.unblockProduct)
+
+//customers 
+admin.get('/customers', adminSession, userControl.userRender);
+admin.put('/block-user/:userID', userControl.blockUser);
+admin.put('/unblock-user/:userID', userControl.unblockUser);
+
 
 
 admin.get('/logout', loginControl.logout)

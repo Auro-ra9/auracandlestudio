@@ -1,24 +1,14 @@
-/*Admin side :
-
-
-Admin sign in
-
-User management (list user, block/unblock).
-Category management (Add, Edit and Delete (soft delete))
-Product management(add, edit & delete(soft delete) products).
+*Admin side :
 Products must have multiple images (minimum 3 images).
 Images should be cropped and resized properly before upload.
-
-
+/////Admin sign in
+/////User management (list user, block/unblock).
+/////Category management (Add, Edit and Delete (soft delete))
+/////Product management(add, edit & delete(soft delete) products).
 
 User side :
-
-Home page
-Users sign up & login with validation.
 Sign up using OTP with OTP timer and Resend Otp
-Login or signup with single sign on (google , facebook …)
 List products on the user side.
-Product details view on the user side with image zoom.
 Product detailed page should contain following 
  Breadcrumbs 
  Ratings 
@@ -29,3 +19,7 @@ Product detailed page should contain following
 Proper error handles Sold out / unavailable  and  out of stock EXAMPLE
  Highlights / specs of product 
  Related product recommendations*/
+//Home page
+////Users sign up & login with validation.
+////Login or signup with single sign on (google , facebook …)
+Product details view on the user side with image zoom.
