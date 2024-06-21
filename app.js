@@ -3,7 +3,6 @@ const session=require('express-session')
 const path=require('path');
 const bcrypt=require('bcrypt');
 const dotenv=require('dotenv').config()
-const multer=require('multer')
 const expressLayouts=require('express-ejs-layouts')
 const adminRouter=require('./router/adminRoute');
 const userRouter=require('./router/userRoute');
@@ -28,6 +27,7 @@ app.use(nocache())
 //path setting
 app.use('/images',express.static(path.join(__dirname,'public','images')))
 app.use('/style', express.static(path.join(__dirname,'public','style')))
+app.use('/uploads', express.static(path.join(__dirname,'uploads')))
 //static file
 app.use(express.static('public'));
 app.use(express.static('uploads'));

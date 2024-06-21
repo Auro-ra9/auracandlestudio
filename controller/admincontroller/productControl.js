@@ -44,6 +44,12 @@ const addProductPost= async (req,res)=>{
         let actualQuantity=req.body.available_quantity
         let actualdescription=req.body.product_description.trim()
         let actualDiscount=req.body.percentage_discount
+
+        const imageArray=[]
+        console.log(req.files);
+        req.files.forEach((img)=>{
+            imageArray.push(img.path)
+        })
         //check the fields
 
         if(!actualProduct && !actualPrice && !actualBrand && !actualCategory && !actualQuantity && !actualdescription && !actualDiscount) {
@@ -68,8 +74,10 @@ const addProductPost= async (req,res)=>{
             category:actualCategory,
             productQuantity:actualQuantity,
             productDescription:actualdescription,
-            discount:actualDiscount
+            discount:actualDiscount,
+            image:imageArray
         })
+        
 
         await newProduct.save()
         req.flash('errorMessage', 'Product added successfully')

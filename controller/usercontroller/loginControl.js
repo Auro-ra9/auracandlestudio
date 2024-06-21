@@ -3,6 +3,8 @@ const bcrypt = require('bcrypt')
 const passport = require('passport')
 require('../../services/auth')
 
+
+//rendering lpgin page
 const loginRender = (req, res) => {
     try {
         res.render('user/login', { title: 'login', alertMessage: req.flash('errorMessage'), user: req.session.user })
@@ -21,8 +23,8 @@ const loginPost = async (req, res) => {
             req.flash('errorMessage', 'We could not find the user credentials');
             return res.redirect('/login');
         }
-        
-        if(checkUser.isBlocked===true){
+
+        if (checkUser.isBlocked === true) {
             req.flash('errorMessage', "Your account is blocked by admin. please contact for further details");
             return res.redirect('/login');
 
@@ -53,7 +55,7 @@ const registerRender = (req, res) => {
 
 }
 
-
+//registering account
 
 const registerPost = async (req, res) => {
     try {
@@ -94,41 +96,66 @@ const registerPost = async (req, res) => {
     }
 }
 
-    //google auth instance
-    const googleRender = (req, res) => {
-        try {
-            passport.authenticate('google', { scope: ['email', 'profile'] })(req, res);
-        } catch (error) {
-            console.log(`Error on google render: ${error}`);
-        }
+//google auth instance
+const googleRender = (req, res) => {
+    try {
+        passport.authenticate('google', { scope: ['email', 'profile'] })(req, res);
+    } catch (error) {
+        console.log(`Error on google render: ${error}`);
     }
+}
 
-    //google auth callback   
-    const googleCallback = (req, res, next) => {
-        try {
-            passport.authenticate('google', (err, user, info) => {
+//google auth callback   
+const googleCallback = (req, res, next) => {
+    try {
+        passport.authenticate('google', (err, user, info) => {
+            if (err) {
+                console.log(`Error on google Auth callback: ${err}`);
+                return next(err);  // Passimg err to next middleware
+            }
+            // failure 
+            if (!user) {
+                return res.redirect('/login');
+            }
+            // successful
+            req.logIn(user, (err) => {
                 if (err) {
-                    console.log(`Error on google Auth callback: ${err}`);
-                    return next(err);  // Passimg err to next middleware
+                    console.log(`Error during login: ${err}`);
+                    return next(err);
                 }
-                // failure 
-                if (!user) {
-                    return res.redirect('/login');
-                }
-                // successful
-                req.logIn(user, (err) => {
-                    if (err) {
-                        console.log(`Error during login: ${err}`);
-                        return next(err);
-                    }
-                    req.session.user = user.id;
-                    return res.redirect('/home');
-                });
-            })(req, res, next);
-        } catch (error) {
-            console.log(`Error on google auth callback: ${error}`);
-        }
+                req.session.user = user.id;
+                return res.redirect('/home');
+            });
+        })(req, res, next);
+    } catch (error) {
+        console.log(`Error on google auth callback: ${error}`);
     }
+}
+
+//OTP and verification
+
+const otpRender = (req, res) => {
+    try {
+        res.render('user/otp', { title: 'login', alertMessage: req.flash('errorMessage') })
+    } catch (err) {
+        console.log(`Error on otp render get ${err}`);
+    }
+}
+const verificationRender = (req, res) => {
+    try {
+        res.render('user/verification', { title: 'veirification', alertMessage: req.flash('errorMessage') })
+    } catch (err) {
+        console.log(`Error on verification email render get ${err}`);
+    }
+}
+const confirmPasswordRender = (req, res) => {
+    try {
+        res.render('user/confirmPassword', { title: 'confirm-password', alertMessage: req.flash('errorMessage') })
+    } catch (err) {
+        console.log(`Error on confirm password render get ${err}`);
+    }
+}
+
 
 
 
@@ -154,7 +181,11 @@ module.exports = {
     registerPost,
     googleRender,
     googleCallback,
-    logout
+    otpRender,
+    verificationRender,
+    confirmPasswordRender,
+    logout,
+
 
 }
 

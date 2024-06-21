@@ -1,3 +1,19 @@
+<style>
+    .product-name{
+        max-width: 200px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+    .product-name:hover{
+        max-width: 200px;
+        overflow: visible;
+        white-space: wrap;
+        /* text-overflow: ellipsis; */
+    }
+</style>
+
+
 <%- include('navbar') %>
 
 <div class="container my-5" style="min-height: 100vh;">
@@ -19,7 +35,7 @@
             <% products.forEach((product, index) => { %>
                 <tr>
                     <th scope="row"><%= index + 1 %></th>
-                    <td><%= product.productName %></td>
+                    <td class="product-name"><%= product.productName %></td>
                     <td><%= product.productPrice %></td>
                     <td><%= product.productQuantity %></td>
                     <td><%= product.category.categoryName %></td>

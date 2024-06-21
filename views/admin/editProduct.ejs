@@ -1,159 +1,195 @@
 <%- include('navbar') %>
 
-<style>
-    .form-horizontal {
-        background-color: rgb(220, 220, 220);
-    }
-</style>
-
-<div class="container mt-5">
-    <!-- Form Name -->
-    <legend class="text-center mb-4 font-weight-bold">Edit PRODUCT DETAILS</legend>
-    <form id="form-edit-product" class="form-horizontal mb-5 p-5 border rounded" action="/admin/edit-product/<%= productDetails._id %>" method="post" style="min-height: 100vh;">
-        <fieldset>
-
-            <!-- Text input-->
-            <div class="form-group row">
-                <label class="col-md-4 col-form-label text-md-right" for="edit-product_name">PRODUCT NAME</label>
-                <div class="col-md-6">
-                    <input id="edit-product_name" name="edit-product_name" class="form-control" type="text" value="<%= productDetails.productName %>">
-                    <label class="col-md-12 text-danger validate-edit-product" for="edit-product_name"></label>
-                </div>
-            </div>
-
-            <!-- Text input-->
-            <div class="form-group row">
-                <label class="col-md-4 col-form-label text-md-right" for="edit-product_price">PRODUCT PRICE</label>
-                <div class="col-md-6">
-                    <input id="edit-product_price" name="edit-product_price" class="form-control" type="text" value="<%= productDetails.productPrice %>">
-                    <label class="col-md-12 text-danger validate-edit-product" for="edit-product_price"></label>
-                </div>
-            </div>
-
-
-            <div class="form-group row">
-                <label class="col-md-4 col-form-label text-md-right" for="product_categorie"> CATEGORY</label>
-                <div class="col-md-6">
-                    <select id="product_categorie" name="product_categorie" class="form-control">
-                        <option value="<%= productDetails.category._id %>" selected>
-                            <%= productDetails.category.categoryName %>
-                        </option>
-                    </select>
-                    <label class="col-md-12 text-danger validate-edit-product" for="product_categorie"></label>
-                </div>
-            </div>
-
-            <!-- Text input-->
-            <div class="form-group row">
-                <label class="col-md-4 col-form-label text-md-right" for="edit-available_quantity">QUANTITY</label>
-                <div class="col-md-6">
-                    <input id="edit-available_quantity" name="edit-available_quantity" class="form-control" type="text" value="<%= productDetails.productQuantity %>">
-                    <label class="col-md-12 text-danger validate-edit-product" for="edit-available_quantity"></label>
-                </div>
-            </div>
-
-            <!-- Text input-->
-            <div class="form-group row">
-                <label class="col-md-4 col-form-label text-md-right" for="edit-available_brand">BRAND</label>
-                <div class="col-md-6">
-                    <input id="edit-available_brand" name="edit-available_brand" class="form-control" type="text" value="<%= productDetails.brand %>">
-                    <label class="col-md-12 text-danger validate-edit-product" for="edit-available_brand"></label>
-                </div>
-            </div>
-
-            <!-- Textarea -->
-            <div class="form-group row">
-                <label class="col-md-4 col-form-label text-md-right" for="product_description">PRODUCT DESCRIPTION</label>
-                <div class="col-md-6">
-                    <textarea class="form-control" id="product_description" name="product_description" rows="10"><%= productDetails.productDescription %></textarea>
-                    <label class="col-md-12 text-danger validate-edit-product" for="product_description"></label>
-                </div>
-            </div>
-
-            <!-- Text input-->
-            <div class="form-group row">
-                <label class="col-md-4 col-form-label text-md-right" for="edit-percentage_discount">DISCOUNT</label>
-                <div class="col-md-6">
-                    <input id="edit-percentage_discount" name="edit-percentage_discount" class="form-control" type="text" value="<%= productDetails.discount || '' %>">
-                    <label class="col-md-12 text-danger validate-edit-product" for="edit-percentage_discount"></label>
-                </div>
-            </div>
-            
-
-            <!-- Button -->
-            <div class="form-group row ">
-                <div class="col-md-12 text-center">
-                    <button class="btn btn-primary" type="submit" onclick="validateForm()">Submit</button>
-                    <a href="/admin/products" class="btn btn-danger">Cancel</a>
-                </div>
-            </div>
-
-        </fieldset>
-    </form>
-</div>
-
-<%- include('footer') %>
-
-<script>
-    function validateForm() {
-        const productName = document.getElementById('edit-product_name').value.trim();
-        const productPrice = document.getElementById('edit-product_price').value.trim();
-        const category = document.getElementById('product_categorie').value.trim();
-        const quantity = document.getElementById('edit-available_quantity').value.trim();
-        const brand = document.getElementById('edit-available_brand').value.trim();
-        const description = document.getElementById('product_description').value.trim();
-        const discount = document.getElementById('edit-percentage_discount').value.trim();
-
-        let validate = true;
-
-        // Reset validation messages
-        const errorLabels = document.querySelectorAll('.validate-edit-product');
-        errorLabels.forEach(label => label.innerHTML = '');
-
-        // Validate product name
-        if (productName.length === 0 || productName.length > 150 || !isNaN(productName)) {
-            document.getElementsByClassName('validate-edit-product')[0].innerHTML = 'Enter a valid product name';
-            validate = false;
+    <style>
+        .form-horizontal {
+            background-color: rgb(220, 220, 220);
         }
 
-        // Validate product price
-        if (productPrice > 1000000 || isNaN(productPrice) || productPrice <= 0) {
-            document.getElementsByClassName('validate-edit-product')[1].innerHTML = 'Enter a valid product price';
-            validate = false;
+        .image-div {
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
         }
 
-        // Validate category
-        if (!category) {
-            document.getElementsByClassName('validate-edit-product')[2].innerHTML = 'Select a category';
-            validate = false;
+        .image-div img {
+            border-radius: 10px;
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
         }
+    </style>
 
-        // Validate quantity
-        if (quantity > 100000 || isNaN(quantity) || quantity <= 0) {
-            document.getElementsByClassName('validate-edit-product')[3].innerHTML = 'Enter a valid quantity';
-            validate = false;
-        }
+    <div class="container mt-5">
+        <!-- Form Name -->
+        <legend class="text-center mb-4 font-weight-bold">Edit PRODUCT DETAILS</legend>
+        <form id="form-edit-product" class="form-horizontal mb-5 p-5 border rounded"
+            action="/admin/edit-product/<%= productDetails._id %>" method="post" style="min-height: 100vh;">
+            <fieldset>
 
-        // Validate brand
-        if (brand.length === 0 || brand.length > 50 || !isNaN(brand)) {
-            document.getElementsByClassName('validate-edit-product')[4].innerHTML = 'Enter a valid brand name';
-            validate = false;
-        }
+                <!-- Text input-->
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right" for="edit-product_name">PRODUCT NAME</label>
+                    <div class="col-md-6">
+                        <input id="edit-product_name" name="edit-product_name" class="form-control" type="text"
+                            value="<%= productDetails.productName %>">
+                        <label class="col-md-12 text-danger validate-edit-product" for="edit-product_name"></label>
+                    </div>
+                </div>
 
-        // Validate description
-        if (description.length === 0 || description.length > 500 || !isNaN(description) || description.length < 5) {
-            document.getElementsByClassName('validate-edit-product')[5].innerHTML = 'Enter a valid description (5-500 characters)';
-            validate = false;
-        }
+                <!-- Text input-->
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right" for="edit-product_price">PRODUCT PRICE</label>
+                    <div class="col-md-6">
+                        <input id="edit-product_price" name="edit-product_price" class="form-control" type="text"
+                            value="<%= productDetails.productPrice %>">
+                        <label class="col-md-12 text-danger validate-edit-product" for="edit-product_price"></label>
+                    </div>
+                </div>
 
-        // Validate discount
-        if (discount > 1000000 || isNaN(discount) || discount <= 0) {
-            document.getElementsByClassName('validate-edit-product')[6].innerHTML = 'Enter a valid discount';
-            validate = false;
-        }
 
-        if (validate) {
-            document.getElementById('form-edit-product').submit();
-        }
-    }
-</script>
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right" for="product_categorie"> CATEGORY</label>
+                    <div class="col-md-6">
+                        <select id="product_categorie" name="product_categorie" class="form-control">
+                            <option value="<%= productDetails.category._id %>" selected>
+                                <%= productDetails.category.categoryName %>
+                            </option>
+                        </select>
+                        <label class="col-md-12 text-danger validate-edit-product" for="product_categorie"></label>
+                    </div>
+                </div>
+
+                <!-- Text input-->
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right" for="edit-available_quantity">QUANTITY</label>
+                    <div class="col-md-6">
+                        <input id="edit-available_quantity" name="edit-available_quantity" class="form-control"
+                            type="text" value="<%= productDetails.productQuantity %>">
+                        <label class="col-md-12 text-danger validate-edit-product"
+                            for="edit-available_quantity"></label>
+                    </div>
+                </div>
+
+                <!-- Text input-->
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right" for="edit-available_brand">BRAND</label>
+                    <div class="col-md-6">
+                        <input id="edit-available_brand" name="edit-available_brand" class="form-control" type="text"
+                            value="<%= productDetails.brand %>">
+                        <label class="col-md-12 text-danger validate-edit-product" for="edit-available_brand"></label>
+                    </div>
+                </div>
+
+                <!-- Textarea -->
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right" for="product_description">PRODUCT
+                        DESCRIPTION</label>
+                    <div class="col-md-6">
+                        <textarea class="form-control" id="product_description" name="product_description"
+                            rows="10"><%= productDetails.productDescription %></textarea>
+                        <label class="col-md-12 text-danger validate-edit-product" for="product_description"></label>
+                    </div>
+                </div>
+
+                <!-- Text input-->
+                <div class="form-group row">
+                    <label class="col-md-4 col-form-label text-md-right" for="edit-percentage_discount">DISCOUNT</label>
+                    <div class="col-md-6">
+                        <input id="edit-percentage_discount" name="edit-percentage_discount" class="form-control"
+                            type="text" value="<%= productDetails.discount || '' %>">
+                        <label class="col-md-12 text-danger validate-edit-product"
+                            for="edit-percentage_discount"></label>
+                    </div>
+                </div>
+
+
+                <div class="form-group row">
+                    <% productDetails.image.forEach((img)=>{ %>
+                        <div class="col-md-3">
+                            <div class="image-div">
+                                <img src="../../<%= img %>" alt="" class="image-fluid">
+                            </div>
+                            <!-- <button class="btn btn-warning">Edit</button> -->
+                            <!-- <button class="btn btn-warning">Edit</button> -->
+                        </div>
+                        <% }) %>
+                </div>
+
+
+                <!-- Button -->
+                <div class="form-group row ">
+                    <div class="col-md-12 text-center">
+                        <button class="btn btn-primary" type="submit" onclick="validateForm()">Submit</button>
+                        <a href="/admin/products" class="btn btn-danger">Cancel</a>
+                    </div>
+                </div>
+
+            </fieldset>
+        </form>
+    </div>
+
+    <%- include('footer') %>
+
+        <script>
+            function validateForm() {
+                const productName = document.getElementById('edit-product_name').value.trim();
+                const productPrice = document.getElementById('edit-product_price').value.trim();
+                const category = document.getElementById('product_categorie').value.trim();
+                const quantity = document.getElementById('edit-available_quantity').value.trim();
+                const brand = document.getElementById('edit-available_brand').value.trim();
+                const description = document.getElementById('product_description').value.trim();
+                const discount = document.getElementById('edit-percentage_discount').value.trim();
+
+                let validate = true;
+
+                // Reset validation messages
+                const errorLabels = document.querySelectorAll('.validate-edit-product');
+                errorLabels.forEach(label => label.innerHTML = '');
+
+                // Validate product name
+                if (productName.length === 0 || productName.length > 150 || !isNaN(productName)) {
+                    document.getElementsByClassName('validate-edit-product')[0].innerHTML = 'Enter a valid product name';
+                    validate = false;
+                }
+
+                // Validate product price
+                if (productPrice > 1000000 || isNaN(productPrice) || productPrice <= 0) {
+                    document.getElementsByClassName('validate-edit-product')[1].innerHTML = 'Enter a valid product price';
+                    validate = false;
+                }
+
+                // Validate category
+                if (!category) {
+                    document.getElementsByClassName('validate-edit-product')[2].innerHTML = 'Select a category';
+                    validate = false;
+                }
+
+                // Validate quantity
+                if (quantity > 100000 || isNaN(quantity) || quantity <= 0) {
+                    document.getElementsByClassName('validate-edit-product')[3].innerHTML = 'Enter a valid quantity';
+                    validate = false;
+                }
+
+                // Validate brand
+                if (brand.length === 0 || brand.length > 50 || !isNaN(brand)) {
+                    document.getElementsByClassName('validate-edit-product')[4].innerHTML = 'Enter a valid brand name';
+                    validate = false;
+                }
+
+                // Validate description
+                if (description.length === 0 || description.length > 500 || !isNaN(description) || description.length < 5) {
+                    document.getElementsByClassName('validate-edit-product')[5].innerHTML = 'Enter a valid description (5-500 characters)';
+                    validate = false;
+                }
+
+                // Validate discount
+                if (discount > 1000000 || isNaN(discount) || discount <= 0) {
+                    document.getElementsByClassName('validate-edit-product')[6].innerHTML = 'Enter a valid discount';
+                    validate = false;
+                }
+
+                if (validate) {
+                    document.getElementById('form-edit-product').submit();
+                }
+            }
+        </script>

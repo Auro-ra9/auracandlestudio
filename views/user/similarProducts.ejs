@@ -341,16 +341,12 @@
 }
 </style>
 
-    <%- include('navbar') %>
-  
-
-
-<%- include('banner') %>
 
 <div class="container mt-5">
     <div class="row clearfix">
-
-        <% products.forEach((product)=>{ %>
+        <h2>Similar Products</h2>
+        <hr class="bg-dark">
+        <% similarProducts.forEach((product)=>{ %>
             <div class="col-lg-3 col-md-4 col-sm-12">
                 <div class="card product_item">
                     <div class="body">
@@ -380,5 +376,3 @@
     </div>
 </div>
 
-
-<%- include('footer') %>

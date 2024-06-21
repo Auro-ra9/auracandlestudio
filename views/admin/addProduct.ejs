@@ -1,242 +1,327 @@
-<%- include('navbar') %>
+    <%- include('navbar') %>
 
-    <style>
-        .form-horizontal {
-            background-color: rgb(220, 220, 220);
-        }
-
-        /* Media Query for Small Devices (576px and below) */
-        @media (max-width: 576px) {
-            .form-group {
-                margin-bottom: 15px;
-                /* Increase margin between form groups */
-            }
-
+        <style>
             .form-horizontal {
-                padding: 15px;
-                /* Add padding to the form */
+                background-color: rgb(220, 220, 220);
             }
 
-            .col-md-4 {
-                text-align: left;
-                /* Align labels to the left */
+            /* Media Query for Small Devices (576px and below) */
+            @media (max-width: 576px) {
+                .form-group {
+                    margin-bottom: 15px;
+                    /* Increase margin between form groups */
+                }
+
+                .form-horizontal {
+                    padding: 15px;
+                    /* Add padding to the form */
+                }
+
+                .col-md-4 {
+                    text-align: left;
+                    /* Align labels to the left */
+                }
+
+                .col-md-6 {
+                    width: 100%;
+                    /* Full width for input fields */
+                }
             }
 
-            .col-md-6 {
-                width: 100%;
-                /* Full width for input fields */
+            /* Media Query for Medium and Large Devices */
+            @media (min-width: 576px) {
+                .form-horizontal {
+                    padding: 50px;
+                    /* Increase padding for better spacing */
+                }
             }
-        }
-
-        /* Media Query for Medium and Large Devices */
-        @media (min-width: 576px) {
-            .form-horizontal {
-                padding: 50px;
-                /* Increase padding for better spacing */
+            #imageContainer{
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-around;
+                flex-wrap: wrap;
             }
-        }
-    </style>
+        </style>
 
-    <div class="container mt-5">
-        <!-- Form Name -->
-        <legend class="text-center mb-4 font-weight-bold">Add PRODUCTS</legend>
-        <form id="form-add-product" class="form-horizontal mb-5 p-5 border rounded" action="/admin/addProduct"
-            method="post" style="min-height: 100vh;">
-            <fieldset>
+        <div class="container mt-5">
+            <!-- Form Name -->
+            <legend class="text-center mb-4 font-weight-bold">Add PRODUCTS</legend>
+            <form id="form-add-product" class="form-horizontal mb-5 p-5 border rounded" action="/admin/addProduct"
+                method="post" style="min-height: 100vh;" enctype="multipart/form-data">
+                <fieldset>
 
-                <!-- Text input-->
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="product_name">PRODUCT NAME</label>
-                    <div class="col-md-6">
-                        <input id="product_name" name="product_name" class="form-control" type="text">
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
+                    <!-- Text input-->
+                    <div class="form-group row">
+                        <label class="col-md-4 col-form-label text-md-right" for="product_name">PRODUCT NAME</label>
+                        <div class="col-md-6">
+                            <input id="product_name" name="product_name" class="form-control" type="text">
+                            <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
+                        </div>
+                    </div>
+
+                    <!-- Text input-->
+                    <div class="form-group row">
+                        <label class="col-md-4 col-form-label text-md-right" for="product_price">PRODUCT PRICE</label>
+                        <div class="col-md-6">
+                            <input id="product_price" name="product_price" class="form-control" type="text">
+                            <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
+                        </div>
+                    </div>
+
+                    <!-- Select Basic -->
+                    <div class="form-group row">
+                        <label class="col-md-4 col-form-label text-md-right" for="product_categorie"> CATEGORY</label>
+                        <div class="col-md-6">
+                            <select id="product_categorie" name="product_categorie" class="form-control">
+                                <option value="" disabled selected>Select a category</option>
+                                <% category.forEach((category)=>{ %>
+                                    <option value="<%= category._id %>">
+                                        <%= category.categoryName %>
+                                    </option>
+                                    <% }) %>
+
+                            </select>
+                            <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
+                        </div>
+                    </div>
+
+                    <!-- Text input-->
+                    <div class="form-group row">
+                        <label class="col-md-4 col-form-label text-md-right" for="available_quantity">QUANTITY</label>
+                        <div class="col-md-6">
+                            <input id="available_quantity" name="available_quantity" class="form-control" type="text">
+                            <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
+                        </div>
+                    </div>
+                    <!-- Text input-->
+                    <div class="form-group row">
+                        <label class="col-md-4 col-form-label text-md-right" for="available_brand">BRAND</label>
+                        <div class="col-md-6">
+                            <input id="available_brand" name="available_brand" class="form-control" type="text">
+                            <label class="col-md-12 text-danger validate-add-product" for="available_brand"></label>
+                        </div>
+                    </div>
+
+                    <!-- Textarea -->
+                    <div class="form-group row">
+                        <label class="col-md-4 col-form-label text-md-right" for="product_description">PRODUCT
+                            DESCRIPTION</label>
+                        <div class="col-md-6">
+                            <textarea class="form-control" id="product_description" name="product_description"
+                                rows="10"></textarea>
+                            <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
+                        </div>
+                    </div>
+
+                    <!-- Text input-->
+                    <div class="form-group row">
+                        <label class="col-md-4 col-form-label text-md-right" for="percentage_discount">DISCOUNT</label>
+                        <div class="col-md-6">
+                            <input id="percentage_discount" name="percentage_discount" class="form-control" type="text">
+                            <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
+                        </div>
+                    </div>
+                    <!-- File Button -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="product_image">Image</label>
+                        <div class="col-md-4">
+                            <input id="product_image" name="product_image" class="input-file" type="file" accept="image/png, image/jpeg" multiple>
+                            <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
+                        </div>
+                    </div>
+
+                    <!-- image preview -->
+                        <div class="container my-4 text-center">
+                                <div id="imageContainer">
+                                </div>
+                        </div>
+
+                    <!-- Button -->
+                    <div class="form-group row">
+                        <div class="col-md-12 text-center">
+                            <button class="btn btn-primary" type="submit">Submit</button>
+                            <a href="/admin/products" class="btn btn-danger">Cancel</a>
+                        </div>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+
+        <!-- modal for cropping image -->
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="imageModalLabel">Crop Image</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="image-crop-div">
+                            <img id="modalImage" class="img-fluid" src="" alt="Image preview">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-dark text-center" id="cropButton">Save Cropped Image</button>
                     </div>
                 </div>
+            </div>
+        </div>
+        <%- include('footer') %>
 
-                <!-- Text input-->
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="product_price">PRODUCT PRICE</label>
-                    <div class="col-md-6">
-                        <input id="product_price" name="product_price" class="form-control" type="text">
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
-                    </div>
-                </div>
+            <script>
 
-                <!-- Select Basic -->
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="product_categorie"> CATEGORY</label>
-                    <div class="col-md-6">
-                        <select id="product_categorie" name="product_categorie" class="form-control">
-                            <option value="" disabled selected>Select a category</option>
-                            <% category.forEach((category)=>{ %>
-                                <option value="<%= category._id %>">
-                                    <%= category.categoryName %>
-                                </option>
-                                <% }) %>
-
-                        </select>
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
-                    </div>
-                </div>
-
-                <!-- Text input-->
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="available_quantity">QUANTITY</label>
-                    <div class="col-md-6">
-                        <input id="available_quantity" name="available_quantity" class="form-control" type="text">
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
-                    </div>
-                </div>
-                <!-- Text input-->
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="available_brand">BRAND</label>
-                    <div class="col-md-6">
-                        <input id="available_brand" name="available_brand" class="form-control" type="text">
-                        <label class="col-md-12 text-danger validate-add-product" for="available_brand"></label>
-                    </div>
-                </div>
-
-                <!-- Textarea -->
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="product_description">PRODUCT
-                        DESCRIPTION</label>
-                    <div class="col-md-6">
-                        <textarea class="form-control" id="product_description" name="product_description"
-                            rows="10"></textarea>
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
-                    </div>
-                </div>
-
-                <!-- Text input-->
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="percentage_discount">DISCOUNT</label>
-                    <div class="col-md-6">
-                        <input id="percentage_discount" name="percentage_discount" class="form-control" type="text">
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
-                    </div>
-                </div>
-                <!-- File Button -->
-                <div class="form-group">
-                    <label class="col-md-4 control-label" for="product_iamge">Image</label>
-                    <div class="col-md-4">
-                        <input id="product_iamge" name="product_iamge" class="input-file" type="file">
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
-                    </div>
-                </div>
-
-                <!-- Button -->
-                <div class="form-group row">
-                    <div class="col-md-12 text-center">
-                        <button class="btn btn-primary" type="submit">Submit</button>
-                        <a href="/admin/products" class="btn btn-danger">Cancel</a>
-                    </div>
-                </div>
-
-            </fieldset>
-        </form>
-    </div>
-
-    <%- include('footer') %>
-
-        <script>
-
-            const addProductForm = document.getElementById('form-add-product')
-            const productName = document.getElementById('product_name')
-            const price = document.getElementById('product_price')
-            const category = document.getElementById('product_categorie')
-            const quantity = document.getElementById('available_quantity')
-            const brand = document.getElementById('available_brand')
-            const description = document.getElementById('product_description')
-            const discount = document.getElementById('percentage_discount')
-            const productImage = document.getElementById('product_image')
+                const addProductForm = document.getElementById('form-add-product')
+                const productName = document.getElementById('product_name')
+                const price = document.getElementById('product_price')
+                const category = document.getElementById('product_categorie')
+                const quantity = document.getElementById('available_quantity')
+                const brand = document.getElementById('available_brand')
+                const description = document.getElementById('product_description')
+                const discount = document.getElementById('percentage_discount')
+                const productImage = document.getElementById('product_image')
 
 
-            addProductForm.addEventListener('submit',async (event) => {
-                event.preventDefault()
-                document.getElementsByClassName('validate-add-product')[0].innerHTML = ''
-                document.getElementsByClassName('validate-add-product')[1].innerHTML = ''
-                document.getElementsByClassName('validate-add-product')[2].innerHTML = ''
-                document.getElementsByClassName('validate-add-product')[3].innerHTML = ''
-                document.getElementsByClassName('validate-add-product')[4].innerHTML = ''
-                document.getElementsByClassName('validate-add-product')[5].innerHTML = ''
-                document.getElementsByClassName('validate-add-product')[6].innerHTML = ''
-                document.getElementsByClassName('validate-add-product')[7].innerHTML = ''
+                addProductForm.addEventListener('submit',async (event) => {
+                    event.preventDefault()
+                    document.getElementsByClassName('validate-add-product')[0].innerHTML = ''
+                    document.getElementsByClassName('validate-add-product')[1].innerHTML = ''
+                    document.getElementsByClassName('validate-add-product')[2].innerHTML = ''
+                    document.getElementsByClassName('validate-add-product')[3].innerHTML = ''
+                    document.getElementsByClassName('validate-add-product')[4].innerHTML = ''
+                    document.getElementsByClassName('validate-add-product')[5].innerHTML = ''
+                    document.getElementsByClassName('validate-add-product')[6].innerHTML = ''
+                    document.getElementsByClassName('validate-add-product')[7].innerHTML = ''
 
-                let validate = true
+                    let validate = true
 
 
-                //name field validation
-                if (productName.value.trim() === 0 || productName.value.length > 150 || !isNaN(productName.value)) {
-                    document.getElementsByClassName('validate-add-product')[0].innerHTML = 'mention product name'
-                    validate = false
-                }
-                //price field validation
-                if (price.value > 1000000 || isNaN(price.value) || price.value <= 0) {
-                    document.getElementsByClassName('validate-add-product')[1].innerHTML = 'add price'
-                    validate = false
-
-                }
-                //cateogry field validation
-                if (!category.value) {
-                    document.getElementsByClassName('validate-add-product')[2].innerHTML = 'select any category'
-                    validate = false
-                }
-                //quantity field validation
-                if (quantity.value > 100000 || isNaN(quantity.value) || quantity.value <= 0) {
-                    document.getElementsByClassName('validate-add-product')[3].innerHTML = 'must specify quantity'
-                    validate = false
-
-                }
-                //vrand field validation
-                if (brand.value.trim() === 0 || brand.value.length > 50 || !isNaN(brand.value)) {
-                    document.getElementsByClassName('validate-add-product')[4].innerHTML = 'specify the brand name'
-                    validate = false
-                }
-
-                //description field validation
-                if (description.value.trim() === 0 || description.value.length > 500 || !isNaN(description.value) || description.value.length < 5) {
-                    document.getElementsByClassName('validate-add-product')[5].innerHTML = 'discription cannot be empty and at least in 6 characters'
-                    validate = false
-                }
-
-                //discount field validation
-                if (discount.value > 1000000 || isNaN(discount.value) || discount.value <= 0) {
-                    document.getElementsByClassName('validate-add-product')[6].innerHTML = 'fill discount field'
-                    validate = false
-
-                }
-                //image validation
-                if (!productImage.files || productImage.files.length === 0) {
-                    validationMessages[7].innerHTML = 'Please select an image';
-                    validate = false;
-                }
-
-                /*if (validate) {
-                    addProductForm.submit()
-                }*/
-
-                if (validate) {
-                    // Submit form using FormData for file upload
-                    const formData = new FormData(addProductForm);
-                    try {
-                        const response = await fetch('/your-upload-route', {
-                            method: 'POST',
-                            body: formData
-                        });
-                        if (response.ok) {
-                            console.log('Product added successfully');
-                        } else {
-                            console.error('Failed to add product');
-                        }
-                    } catch (error) {
-                        console.error('Error submitting form', error);
+                    //name field validation
+                    if (productName.value.trim() === 0 || productName.value.length > 150 || !isNaN(productName.value)) {
+                        document.getElementsByClassName('validate-add-product')[0].innerHTML = 'mention product name'
+                        validate = false
                     }
-                }
+                    //price field validation
+                    if (price.value > 1000000 || isNaN(price.value) || price.value <= 0) {
+                        document.getElementsByClassName('validate-add-product')[1].innerHTML = 'add price'
+                        validate = false
 
-            })
+                    }
+                    //cateogry field validation
+                    if (!category.value) {
+                        document.getElementsByClassName('validate-add-product')[2].innerHTML = 'select any category'
+                        validate = false
+                    }
+                    //quantity field validation
+                    if (quantity.value > 100000 || isNaN(quantity.value) || quantity.value <= 0) {
+                        document.getElementsByClassName('validate-add-product')[3].innerHTML = 'must specify quantity'
+                        validate = false
+
+                    }
+                    //vrand field validation
+                    if (brand.value.trim() === 0 || brand.value.length > 50 || !isNaN(brand.value)) {
+                        document.getElementsByClassName('validate-add-product')[4].innerHTML = 'specify the brand name'
+                        validate = false
+                    }
+
+                    //description field validation
+                    if (description.value.trim() === 0 || description.value.length > 500 || !isNaN(description.value) || description.value.length < 5) {
+                        document.getElementsByClassName('validate-add-product')[5].innerHTML = 'discription cannot be empty and at least in 6 characters'
+                        validate = false
+                    }
+
+                    //discount field validation
+                    if (discount.value > 1000000 || isNaN(discount.value) || discount.value <= 0) {
+                        document.getElementsByClassName('validate-add-product')[6].innerHTML = 'fill discount field'
+                        validate = false
+
+                    }
+                    //image validation
+                    if (!productImage.files || productImage.files.length === 0) {
+                        validationMessages[7].innerHTML = 'Please select an image';
+                        validate = false;
+                    }
+
+                    if (validate) {
+                        addProductForm.submit()
+                    }
+                })
+
+
+                const inputImage = document.getElementById('product_image');
+                const imageContainer = document.getElementById('imageContainer');
+                let cropper;
+
+                inputImage.addEventListener('change', (event) => {
+                    const files = event.target.files;
+
+                    // Check if the number of files exceeds the limit
+                    if (files.length > 4 || imageContainer.children.length + files.length > 4) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "File limit reached",
+                            text: "Maximum four files can be uploaded",
+                            timer: 12000,
+                        });
+                        return;
+                    }
+
+
+                    for (const file of files) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const colDiv = document.createElement('div');
+                            colDiv.classList.add('col-md-3', 'mb-3', 'image-container');
+
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.classList.add('img-fluid', 'img-thumbnail', 'image-preview');
+
+                            const openModalButton = document.createElement('button');
+                            openModalButton.classList.add('btn', 'btn-primary', 'mt-2', 'me-2');
+                            openModalButton.innerText = 'Crop';
+                            openModalButton.setAttribute('type', 'button');
+                            openModalButton.setAttribute('data-bs-toggle', 'modal');
+                            openModalButton.setAttribute('data-bs-target', '#imageModal');
+                            openModalButton.addEventListener('click', () => {
+                                document.getElementById('modalImage').src = e.target.result;
+                                cropper = new Cropper(document.getElementById('modalImage'), {
+                                    aspectRatio: 1,
+                                    viewMode: 0,
+                                    autoCropArea: 1,
+                                });
+
+                                document.getElementById('cropButton').onclick = () => {
+                                    const canvas = cropper.getCroppedCanvas();
+                                    const croppedImage = canvas.toDataURL('image/png');
+
+                                    img.src = croppedImage;
+
+                                    cropper.destroy();
+                                    cropper = null;
+                                    document.getElementById('imageModal').querySelector('.btn-close').click();
+                                };
+                            });
+
+                            const deleteButton = document.createElement('button');
+                            deleteButton.classList.add('btn', 'btn-danger', 'mt-2', 'ms-2');
+                            deleteButton.innerText = 'Delete';
+                            deleteButton.addEventListener('click', () => {
+                                imageContainer.removeChild(colDiv);
+                            });
+
+                            colDiv.appendChild(img);
+                            colDiv.appendChild(openModalButton);
+                            colDiv.appendChild(deleteButton);
+                            imageContainer.appendChild(colDiv);
+                        }
+                        reader.readAsDataURL(file);
+                    }
+
+                })
 
 
 
 
-
-        </script>
+            </script>

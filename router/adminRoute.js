@@ -6,6 +6,7 @@ const dashboardControl=require('../controller/admincontroller/dashboardControl')
 const categoryControl=require('../controller/admincontroller/categoryControl')
 const productControl=require('../controller/admincontroller/productControl')//named export, above are default
 const userControl=require('../controller/admincontroller/userControl')
+const upload = require('../middleware/multer')
 
 
 admin.get('/',loginControl.admin)
@@ -26,7 +27,7 @@ admin.post('/edit-category/:categoryID',categoryControl.editCategory)
 // products
 admin.get('/products',adminSession,productControl.productRender)
 admin.get('/addProduct', productControl.addProductRender)
-admin.post('/addProduct', productControl.addProductPost)
+admin.post('/addProduct',upload.array('product_image',4),adminSession, productControl.addProductPost)
 admin.get('/edit-product/:productID', productControl.editProductRender)
 admin.post('/edit-product/:productID', productControl.editProduct)
 admin.delete('/delete-product/:productID',productControl.deleteProduct)
