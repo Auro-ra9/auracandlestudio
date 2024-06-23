@@ -1,15 +1,15 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const dotenv = require('dotenv').config();
-const userSchema = require('../model/userSchema'); 
+const userSchema = require('../model/userSchema');
 
 passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CLIENT_CALLBACK,
-    passReqToCallback: true
-  },
-  async function(request, accessToken, refreshToken, profile, done) {
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: process.env.GOOGLE_CLIENT_CALLBACK,
+  passReqToCallback: true
+},
+  async function (request, accessToken, refreshToken, profile, done) {
     try {
       let user = await userSchema.findOne({ email: profile.email });
 
@@ -31,11 +31,11 @@ passport.use(new GoogleStrategy({
   }
 ));
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
   done(null, user.id);
 });
 
-passport.deserializeUser(async function(id, done) {
+passport.deserializeUser(async function (id, done) {
   try {
     const user = await userSchema.findById(id);
     done(null, user);

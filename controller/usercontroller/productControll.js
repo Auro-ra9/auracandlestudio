@@ -3,21 +3,21 @@ const productSchema = require("../../model/productSchema");
 const viewProductRender = async (req, res) => {
     try {
 
-        const productID=req.params.productID
+        const productID = req.params.productID
 
-        const productDetail=await productSchema.findById(productID).populate('category')
+        const productDetail = await productSchema.findById(productID).populate('category')
 
-        const similarProducts=await productSchema.find({category:productDetail.category})
+        const similarProducts = await productSchema.find({ category: productDetail.category })
 
-        if(!productDetail){
-            req.flash('errorMessage',"cannot find the product details");
+        if (!productDetail) {
+            req.flash('errorMessage', "cannot find the product details");
             return res.redirect('/home')
         }
 
-        res.render('user/viewProduct', { 
-            title: 'product-view', 
+        res.render('user/viewProduct', {
+            title: 'product-view',
             alertMessage: req.flash('errorMessage'),
-            user:req.session.user,
+            user: req.session.user,
             productDetail,
             similarProducts
         })
@@ -28,6 +28,6 @@ const viewProductRender = async (req, res) => {
     }
 }
 
-module.exports={
+module.exports = {
     viewProductRender,
 }

@@ -12,4 +12,4 @@ async function checkAdminLogin(req, res, next) {
     }
 }
 
-module.exports=checkAdminLogin
+module.exports = checkAdminLogin

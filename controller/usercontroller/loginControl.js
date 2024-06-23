@@ -16,6 +16,8 @@ const loginRender = (req, res) => {
 const loginPost = async (req, res) => {
     try {
 
+
+
         // check the user details from Database
         const checkUser = await userSchema.findOne({ email: req.body.email });
 
@@ -59,21 +61,24 @@ const registerRender = (req, res) => {
 
 const registerPost = async (req, res) => {
     try {
+
+        const { name, email, password, phone, confirmPassword } = req.body
         //Server-side validation
-        if (!req.body.name || !req.body.email || !req.body.password || !req.body.confirmPassword) {
+        if (!name || !email || !phone || !password || !confirmPassword) {
             req.flash('errorMessage', 'All fields are required');
             return res.redirect('/user/register');
         }
         //storing userdata and encrypting the password
         const userData = {
-            name: req.body.name,
-            email: req.body.email,
-            password: await bcrypt.hash(req.body.password, 10),
+            name: name,
+            email: email,
+            password: await bcrypt.hash(password, 10),
+            phone: phone
         }
 
         console.log(userData);
         //to check whether the useremail already exists in the database or not
-        const checkUserExist = await userSchema.find({ email: req.body.email })
+        const checkUserExist = await userSchema.find({ email: email })
 
 
         //if is a new user then storing it to the db

@@ -1,5 +1,5 @@
 *Admin side :
-Products must have multiple images (minimum 3 images).
+//////Products must have multiple images (minimum 3 images).
 Images should be cropped and resized properly before upload.
 /////Admin sign in
 /////User management (list user, block/unblock).
@@ -8,18 +8,47 @@ Images should be cropped and resized properly before upload.
 
 User side :
 Sign up using OTP with OTP timer and Resend Otp
-List products on the user side.
-Product detailed page should contain following 
+////List products on the user side.
+///Product detailed page should contain following 
  Breadcrumbs 
- Ratings 
- Price
- Discounts or coupons applied
- Reviews 
- Stock 
-Proper error handles Sold out / unavailable  and  out of stock EXAMPLE
- Highlights / specs of product 
- Related product recommendations*/
-//Home page
+/ Ratings 
+/ Price
+/ Discounts or coupons applied
+/ Reviews 
+/ Stock 
+////Proper error handles Sold out / unavailable  and  out of stock EXAMPLE
+////Highlights / specs of product 
+//// Related product recommendations*/
+////Home page
 ////Users sign up & login with validation.
 ////Login or signup with single sign on (google , facebook …)
-Product details view on the user side with image zoom.
+////Product details view on the user side with image zoom.
+
+
+SECOND WEEK
+User side : 
+User profile(Show user details, show address, show orders, edit profile, cancel orders, forgot password).
+Add address management in user profile( Multiple Address, Add, Edit, Delete).
+Cart management (Add to cart, list products in cart, remove products from cart)
+Qty (add to cart) should be controlled based on stocks left
+Handle maximum qty per person to add to cart for a product 
+Out of stock product need to shown or hidden based on filter
+Advanced search with sort based on 
+Popularity 
+Price: low to high
+Price : high to low 
+Average ratings 
+Featured 
+New arrivals 
+aA - zZ 
+zZ - aA 
+Inventory/Stock management.
+Checkout page(Multiple address,edit and saved address)
+Place order with Cash on Delivery(Address selection)
+Purchase with COD.
+Order Management-Order cancellation option, Order history and status.
+
+Admin side : 
+Order Management
+Admin Side: List orders, change order status, cancel orders
+Stocks left - should be shown in product listing and product details page

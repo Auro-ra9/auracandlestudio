@@ -16,7 +16,7 @@ const userRender = async (req, res) => {
     } catch (err) {
         console.log(`Error rendering customers: ${err}`);
         req.flash('errorMessage', 'Error rendering customers');
-        res.redirect('/admin/customers'); 
+        res.redirect('/admin/customers');
     }
 }
 
@@ -27,9 +27,9 @@ const blockUser = async (req, res) => {
         if (!userID) {
             return res.status(404).json({ message: "User id not found" });
         }
-        
+
         const blockedUser = await userSchema.findByIdAndUpdate(userID, { isBlocked: true });
-        
+
         if (blockedUser) {
             return res.status(200).json({ message: "User blocked" });
         } else {
@@ -48,9 +48,9 @@ const unblockUser = async (req, res) => {
         if (!userID) {
             return res.status(404).json({ message: "User id not found" });
         }
-        
+
         const unblockedUser = await userSchema.findByIdAndUpdate(userID, { isBlocked: false });
-        
+
         if (unblockedUser) {
             return res.status(200).json({ message: "User unblocked" });
         } else {

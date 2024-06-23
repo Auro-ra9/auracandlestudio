@@ -22,9 +22,9 @@ async function checkUserSessionBlocked(req, res, next) {
 
             // get the data of the user
             const user = await userSchema.findById(req.session.user)
-            
+
             if (user.isBlocked) {
-                req.session.user=''
+                req.session.user = ''
                 res.redirect('/login')
             } else {
                 next()

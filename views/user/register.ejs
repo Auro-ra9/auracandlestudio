@@ -70,10 +70,10 @@
                     <p>Already have an account then: <a href="/login">Login</a></p>
                     <hr>
                     <p>Or continue with</p>
-                    <button onclick="window.location.href='/auth/google'" data-mdb-button-init data-mdb-ripple-init
+                    <a href="/auth/google" data-mdb-button-init data-mdb-ripple-init
                       class="btn btn-link btn-floating mx-1">
                       <i class="fab fa-google"></i>
-                    </button>
+                      </button>
                   </div>
                 </form>
               </div>
@@ -96,7 +96,7 @@
       const confirmPassword = document.getElementsByName('confirmPassword')[0]
       const signUpButton = document.getElementById('register-btn')
 
-     
+
 
 
       function checkEmail(email) {
@@ -131,10 +131,10 @@
         let validate = true
 
         document.getElementsByClassName('registerValidate')[0].innerHTML = ""
-      document.getElementsByClassName('registerValidate')[1].innerHTML = ""
-      document.getElementsByClassName('registerValidate')[2].innerHTML = ""
-      document.getElementsByClassName('registerValidate')[3].innerHTML = ""
-      document.getElementsByClassName('registerValidate')[4].innerHTML = ""
+        document.getElementsByClassName('registerValidate')[1].innerHTML = ""
+        document.getElementsByClassName('registerValidate')[2].innerHTML = ""
+        document.getElementsByClassName('registerValidate')[3].innerHTML = ""
+        document.getElementsByClassName('registerValidate')[4].innerHTML = ""
 
 
         if (name.value.trim() === "" || name.value.length > 30 || !isNaN(name.value)) {
@@ -148,7 +148,7 @@
           document.getElementsByClassName('registerValidate')[1].innerHTML = "Number must not be less than 10"
         }
 
-        if (checkEmail(email.value) || email.value.trim==='' || email.value.length===0) {
+        if (checkEmail(email.value) || email.value.trim === '' || email.value.length === 0) {
           validate = false
           document.getElementsByClassName('registerValidate')[2].innerHTML = "Email must be valid"
         }
@@ -158,7 +158,7 @@
           document.getElementsByClassName('registerValidate')[3].innerHTML = "Enter a strong password"
         }
 
-        if (password.value != confirmPassword.value || confirmPassword.value.length===0)  {
+        if (password.value != confirmPassword.value || confirmPassword.value.length === 0) {
           validate = false
           document.getElementsByClassName('registerValidate')[4].innerHTML = "Passwords do not match "
         }
