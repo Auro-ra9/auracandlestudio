@@ -1,0 +1,51 @@
+{
+  "_id": {
+    "$oid": "667e635cdebdfd82a9ef9501"
+  },
+  "userID": "6676ec02e8aefa8ad77c37cb",
+  "items": [
+    {
+      "productID": {
+       {
+  "_id": {
+    "$oid": "667c34d5995248abd2fab06b"
+  },
+  "productName": "Luxe Vanilla Scented Glass Votive Candles for Home Decor | Smokeless Soy Wax  (Pack of 6)",
+  "productQuantity": 50,
+  "productDescription": "<%= product.productID.image[0] %><%= product.productID.image[0] %>",
+  "productPrice": 14000,
+  "category": {
+    "$oid": "6671678c665460bc7d1b479e"
+  },
+  "discount": 15,
+  "image": [
+    "uploads\\1719416021594-396045380-image0.png",
+    "uploads\\1719416021600-171174372-image1.png",
+    "uploads\\1719416021602-63085958-image2.png"
+  ],
+  "brand": "misa new",
+  "isAvailable": true,
+  "createdAt": {
+    "$date": "2024-06-26T15:33:41.634Z"
+  },
+  "updatedAt": {
+    "$date": "2024-06-26T15:33:41.634Z"
+  },
+  "__v": 0
+}
+      },
+      "productCount": 2,
+      "productPrice": 699,
+      "createdAt": {
+        "$date": "2024-06-28T07:16:44.085Z"
+      },
+      "updatedAt": {
+        "$date": "2024-06-28T07:21:22.484Z"
+      }
+    }
+  ],
+  "payableAmount": 0,
+  "totalPrice": 0,
+  "couponDiscount": 0,
+  "__v": 0
+}

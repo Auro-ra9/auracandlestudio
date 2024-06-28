@@ -11,6 +11,9 @@ const addressSchema = mongoose.Schema({
     areaAddress: {
         type: String,
     },
+    city: {
+        type: String
+    },
     landmark: {
         type: String
     },

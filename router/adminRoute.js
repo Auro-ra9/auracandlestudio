@@ -8,7 +8,6 @@ const productControl = require('../controller/admincontroller/productControl')//
 const userControl = require('../controller/admincontroller/userControl')
 const upload = require('../middleware/multer')
 
-
 admin.get('/', loginControl.admin)
 admin.get('/login', loginControl.loginRender)
 admin.post('/login', loginControl.loginPost)
@@ -28,14 +27,20 @@ admin.post('/edit-category/:categoryID', adminSession, categoryControl.editCateg
 admin.get('/products', adminSession, productControl.productRender)
 admin.get('/addProduct', adminSession, productControl.addProductRender)
 admin.post('/addProduct', upload.array('product_image', 4), adminSession, productControl.addProductPost)
-admin.get('/edit-product/:productID', adminSession, productControl.editProductRender)
-admin.post('/edit-product/:productID', adminSession, productControl.editProduct)
 admin.delete('/delete-product/:productID', adminSession, productControl.deleteProduct)
 admin.put('/block-product/:productID', adminSession, productControl.blockProduct)
 admin.put('/unblock-product/:productID', adminSession, productControl.unblockProduct)
-admin.get('/delete-single-image/:index/:productID', adminSession, productControl.deleteSingleImage)
-// admin.post('/save-cropped-image',adminSession, upload.single('croppedImage'),productControl.saveCroppedImage)
-admin.post('/save-cropped-image', adminSession, upload.single('croppedImage'), productControl.saveCroppedImage)
+// admin.get('/edit-product/:productID', adminSession, productControl.editProductRender)
+// admin.post('/edit-product/:productID', adminSession, productControl.editProduct)
+// admin.get('/delete-single-image/:index/:productID', adminSession, productControl.deleteSingleImage)
+// admin.post('/save-cropped-image', adminSession, upload.single('croppedImage'), productControl.saveCroppedImage)
+
+// Route to handle the product update
+// admin.post('/productedit/:productID', adminSession, productControl.upload.array('images', 5), productControl.editProduct);
+
+// Route to delete a single image
+admin.get('/deleteSingleImage/:index/:productID', adminSession, productControl.deleteSingleImage);
+
 
 
 

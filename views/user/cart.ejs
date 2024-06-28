@@ -1,0 +1,362 @@
+<style>
+    .cart-container {
+        min-height: 100vh;
+    }
+
+    .avatar-lg {
+        height: 5rem;
+        width: 5rem;
+    }
+
+    .font-size-18 {
+        font-size: 18px !important;
+    }
+
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    a {
+        text-decoration: none !important;
+    }
+
+    .w-xl {
+        min-width: 160px;
+    }
+
+    .card {
+        margin-bottom: 24px;
+        -webkit-box-shadow: 0 2px 3px #e4e8f0;
+        box-shadow: 0 2px 3px #e4e8f0;
+    }
+
+    .card {
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 1px solid #eff0f2;
+        border-radius: 1rem;
+    }
+
+
+
+    .wrapper {
+        min-width: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #a8a8a86d;
+        border-radius: 10px;
+    }
+
+    .wrapper span {
+        width: 100%;
+        text-align: center;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .wrapper span.num {
+        font-size: 1rem;
+        border-right: 2px solid rgba(0, 0, 0, 0.2);
+        border-left: 2px solid rgba(0, 0, 0, 0.2);
+        pointer-events: none;
+    }
+</style>
+
+<%-include('navbar') %>
+
+    <div class="container pt-5 cart-container">
+        <div class="row">
+            <div class="col-xl-8">
+
+                <% productInCart.items.forEach((product,index)=>{ %>
+
+
+                    <div class="card border shadow-none">
+                        <div class="card-body">
+
+                            <div class="d-flex align-items-start border-bottom pb-3">
+                                <div class="me-4">
+                                    <a href="/product-view/<%= product.productID.id %>">
+                                        <img src="../../<%= product.productID.image[0] %>" alt=""
+                                            class="avatar-lg rounded"></a>
+                                </div>
+                                <div class="flex-grow-1 align-self-center overflow-hidden">
+                                    <div>
+                                        <h5 class="text-truncate font-size-18"><a
+                                                href="/product-view/<%= product.productID.id %>" class="text-dark">
+                                                <%= product.productID.productName %>
+                                            </a></h5>
+                                        <p class="text-muted mb-0">
+                                            <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star-half text-warning"></i>
+                                        </p>
+                                        <p class="mb-0 mt-1">Brand : <span class="fw-medium">
+                                                <%= product.productID.brand %>
+                                            </span></p>
+                                        <% if(product.productID.productQuantity<10){%>
+                                            <p class="mb-0 mt-1"><b class="fw-medium text-danger">
+                                                   only <%= product.productID.productQuantity %> stock left
+                                            </b></p>
+                                            <% } %>
+                                    </div>
+                                </div>
+                                <div class="flex-shrink-0 ms-2">
+                                    <ul class="list-inline mb-0 font-size-16">
+                                        <li class="list-inline-item">
+                                            <i class="mdi mdi-trash-can-outline"
+                                                onclick="deleteCart('<%= product.productID._id %>')"></i>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <i class="mdi mdi-heart-outline"></i>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mt-3">
+                                            <p class="text-muted mb-2">Price</p>
+                                            <h5 class="mb-0 mt-2"><span class="text-muted me-2"><del
+                                                        class="font-size-16 fw-normal">&#8377; <%=
+                                                            product.productID.productPrice %></del></span>&#8377; <%=
+                                                    (product.productID.productPrice*(1-product.productID.discount/100)).toLocaleString()
+                                                    %>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="mt-3">
+                                            <p class="text-muted mb-2">Quantity</p>
+                                            <div class="d-inline-flex">
+                                                <div class="wrapper">
+                                                    <span class="minus"
+                                                        onclick="decreaseQuantity('<%= product.productID._id%>','<%= index %>')">-</span>
+                                                    <span class="num product-quantity-box">
+                                                        <%= product.productCount %>
+                                                    </span>
+                                                    <span class="plus"
+                                                        onclick="increaseQuantity('<%=product.productID._id%>','<%= index %>')">+</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mt-3">
+                                            <p class="text-muted mb-2 total-count-box  ">Total</p>
+                                            <h5 class="product-total-box">&#8377;<%=
+                                                    (product.productID.productPrice*(1-product.productID.discount/100)*(product.productCount)).toLocaleString()
+                                                    %>
+                                            </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <% }) %>
+                        <!-- end card -->
+
+
+                        <div class="row my-4">
+                            <div class="col-sm-6">
+                                <a href="/home" class="btn btn-link text-muted">
+                                    <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping </a>
+                            </div> <!-- end col -->
+                            <div class="col-sm-6">
+                                <div class="text-sm-end mt-2 mt-sm-0">
+                                    <a href="ecommerce-checkout.html" class="btn btn-success">
+                                        <i class="mdi mdi-cart-outline me-1"></i> Checkout </a>
+                                </div>
+                            </div> <!-- end col -->
+                        </div> <!-- end row-->
+            </div>
+
+            <div class="col-xl-4">
+                <div class="mt-5 mt-lg-0">
+                    <div class="card border shadow-none">
+                        <div class="card-header bg-transparent border-bottom py-3 px-4">
+                            <h5 class="font-size-16 mb-0">Order Summary <span class="float-end">#MN0124</span></h5>
+                        </div>
+                        <div class="card-body p-4 pt-2">
+
+                            <div class="table-responsive">
+                                <table class="table mb-0">
+                                    <tbody>
+                                        <tr>
+                                            <td>Sub Total :</td>
+                                            <td class="text-end " id="sub-total-box">&#8377; <%= subTotal%>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Discount : </td>
+                                            <td class="text-end " id="total-discount">
+                                                <%= (totalDiscount).toLocaleString() %>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Shipping Charge :</td>
+                                            <td class="text-end">$ 25</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Estimated Tax : </td>
+                                            <td class="text-end">$ 18.20</td>
+                                        </tr>
+                                        <tr class="bg-light">
+                                            <th>Total :</th>
+                                            <td class="text-end">
+                                                <span class="fw-bold" id="total-box">
+                                                    &#8377;<%=(total).toLocaleString() %>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- end table-responsive -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end row -->
+
+    </div>
+
+
+    <%- include('footer') %>
+
+
+        <script>
+            // Function to remove a product from the cart
+            function deleteCart(productID, index) {
+                const URL = `/delete-cart-item/${productID}`
+
+                fetch(URL, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then((res) => {
+                    if (res.ok) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Product removed from cart',
+                            showConfirmButton: false,
+                            timer: 900
+                        }).then(() => {
+                            window.location.reload()
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Failed to remove product',
+                            text: 'Please try again later',
+                        });
+                    }
+                }).catch((err) => {
+                    console.log('Error removing product from cart', err)
+                });
+            }
+
+
+
+            const productQuantityBox = document.querySelectorAll('.product-quantity-box')
+            const productTotalBox = document.querySelectorAll('.product-total-box')
+            const subTotalBox = document.getElementById('sub-total-box')
+            const totalBox = document.getElementById('total-box')
+            const totalDiscountBox = document.getElementById('total-discount')
+
+
+            //function to increase the quantity of the product
+
+            function increaseQuantity(productID, index) {
+
+                if (productQuantityBox[index].innerHTML >= 10) {
+                    iziToast.warning({
+                        message: 'Products limit exceeded'
+                    });
+                    return
+                }
+                const URL = `/increase-quantity/${productID}`
+                fetch(URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then((res) => {
+                    return res.json()
+                }).then((data) => {
+
+                    if (data.success) {
+                        productQuantityBox[index].innerHTML = data.productCount.toLocaleString()
+                        productTotalBox[index].innerHTML = data.productTotal.toLocaleString()
+                        subTotalBox.innerHTML = data.totalWithoutDiscount.toLocaleString()
+                        totalBox.innerHTML = data.totalAmount.toLocaleString()
+                        totalDiscountBox.innerHTML = data.totalDiscount.toLocaleString()
+
+                    }
+                    if (data.stockReached) {
+                        iziToast.warning({
+                            message: data.stockReached
+                        });
+                    }
+
+                }).catch((err) => {
+                    console.log(`error on increasing the quantity fetch in cart${err}`)
+                })
+            }
+
+            //fuction to decrease the quantity
+
+            function decreaseQuantity(productID, index) {
+                if (productQuantityBox[index].innerHTML <= 1) {
+                    iziToast.error({
+                        message: 'Products limit must be 1 or above 1'
+                    });
+                    return
+                }
+                const URL = `/decrease-quantity/${productID}`
+                fetch(URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application.json'
+                    }
+                }).then((res) => {
+                    return res.json()
+                }).then((data) => {
+
+                    if (data.success) {
+                        productQuantityBox[index].innerHTML = data.productCount.toLocaleString()
+                        productTotalBox[index].innerHTML = data.productTotal.toLocaleString()
+                        subTotalBox.innerHTML = data.totalWithoutDiscount.toLocaleString()
+                        totalBox.innerHTML = data.totalAmount.toLocaleString()
+                        totalDiscountBox.innerHTML = data.totalDiscount.toLocaleString()
+
+                    }
+                }).catch((err) => {
+                    console.log(`error on decrasing quantity in fetch cart${err}`)
+                })
+            }
+        </script>

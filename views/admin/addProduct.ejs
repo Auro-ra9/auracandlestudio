@@ -229,7 +229,7 @@
                     validationMessages[7].innerHTML = 'Please select an image';
                     validate = false;
                 }
-                if (productImage.files.length > 5) {
+                if (productImage.files.length > 4) {
                     validationMessages[7].innerHTML = 'Do not choose upto 4 images';
                     validate = false;
                 }
@@ -365,4 +365,4 @@
                 document.getElementById('cropButton').onclick = cropImage;
                 document.getElementById('imageModal').addEventListener('hidden.bs.modal', closeCropModal);
             });
-        </script>
+        </script> 4
