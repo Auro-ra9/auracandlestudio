@@ -72,18 +72,14 @@ const addProductPost = async (req, res) => {
             imageArray.push(img.path)
         })
 
-        console.log('Images to save:', imageArray); // Log the number of images to be saved
 
-
-        //check the fields
-
+        //checkin the fields
         if (!actualProduct && !actualPrice && !actualBrand && !actualCategory && !actualQuantity && !actualdescription && !actualDiscount) {
             req.flash('errorMessage', 'Product not found')
             return res.redirect('/admin/products')
         }
 
         //already exsit or not
-
         const productDetails = await productSchema.findOne({ productName: actualProduct, productPrice: actualPrice, band: actualBrand })
         if (productDetails) {
             req.flash('errorMessage', 'Product already exists')
@@ -178,6 +174,74 @@ const unblockProduct = async (req, res) => {
     }
 }
 
+const editProductRender = async (req, res) => {
+    try {
+        const productID = req.params.productID;
+        const productDetails = await productSchema.findById(productID).populate('category');
+        const categories = await categorySchema.find({ isBlocked: false });
+
+        if (!productDetails) {
+            req.flash("errorMessage", "Product not found.");
+            return res.redirect('/admin/products');
+        }
+
+        res.render('admin/editProduct', {
+            title: "Edit Product",
+            alertMessage: req.flash('errorMessage'),
+            productDetails,
+            categories
+        });
+    } catch (err) {
+        console.error("Error on rendering edit product page:", err);
+        req.flash("errorMessage", "An error occurred while rendering the edit product page.");
+        res.redirect('/admin/products');
+    }
+};
+
+const editProduct = async (req, res) => {
+    try {
+        const productID = req.params.productID;
+        const updatedData = {
+            productName: req.body.product_name,
+            productPrice: req.body.product_price,
+            category: req.body.product_categorie,
+            productQuantity: req.body.available_quantity,
+            brand: req.body.available_brand,
+            productDescription: req.body.product_description,
+            discount: req.body.percentage_discount
+        };
+
+        // Handle image updates
+        const product = await productSchema.findById(productID);
+        let images = [...product.image]; // Get existing images
+
+        // Remove deleted images
+        const keptImages = req.body.keptImages ? req.body.keptImages.split(',') : [];
+        images = images.filter(img => keptImages.includes(img));
+
+        // Add new images
+        if (req.files && req.files.length > 0) {
+            const newImages = req.files.map(file => file.path);
+            images = [...images, ...newImages];
+        }
+
+        updatedData.image = images;
+
+        const updatedProduct = await productSchema.findByIdAndUpdate(productID, updatedData, { new: true });
+
+        if (updatedProduct) {
+            req.flash('successMessage', 'Product updated successfully');
+            return res.redirect('/admin/products');
+        } else {
+            req.flash('errorMessage', 'Failed to update product');
+            return res.redirect(`/admin/edit-product/${productID}`);
+        }
+    } catch (err) {
+        console.error(`Error on edit product post: ${err}`);
+        req.flash('errorMessage', 'An error occurred while updating the product');
+        res.redirect(`/admin/edit-product/${req.params.productID}`);
+    }
+};
 
 const deleteSingleImage = async (req, res) => {
     try {
@@ -211,6 +275,8 @@ module.exports = {
     deleteProduct,
     blockProduct,
     unblockProduct,
+    editProductRender,
+    editProduct,
     deleteSingleImage,
 
 

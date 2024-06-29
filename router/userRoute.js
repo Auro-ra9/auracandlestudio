@@ -1,58 +1,70 @@
 const express = require('express')
-const loginControl = require('../controller/usercontroller/loginControl')
-const userHomeControl = require('../controller/usercontroller/userHomeControl')
+const loginController = require('../controller/usercontroller/loginController')
+const userHomeController = require('../controller/usercontroller/userHomeController')
 const { checkUserSession, checkUserSessionBlocked, checkUserLogin } = require('../middleware/userSession')
-const productController = require('../controller/usercontroller/productControll')
-const cartControl = require('../controller/usercontroller/cartControl')
+const productController = require('../controller/usercontroller/productController')
+const cartController = require('../controller/usercontroller/cartController') 
+const checkoutController = require('../controller/usercontroller/checkoutController') 
 const user = express.Router()
 
 //login
-user.get('/login', checkUserLogin, loginControl.loginRender)
-user.post('/login', checkUserLogin, loginControl.loginPost)
-user.get('/register', checkUserLogin, loginControl.registerRender)
-user.post('/register', checkUserLogin, loginControl.registerPost)
+user.get('/login', checkUserLogin, loginController.loginRender)
+user.post('/login', checkUserLogin, loginController.loginPost)
+user.get('/register', checkUserLogin, loginController.registerRender)
+user.post('/register', checkUserLogin, loginController.registerPost)
 
 //google auth
-user.get('/auth/google', loginControl.googleRender)
-user.get('/auth/google/callback', loginControl.googleCallback);
+user.get('/auth/google', loginController.googleRender)
+user.get('/auth/google/callback', loginController.googleCallback);
 
 //otp 
 
-user.get('/otp', checkUserLogin, loginControl.otpRender)
-user.get('/verification', checkUserLogin, loginControl.verificationRender)
-user.get('/confirmPassword', checkUserLogin, loginControl.confirmPasswordRender)
+user.get('/otp', checkUserLogin, loginController.otpRender)
+user.get('/verification', checkUserLogin, loginController.verificationRender)
+user.get('/confirmPassword', checkUserLogin, loginController.confirmPasswordRender)
 
 
 
 // home route
-user.get('/home', checkUserSessionBlocked, userHomeControl.homeRender)
+user.get('/home', checkUserSessionBlocked, userHomeController.homeRender)
 
 //profile 
-user.get('/profile', checkUserSession, userHomeControl.profileRender)
-user.post('/address', checkUserSession, userHomeControl.editProfile)
+user.get('/profile', checkUserSession, userHomeController.profileRender)
+user.post('/address', checkUserSession, userHomeController.editProfile)
 
 //address
-user.post('/add-address', checkUserSession, userHomeControl.addAddress)
-user.post('/edit-address/:index', checkUserSession, userHomeControl.editAddress)
-user.delete('/delete-address/:index', checkUserSession, userHomeControl.deleteAddress)
+user.post('/add-address', checkUserSession, userHomeController.addAddress)
+user.post('/edit-address/:index', checkUserSession, userHomeController.editAddress)
+user.delete('/delete-address/:index', checkUserSession, userHomeController.deleteAddress)
 
 
 //cart
-user.get('/cart', checkUserSession, cartControl.viewCart)
-user.post('/addToCart/:productID', checkUserSession, cartControl.addToCart)
-user.delete('/delete-cart-item/:productID',checkUserSession,cartControl.deleteFromCart)
-user.put('/increase-quantity/:productID', checkUserSession,cartControl.increaseQuantity)
-user.put('/decrease-quantity/:productID',checkUserSession,cartControl.decreaseQuantity)
+user.get('/cart', checkUserSessionBlocked, cartController.viewCart)
+user.post('/addToCart/:productID', checkUserSessionBlocked, cartController.addToCart)
+user.delete('/delete-cart-item/:productID',checkUserSessionBlocked,cartController.deleteFromCart)
+user.put('/increase-quantity/:productID', checkUserSessionBlocked,cartController.increaseQuantity)
+user.put('/decrease-quantity/:productID',checkUserSessionBlocked,cartController.decreaseQuantity)
+
+//checkout 
+//address
+user.post('/add-address', checkUserSessionBlocked, checkoutController.addAddress)
+user.post('/edit-address/:index', checkUserSessionBlocked, checkoutController.editAddress)
+user.delete('/delete-address/:index', checkUserSessionBlocked, checkoutController.deleteAddress)
+
+
 
 
 //security or password changing
-user.get('/security', checkUserSession, userHomeControl.security)
-user.post('/newSecurity',checkUserSession,userHomeControl.newSecurity)
+user.get('/security', checkUserSession, userHomeController.security)
+user.post('/newSecurity',checkUserSession,userHomeController.newSecurity)
 
 // view product
 user.get('/product-view/:productID', checkUserSessionBlocked, productController.viewProductRender)
 
-user.get('/logout', loginControl.logout)
+// checkout 
+user.get('/checkout',checkUserSession,checkoutController.checkoutRender)
+
+user.get('/logout', loginController.logout)
 
 
 module.exports = user

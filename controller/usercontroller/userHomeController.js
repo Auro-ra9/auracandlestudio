@@ -170,8 +170,6 @@ const deleteAddress = async (req, res) => {
     if (deletedAddress.length != 0) {
       await userDetails.save()
       return res.status(200).json({ message: 'address removed' })
-
-      //not sure
     }
   } catch (err) {
     console.log(`error on deleting address post${err}`)
