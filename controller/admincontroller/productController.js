@@ -53,7 +53,7 @@ const addProductRender = async (req, res) => {
     }
 }
 
-//Add products
+//Add products 
 
 const addProductPost = async (req, res) => {
     try {

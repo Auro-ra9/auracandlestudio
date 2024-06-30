@@ -173,7 +173,6 @@
     </div>
     <%- include('footer') %>
 
-        <!-- HTML content (same as your original) -->
 
         <script>
             const addProductForm = document.getElementById('form-add-product');
@@ -189,7 +188,7 @@
 
             addProductForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
-                // Reset validation messages
+
                 for (let i = 0; i < validationMessages.length; i++) {
                     validationMessages[i].innerHTML = '';
                 }
@@ -248,7 +247,6 @@
                 inputImage.addEventListener('change', (event) => {
                     const files = event.target.files;
 
-                    // Check if the number of files exceeds the limit
                     if (files.length > 4 || imageContainer.children.length + files.length > 4) {
                         Swal.fire({
                             icon: "error",
@@ -365,4 +363,4 @@
                 document.getElementById('cropButton').onclick = cropImage;
                 document.getElementById('imageModal').addEventListener('hidden.bs.modal', closeCropModal);
             });
-        </script> 4
+        </script> 

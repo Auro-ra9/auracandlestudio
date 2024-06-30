@@ -8,12 +8,18 @@ const productController = require('../controller/admincontroller/productControll
 const userController = require('../controller/admincontroller/userController')
 const upload = require('../middleware/multer')
 
+//admin login 
 admin.get('/', loginController.admin)
 admin.get('/login', loginController.loginRender)
 admin.post('/login', loginController.loginPost)
 
 //dashboard
 admin.get('/dashboard', adminSession, dashboardController.dashboardRender)
+
+//customers 
+admin.get('/customers', adminSession, userController.userRender);
+admin.put('/block-user/:userID', adminSession, userController.blockUser);
+admin.put('/unblock-user/:userID', adminSession, userController.unblockUser);
 
 //category
 admin.get('/category', adminSession, categoryController.categoryRender)
@@ -39,14 +45,7 @@ admin.get('/deleteSingleImage/:index/:productID', adminSession, productControlle
 
 
 
-
-//customers 
-admin.get('/customers', adminSession, userController.userRender);
-admin.put('/block-user/:userID', adminSession, userController.blockUser);
-admin.put('/unblock-user/:userID', adminSession, userController.unblockUser);
-
-
-
+//logout admin
 admin.get('/logout', loginController.logout)
 
 
