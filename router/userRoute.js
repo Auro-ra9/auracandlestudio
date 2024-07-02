@@ -5,6 +5,7 @@ const { checkUserSession, checkUserSessionBlocked, checkUserLogin } = require('.
 const productController = require('../controller/usercontroller/productController')
 const cartController = require('../controller/usercontroller/cartController')
 const checkoutController = require('../controller/usercontroller/checkoutController')
+const orderController=require('../controller/usercontroller/orderController')
 const user = express.Router()
 
 //login
@@ -54,9 +55,14 @@ user.put('/decrease-quantity/:productID', checkUserSessionBlocked, cartControlle
 
 // checkout 
 user.get('/checkout', checkUserSession, checkoutController.checkoutRender)
-user.post('/add-address', checkUserSessionBlocked, checkoutController.addAddress)
-user.post('/edit-address/:index', checkUserSessionBlocked, checkoutController.editAddress)
+user.post('/add-address-checkout', checkUserSessionBlocked, checkoutController.addAddress)
+user.post('/edit-address-checkout/:index', checkUserSessionBlocked, checkoutController.editAddress)
 user.delete('/delete-address/:index', checkUserSessionBlocked, checkoutController.deleteAddress)
+user.post('/checkout-submit',checkUserSessionBlocked,checkoutController.postOrderPlaced)
+user.get('/order-confirmed',checkUserSession,checkoutController.orderConfirmed)
+
+//orders
+user.get('/orders',checkUserSession,orderController.getOrders)
 
 
 

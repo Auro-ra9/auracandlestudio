@@ -1,0 +1,187 @@
+<style>
+    .cart-container {
+        min-height: 100vh;
+    }
+
+    .avatar-lg {
+        height: 5rem;
+        width: 5rem;
+    }
+
+    .font-size-18 {
+        font-size: 18px !important;
+    }
+
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    a {
+        text-decoration: none !important;
+    }
+
+    .w-xl {
+        min-width: 160px;
+    }
+
+    .card {
+        margin-bottom: 24px;
+        -webkit-box-shadow: 0 2px 3px #e4e8f0;
+        box-shadow: 0 2px 3px #e4e8f0;
+    }
+
+    .card {
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 1px solid #eff0f2;
+        border-radius: 1rem;
+    }
+
+
+
+    .wrapper {
+        min-width: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid #a8a8a86d;
+        border-radius: 10px;
+    }
+
+    .wrapper span {
+        width: 100%;
+        text-align: center;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .wrapper span.num {
+        font-size: 1rem;
+        border-right: 2px solid rgba(0, 0, 0, 0.2);
+        border-left: 2px solid rgba(0, 0, 0, 0.2);
+        pointer-events: none;
+    }
+</style>
+
+<%-include('navbar') %>
+
+    <div class="container pt-5 cart-container">
+        <div class="row">
+            <div class="col-xl-8">
+
+                <% orders.forEach((product,index)=>{ %>
+
+
+                    <div class="card border shadow-none">
+                        <div class="card-body">
+
+                            <div class="d-flex align-items-start border-bottom pb-3">
+                                <div class="me-4">
+                                    <a href="/product-view/">
+                                        <img src="../../" alt=""
+                                            class="avatar-lg rounded"></a>
+                                </div>
+                                <div class="flex-grow-1 align-self-center overflow-hidden">
+                                    <div>
+                                        <h5 class="text-truncate font-size-18"><a
+                                                href="/product-view/<%= product.id %>" class="text-dark">
+                                               fedfd
+                                            </a></h5>
+                                        <p class="text-muted mb-0">
+                                            <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star text-warning"></i>
+                                            <i class="bx bxs-star-half text-warning"></i>
+                                        </p>
+                                        <p class="mb-0 mt-1">Brand : <span class="fw-medium">
+                                               rgere
+                                            </span></p>
+
+                                    </div>
+                                </div>
+                                <div class="flex-shrink-0 ms-2">
+                                    <ul class="list-inline mb-0 font-size-16">
+                                        <li class="list-inline-item">
+                                            <i class="mdi mdi-trash-can-outline"
+                                               ></i>
+                                        </li>
+                                        <li class="list-inline-item">
+                                            <i class="mdi mdi-heart-outline"></i>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mt-3">
+                                            <p class="text-muted mb-2">Price</p>
+                                            <h5 class="mb-0 mt-2"><span class="text-muted me-2"><del
+                                                        class="font-size-16 fw-normal">&#8377; 3rere
+                                                            </del></span>
+                                                &#8377; 23232
+                                            </h5>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="mt-3">
+                                            <p class="text-muted mb-2">Quantity</p>
+                                            <div class="d-inline-flex">
+                                                <div class="wrapper">
+                                                    <span class="num product-quantity-box">
+                                                        23
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="mt-3">
+                                            <p class="text-muted mb-2 total-count-box  ">Total</p>
+                                            <h5 class="product-total-box">&#8377;2
+                                                  23232
+                                            </h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <% }) %>
+                        <!-- end card -->
+
+
+                        <div class="row my-4">
+                            <div class="col-sm-6">
+                                <a href="/home" class="btn btn-link text-muted">
+                                    <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping </a>
+                            </div> <!-- end col -->
+                        </div> <!-- end row-->
+            </div>
+
+            <!--order summary canbe added if needed-->
+        </div>
+        <!-- end row -->
+
+    </div>
+
+
+    <%- include('footer') %>

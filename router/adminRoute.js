@@ -38,10 +38,8 @@ admin.put('/block-product/:productID', adminSession, productController.blockProd
 admin.put('/unblock-product/:productID', adminSession, productController.unblockProduct)
 
 //edit product
-admin.get('/edit-product/:productID', adminSession, productController.editProductRender)
-admin.post('/edit-product/:productID', upload.array('product_image', 4), adminSession, productController.editProduct)
-// admin.post('/save-cropped-image', adminSession, upload.single('croppedImage'), productController.saveCroppedImage)
-admin.get('/deleteSingleImage/:index/:productID', adminSession, productController.deleteSingleImage);
+admin.get('/edit-product/:productId',adminSession, productController.getEditProduct);
+admin.post('/edit-product/:productId', upload.array('product_image', 4), adminSession, productController.postEditProduct);
 
 
 

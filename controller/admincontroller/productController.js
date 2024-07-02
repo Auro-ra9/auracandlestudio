@@ -1,26 +1,9 @@
 const categorySchema = require('../../model/categorySchema')
 const productSchema = require('../../model/productSchema')
 const express = require('express');
-const app = express();
-const multer = require("multer");
 const path = require("path");
-
 const fs = require('fs');
 
-
-// Multer configuration for file upload
-// const upload = multer({
-//     limits: {
-//         fileSize: 10 * 1024 * 1024, // 10MB limit per file
-//     },
-//     fileFilter: (req, file, cb) => {
-//         if (file.mimetype.startsWith("image/")) {
-//             cb(null, true);
-//         } else {
-//             cb(new Error("Only images are allowed"));
-//         }
-//     },
-// });
 
 const productRender = async (req, res) => {
     try {
@@ -174,97 +157,90 @@ const unblockProduct = async (req, res) => {
     }
 }
 
-const editProductRender = async (req, res) => {
+const getEditProduct = async (req, res) => {
     try {
-        const productID = req.params.productID;
-        const productDetails = await productSchema.findById(productID).populate('category');
-        const categories = await categorySchema.find({ isBlocked: false });
+        const productId = req.params.productId;
+        const product = await productSchema.findById(productId).populate('category').exec();
 
-        if (!productDetails) {
-            req.flash("errorMessage", "Product not found.");
-            return res.redirect('/admin/products');
-        }
+        // Assuming you have categories stored in a Category model and retrieved via mongoose
+        const category = await categorySchema.find().exec();
 
         res.render('admin/editProduct', {
-            title: "Edit Product",
+            title: 'Edit product',
             alertMessage: req.flash('errorMessage'),
-            productDetails,
-            categories
-        });
+            product, 
+            category
+        })
     } catch (err) {
-        console.error("Error on rendering edit product page:", err);
-        req.flash("errorMessage", "An error occurred while rendering the edit product page.");
-        res.redirect('/admin/products');
+        console.error(err);
+        res.status(500).send('Error retrieving product');
     }
 };
 
-const editProduct = async (req, res) => {
+const postEditProduct = async (req, res) => {
     try {
-        const productID = req.params.productID;
-        const updatedData = {
-            productName: req.body.product_name,
-            productPrice: req.body.product_price,
-            category: req.body.product_categorie,
-            productQuantity: req.body.available_quantity,
-            brand: req.body.available_brand,
-            productDescription: req.body.product_description,
-            discount: req.body.percentage_discount
+        const productId = req.params.productId;
+        const { 
+            product_name, 
+            product_price, 
+            product_categorie, 
+            available_quantity, 
+            available_brand, 
+            product_description, 
+            percentage_discount,
+            deletedImages 
+        } = req.body;
+
+        // Prepare updated product fields
+        const updatedFields = {
+            productName: product_name.trim(),
+            productPrice: product_price,
+            category: product_categorie.trim(),
+            productQuantity: available_quantity,
+            brand: available_brand.trim(),
+            productDescription: product_description.trim(),
+            discount: percentage_discount,
         };
 
-        // Handle image updates
-        const product = await productSchema.findById(productID);
-        let images = [...product.image]; // Get existing images
+        // Update product in database
+        const updatedProduct = await productSchema.findById(productId);
 
-        // Remove deleted images
-        const keptImages = req.body.keptImages ? req.body.keptImages.split(',') : [];
-        images = images.filter(img => keptImages.includes(img));
-
-        // Add new images
-        if (req.files && req.files.length > 0) {
-            const newImages = req.files.map(file => file.path);
-            images = [...images, ...newImages];
-        }
-
-        updatedData.image = images;
-
-        const updatedProduct = await productSchema.findByIdAndUpdate(productID, updatedData, { new: true });
-
-        if (updatedProduct) {
-            req.flash('successMessage', 'Product updated successfully');
+        if (!updatedProduct) {
+            req.flash('errorMessage', 'Product not found');
             return res.redirect('/admin/products');
-        } else {
-            req.flash('errorMessage', 'Failed to update product');
-            return res.redirect(`/admin/edit-product/${productID}`);
         }
+
+        // Handle image uploads
+        if (req.files && req.files.length > 0) {
+            const imageArray = req.files.map(file => file.path);
+            updatedProduct.image = updatedProduct.image.concat(imageArray);
+        }
+
+        // Handle image deletions
+        if (deletedImages) {
+            const imagesToDelete = JSON.parse(deletedImages);
+            imagesToDelete.forEach((imagePath) => {
+                const fullPath = path.join(__dirname, '..', '..', imagePath);
+                if (fs.existsSync(fullPath)) {
+                    fs.unlinkSync(fullPath);
+                }
+            });
+            updatedProduct.image = updatedProduct.image.filter(img => !imagesToDelete.includes(img));
+        }
+
+        // Update other fields
+        Object.assign(updatedProduct, updatedFields);
+
+        await updatedProduct.save();
+
+        req.flash('errorMessage', 'Product updated successfully');
+        res.redirect('/admin/products');
     } catch (err) {
-        console.error(`Error on edit product post: ${err}`);
-        req.flash('errorMessage', 'An error occurred while updating the product');
-        res.redirect(`/admin/edit-product/${req.params.productID}`);
+        console.log('Error updating product:', err);
+        req.flash('errorMessage', 'Failed to update product');
+        res.redirect(`/admin/edit-product/${req.params.productId}`);
     }
 };
-
-const deleteSingleImage = async (req, res) => {
-    try {
-        const { index, productID } = req.params;
-        const product = await productSchema.findById(productID);
-
-        if (product && product.image && product.image[index]) {
-            const deletedImage = product.image.splice(index, 1)[0];
-            await product.save();
-
-            try {
-                fs.unlinkSync(path.join(__dirname, '..', '..', deletedImage));
-            } catch (err) {
-                console.error("Error deleting image file:", err);
-            }
-        }
-
-        res.redirect(`/admin/edit-product/${productID}`);
-    } catch (error) {
-        console.log(error);
-        res.status(500).send("Error occurred during deleting single image of the product");
-    }
-}
 
 
 
@@ -275,9 +251,8 @@ module.exports = {
     deleteProduct,
     blockProduct,
     unblockProduct,
-    editProductRender,
-    editProduct,
-    deleteSingleImage,
+    getEditProduct,
+    postEditProduct,
 
 
 }

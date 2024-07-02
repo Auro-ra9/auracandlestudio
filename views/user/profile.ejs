@@ -73,15 +73,9 @@
         border-radius: 0.25rem;
     }
 
-    input[type=file] {
-        /* Hide the default text for file input */
-        color: transparent;
-        /* Make the text transparent */
-    }
 
     .modal-dialog {
         max-width: 800px;
-        /* adjust the width to your needs */
     }
 </style>
 
@@ -98,6 +92,8 @@
                 target="__blank">Billing</a> -->
             <a class="nav-link" href="/security"
                 target="__blank">Security</a>
+            <a class="nav-link" href="/orders"
+                target="__blank">Orders</a>
                 <!--add notifications here-->
             <!-- <a class="nav-link" href="https://www.bootdey.com/snippets/view/bs5-edit-notifications-page"
                 target="__blank">Notifications</a> -->
@@ -348,7 +344,9 @@
             </div>
         </div>
     </div>
-    <!-- modal -->
+    <!-- end of the add address modal -->
+
+
     <!-- EDit Address Modal -->
     <div class="modal fade" id="edit-address-modal" tabindex="-1" aria-labelledby="exampleModalCenterTitle"
         aria-hidden="true">
@@ -412,7 +410,7 @@
 
     <%- include('footer') %>
 
-
+`
         <script>
 
             function checkTextField(text) {
