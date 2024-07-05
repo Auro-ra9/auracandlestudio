@@ -8,27 +8,40 @@ const viewCart = async (req, res) => {
 
         const productInCart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID')
 
-        productInCart.items.sort((productA, productB) => productB.createdAt - productA.createdAt)
+        if (productInCart) {
+            productInCart.items.sort((productA, productB) => productB.createdAt - productA.createdAt)
 
-        let subTotal = 0
-        let total = 0
-        let totalDiscount = 0
+            let subTotal = 0
+            let total = 0
+            let totalDiscount = 0
 
-        productInCart.items.forEach((product) => {
-            subTotal += product.productCount * (product.productID.productPrice)
-            total += (product.productID.productPrice * (1 - product.productID.discount / 100) * (product.productCount))
-        })
-        totalDiscount = subTotal - total
+            productInCart.items.forEach((product) => {
+                subTotal += product.productCount * (product.productID.productPrice)
+                total += (product.productID.productPrice * (1 - product.productID.discount / 100) * (product.productCount))
+            })
+            totalDiscount = subTotal - total
+            res.render('user/cart', {
+                title: 'cart',
+                alertMessage: req.flash('errorMessge'),
+                productInCart,
+                subTotal,
+                total,
+                totalDiscount
+    
+            })
+        }else{
+            res.render('user/cart', {
+                title: 'cart',
+                alertMessage: req.flash('errorMessage'),
+                productInCart:[],
+                subTotal:0,
+                total:0,
+                totalDiscount:0
+    
+            })
+        }
 
-        res.render('user/cart', {
-            title: 'cart',
-            alertMessage: req.flash('errorMessge'),
-            productInCart: productInCart,
-            subTotal,
-            total,
-            totalDiscount
-
-        })
+        
     } catch (err) {
         console.log(`error on cart ${err}`);
     }
@@ -135,8 +148,8 @@ const increaseQuantity = async (req, res) => {
                 if (checkProduct.productCount >= 10) {
                     return res.status(404).json({ limitReached: "product limit reached" })
                 }
-                if(checkProduct.productID.productQuantity<checkProduct.productCount+1){
-                    return res.status(404).json({ stockReached: `only ${checkProduct.productID.productQuantity} left`})
+                if (checkProduct.productID.productQuantity < checkProduct.productCount + 1) {
+                    return res.status(404).json({ stockReached: `only ${checkProduct.productID.productQuantity} left` })
                 }
                 checkProduct.productCount++;
                 productTotal = checkProduct.productCount * (checkProduct.productID.productPrice * (1 - checkProduct.productID.discount / 100))

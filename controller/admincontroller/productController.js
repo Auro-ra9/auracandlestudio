@@ -161,8 +161,6 @@ const getEditProduct = async (req, res) => {
     try {
         const productId = req.params.productId;
         const product = await productSchema.findById(productId).populate('category').exec();
-
-        // Assuming you have categories stored in a Category model and retrieved via mongoose
         const category = await categorySchema.find().exec();
 
         res.render('admin/editProduct', {
@@ -177,72 +175,57 @@ const getEditProduct = async (req, res) => {
     }
 };
 
-const postEditProduct = async (req, res) => {
+
+const editProductPost = async (req, res) => {
     try {
-        const productId = req.params.productId;
-        const { 
-            product_name, 
-            product_price, 
-            product_categorie, 
-            available_quantity, 
-            available_brand, 
-            product_description, 
-            percentage_discount,
-            deletedImages 
-        } = req.body;
+        const { productPrice, productDescription, productQuantity, productName,productBrand } = req.body
 
-        // Prepare updated product fields
-        const updatedFields = {
-            productName: product_name.trim(),
-            productPrice: product_price,
-            category: product_categorie.trim(),
-            productQuantity: available_quantity,
-            brand: available_brand.trim(),
-            productDescription: product_description.trim(),
-            discount: percentage_discount,
-        };
 
-        // Update product in database
-        const updatedProduct = await productSchema.findById(productId);
+        // get the id of the product
+        const productID = req.params.id;
 
-        if (!updatedProduct) {
-            req.flash('errorMessage', 'Product not found');
-            return res.redirect('/admin/products');
-        }
+        // Delete images from the backend
+        const imagesToDelete = JSON.parse(req.body.deletedImages || '[]');
+        // imagesToDelete.forEach(x => fs.unlinkSync(x));
 
-        // Handle image uploads
-        if (req.files && req.files.length > 0) {
-            const imageArray = req.files.map(file => file.path);
-            updatedProduct.image = updatedProduct.image.concat(imageArray);
-        }
-
-        // Handle image deletions
-        if (deletedImages) {
-            const imagesToDelete = JSON.parse(deletedImages);
-            imagesToDelete.forEach((imagePath) => {
-                const fullPath = path.join(__dirname, '..', '..', imagePath);
-                if (fs.existsSync(fullPath)) {
-                    fs.unlinkSync(fullPath);
-                }
+        // Remove deleted images from DB
+        if (imagesToDelete.length > 0) {
+            await productSchema.findByIdAndUpdate(productID, {
+                $pull: { image: { $in: imagesToDelete } }
             });
-            updatedProduct.image = updatedProduct.image.filter(img => !imagesToDelete.includes(img));
         }
 
-        // Update other fields
-        Object.assign(updatedProduct, updatedFields);
+        // Add new image paths to DB
+        if (req.files && req.files.length > 0) {
+            const imagePaths = req.files.map(file => file.path.replace(/\\/g, '/'));
+            await productSchema.findByIdAndUpdate(productID, {
+                $push: { image: { $each: imagePaths } }
+            });
+        }
 
-        await updatedProduct.save();
-
-        req.flash('errorMessage', 'Product updated successfully');
-        res.redirect('/admin/products');
+        // update the product using the values from form
+        productSchema.findByIdAndUpdate(productID, 
+            { productName:productName, 
+                brand:productBrand, 
+                productPrice: productPrice, 
+                productDescription: productDescription, 
+                productQuantity: productQuantity 
+            })
+            .then((elem) => {
+                req.flash('errorMessage', 'Product Updated successfully');
+                res.redirect('/admin/products')
+            }).catch((err) => {
+                console.log(`Error while updating the product ${err}`);
+                req.flash('errorMessage', 'Product is not updated')
+                res.redirect('/admin/products')
+            })
     } catch (err) {
-        console.log('Error updating product:', err);
-        req.flash('errorMessage', 'Failed to update product');
-        res.redirect(`/admin/edit-product/${req.params.productId}`);
+        console.log(`Error during updating the product on database ${err}`);
+        req.flash('errorMessage', 'Oops the action is not completed')
+        res.redirect('/admin/products')
     }
-};
 
-
+}
 
 module.exports = {
     productRender,
@@ -252,7 +235,8 @@ module.exports = {
     blockProduct,
     unblockProduct,
     getEditProduct,
-    postEditProduct,
+    editProductPost,
+   
 
 
 }

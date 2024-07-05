@@ -39,7 +39,7 @@ admin.put('/unblock-product/:productID', adminSession, productController.unblock
 
 //edit product
 admin.get('/edit-product/:productId',adminSession, productController.getEditProduct);
-admin.post('/edit-product/:productId', upload.array('product_image', 4), adminSession, productController.postEditProduct);
+admin.post('/edit-product/:id',adminSession,upload.array("productImage", 4),productController.editProductPost)
 
 
 

@@ -5,14 +5,9 @@ const orderSchema = require('../../model/orderSchema');
 
 const getOrders = async (req, res) => {
     try {
-        const profileDetails = await userSchema.findById(req.session.user)
-        const orders = await orderSchema.find({ userID: req.session.user })
+        const orders = await orderSchema.find({ userID: req.session.user,orderStatus:{$in:['Pending', 'Confirmed', 'Shipping', 'Delivered']} }).sort({createdAt:-1})
 
-        if (!profileDetails) {
-            req.flash('errorMessage', "Profile id not found");
-            return res.redirect('/profile',)
-        }
-
+    
         res.render('user/orders',
             {
                 title: 'orders',
@@ -27,9 +22,52 @@ const getOrders = async (req, res) => {
 
 
 
+const cancelOrder=async(req,res)=>{
+    try {
+        const orderid= req.params.orderid
+        const orderDetails= await orderSchema.findById(orderid).populate('products.productID')
+        if(!orderDetails){
+            req.flash('errorMessage','Order id could/t find')
+            return res.redirect('/checkout')
+        }
 
+        for (let product of orderDetails.products){
+            product.productID.productQuantity+=product.quantity
+            await product.productID.save()
+        }
+
+        orderDetails.orderStatus='Cancelled'
+        orderDetails.isCancelled=true
+        orderDetails.reasonForCancel=req.body.cancelledReason
+        await orderDetails.save()
+
+         req.flash('errorMessage','product canceled successfully')
+         res.redirect('/cancelled-orders')
+
+    } catch (err) {
+       console.log(`Error on cancel order post${err}`) 
+    }
+}
+
+
+const getCancelledOrders = async (req, res) => {
+    try {
+        const orders = await orderSchema.find({ userID: req.session.user,orderStatus:{$in:['Pending-Returned', 'Returned', 'Cancelled']} }).sort({updatedAt:-1})
+        res.render('user/cancelledOrders',
+            {
+                title: 'orders',
+                alertMessage:
+                    req.flash('errorMessage'),
+                orders
+            })
+    } catch (err) {
+        console.log('error on getting orders page', err)
+    }
+}
 
 
 module.exports = {
     getOrders,
+    cancelOrder,
+    getCancelledOrders
 }

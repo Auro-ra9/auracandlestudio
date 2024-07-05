@@ -7,7 +7,10 @@ const checkoutRender = async (req, res) => {
     try {
         const profileDetails = await userSchema.findById(req.session.user)
         const productInCart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID')
-
+        if(!productInCart){
+            req.flash('errorMessage','cart is empty')
+            return res.redirect('/cart')
+        }
         productInCart.items.sort((productA, productB) => productB.createdAt - productA.createdAt)
 
         let subTotal = 0
@@ -148,10 +151,10 @@ const postOrderPlaced = async (req, res) => {
         and it is passed as the integer no, here in this variable*/
         const selectedAddressOption = parseInt(req.body.selectedAddressOption)
         const selectedPaymentOption = parseInt(req.body.selectedPaymentOption)
-
+        const paymentOptions=['Cash on delivery', 'Razor pay', 'Wallet']
         const user = await userSchema.findById(req.session.user)
         const cart = await cartSchema.findOne({ userID: user.id }).populate('items.productID')
-
+console.log(selectedPaymentOption)
 
         let totalPrice = 0
 
@@ -179,13 +182,26 @@ const postOrderPlaced = async (req, res) => {
                 landmark: user.address[selectedAddressOption].landmark,
                 state: user.address[selectedAddressOption].state,
             },
-            paymentMethod: 'Cash on delivery',
+            paymentMethod: paymentOptions[selectedPaymentOption],
             orderStatus: "Confirmed",
 
         })
         await neworder.save()
-        return res.status(200).json({ success: 'Order Placed successfully' })
        
+
+        //decrease the quantity as needed
+        
+        for (const item of cart.items) {
+            item.productID.productQuantity -= item.productCount;
+            await item.productID.save();
+        }
+
+
+        await cartSchema.findByIdAndDelete(cart.id)
+       
+
+        // empty the cart 
+        return res.status(200).json({ success: 'Order Placed successfully' })
 
 
     } catch (err) {

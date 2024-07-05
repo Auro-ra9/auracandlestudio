@@ -1,177 +1,191 @@
+<style>
+    .form-horizontal {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group label {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    .image-preview {
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .image-preview:hover {
+        transform: scale(1.05);
+    }
+
+    .btn-warning {
+        background-color: #ff9800;
+        border-color: #ff9800;
+        color: #fff;
+    }
+
+    .btn-warning:hover {
+        background-color: #e68900;
+        border-color: #d77d00;
+    }
+
+    @media (max-width: 768px) {
+        .form-group.row {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .form-group.row label {
+            text-align: left;
+            padding-left: 15px;
+        }
+
+        .form-group.row .col-md-6 {
+            width: 100%;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+    }
+
+    @media (min-width: 769px) {
+        .container {
+            max-width: 900px;
+        }
+    }
+</style>
+
 <%- include('navbar') %>
 
-    <style>
-        .form-horizontal {
-            background-color: rgb(220, 220, 220);
-        }
+<div class="container mt-5">
+    <!-- Form Name -->
+    <legend class="text-center mb-4 font-weight-bold">Add PRODUCTS</legend>
+    <form id="form-add-product" class="form-horizontal mb-5 p-4 border rounded" action="/admin/addProduct" method="post" enctype="multipart/form-data">
+        <fieldset>
+            <!-- Product Name -->
+            <div class="form-group row mb-3">
+                <label class="col-md-4 col-form-label text-md-right" for="product_name">PRODUCT NAME</label>
+                <div class="col-md-6">
+                    <input id="product_name" name="product_name" class="form-control" type="text">
+                    <label class="col-md-12 text-danger validate-add-product" for="product_name"></label>
+                </div>
+            </div>
 
-        /* Media Query for Small Devices (576px and below) */
-        @media (max-width: 576px) {
-            .form-group {
-                margin-bottom: 15px;
-                /* Increase margin between form groups */
-            }
+            <!-- Product Price -->
+            <div class="form-group row mb-3">
+                <label class="col-md-4 col-form-label text-md-right" for="product_price">PRODUCT PRICE</label>
+                <div class="col-md-6">
+                    <input id="product_price" name="product_price" class="form-control" type="text">
+                    <label class="col-md-12 text-danger validate-add-product" for="product_price"></label>
+                </div>
+            </div>
 
-            .form-horizontal {
-                padding: 15px;
-                /* Add padding to the form */
-            }
+            <!-- Category -->
+            <div class="form-group row mb-3">
+                <label class="col-md-4 col-form-label text-md-right" for="product_categorie">CATEGORY</label>
+                <div class="col-md-6">
+                    <select id="product_categorie" name="product_categorie" class="form-control">
+                        <option value="" disabled selected>Select a category</option>
+                        <% category.forEach((category) => { %>
+                            <option value="<%= category._id %>"><%= category.categoryName %></option>
+                        <% }) %>
+                    </select>
+                    <label class="col-md-12 text-danger validate-add-product" for="product_categorie"></label>
+                </div>
+            </div>
 
-            .col-md-4 {
-                text-align: left;
-                /* Align labels to the left */
-            }
+            <!-- Quantity -->
+            <div class="form-group row mb-3">
+                <label class="col-md-4 col-form-label text-md-right" for="available_quantity">QUANTITY</label>
+                <div class="col-md-6">
+                    <input id="available_quantity" name="available_quantity" class="form-control" type="text">
+                    <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
+                </div>
+            </div>
 
-            .col-md-6 {
-                width: 100%;
-                /* Full width for input fields */
-            }
-        }
+            <!-- Brand -->
+            <div class="form-group row mb-3">
+                <label class="col-md-4 col-form-label text-md-right" for="available_brand">BRAND</label>
+                <div class="col-md-6">
+                    <input id="available_brand" name="available_brand" class="form-control" type="text">
+                    <label class="col-md-12 text-danger validate-add-product" for="available_brand"></label>
+                </div>
+            </div>
 
-        /* Media Query for Medium and Large Devices */
-        @media (min-width: 576px) {
-            .form-horizontal {
-                padding: 50px;
-                /* Increase padding for better spacing */
-            }
-        }
+            <!-- Description -->
+            <div class="form-group row mb-3">
+                <label class="col-md-4 col-form-label text-md-right" for="product_description">PRODUCT DESCRIPTION</label>
+                <div class="col-md-6">
+                    <textarea class="form-control" id="product_description" name="product_description" rows="5"></textarea>
+                    <label class="col-md-12 text-danger validate-add-product" for="product_description"></label>
+                </div>
+            </div>
 
-        #imageContainer {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-around;
-            flex-wrap: wrap;
-        }
-    </style>
+            <!-- Discount -->
+            <div class="form-group row mb-3">
+                <label class="col-md-4 col-form-label text-md-right" for="percentage_discount">DISCOUNT</label>
+                <div class="col-md-6">
+                    <input id="percentage_discount" name="percentage_discount" class="form-control" type="text">
+                    <label class="col-md-12 text-danger validate-add-product" for="percentage_discount"></label>
+                </div>
+            </div>
 
-    <div class="container mt-5">
-        <!-- Form Name -->
-        <legend class="text-center mb-4 font-weight-bold">Add PRODUCTS</legend>
-        <form id="form-add-product" class="form-horizontal mb-5 p-5 border rounded" action="/admin/addProduct"
-            method="post" style="min-height: 100vh;" enctype="multipart/form-data">
-            <fieldset>
-
-                <!-- Text input-->
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="product_name">PRODUCT NAME</label>
-                    <div class="col-md-6">
-                        <input id="product_name" name="product_name" class="form-control" type="text">
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
+            <!-- Image Upload -->
+            <div class="text-center mt-4">
+                <input type="file" id="product-image-upload" name="product_image" accept="image/png, image/jpeg" multiple class="d-none">
+                <label for="product-image-upload" class="btn btn-warning">
+                    <i class="fas fa-upload"></i> &nbsp; Choose Images
+                </label>
+                <div class="container mt-4">
+                    <div id="imageContainer" class="row">
+                        <!-- Image previews will be appended here -->
                     </div>
                 </div>
+            </div>
 
-                <!-- Text input-->
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="product_price">PRODUCT PRICE</label>
-                    <div class="col-md-6">
-                        <input id="product_price" name="product_price" class="form-control" type="text">
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
-                    </div>
+            <!-- Buttons -->
+            <div class="form-group row">
+                <div class="col-md-12 text-center mt-4">
+                    <button class="btn btn-success" type="submit">Submit</button>
+                    <a href="/admin/products" class="btn btn-secondary">Cancel</a>
                 </div>
+            </div>
+        </fieldset>
+    </form>
+</div>
 
-                <!-- Select Basic -->
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="product_categorie"> CATEGORY</label>
-                    <div class="col-md-6">
-                        <select id="product_categorie" name="product_categorie" class="form-control">
-                            <option value="" disabled selected>Select a category</option>
-                            <% category.forEach((category)=>{ %>
-                                <option value="<%= category._id %>">
-                                    <%= category.categoryName %>
-                                </option>
-                                <% }) %>
-
-                        </select>
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
-                    </div>
-                </div>
-
-                <!-- Text input-->
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="available_quantity">QUANTITY</label>
-                    <div class="col-md-6">
-                        <input id="available_quantity" name="available_quantity" class="form-control" type="text">
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
-                    </div>
-                </div>
-                <!-- Text input-->
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="available_brand">BRAND</label>
-                    <div class="col-md-6">
-                        <input id="available_brand" name="available_brand" class="form-control" type="text">
-                        <label class="col-md-12 text-danger validate-add-product" for="available_brand"></label>
-                    </div>
-                </div>
-
-                <!-- Textarea -->
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="product_description">PRODUCT
-                        DESCRIPTION</label>
-                    <div class="col-md-6">
-                        <textarea class="form-control" id="product_description" name="product_description"
-                            rows="10"></textarea>
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
-                    </div>
-                </div>
-
-                <!-- Text input-->
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="percentage_discount">DISCOUNT</label>
-                    <div class="col-md-6">
-                        <input id="percentage_discount" name="percentage_discount" class="form-control" type="text">
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
-                    </div>
-                </div>
-                <!-- File Button -->
-                <div class="form-group">
-                    <label class="col-md-4 control-label" for="product_image">Image</label>
-                    <div class="col-md-4">
-                        <input id="product-image-upload" name="product_image" class="input-file" type="file"
-                            accept="image/png, image/jpeg" multiple>
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
-                    </div>
-                </div>
-
-                <div class="text-center mt-4">
-
-                    <div class="container mt-4">
-                        <div id="imageContainer" class="row">
-                            <!-- Image previews will be appended here -->
-                        </div>
-                    </div>
-                </div>
-                <!-- Button -->
-                <div class="form-group row">
-                    <div class="col-md-12 text-center">
-                        <button class="btn btn-primary" type="submit">Submit</button>
-                        <a href="/admin/products" class="btn btn-danger">Cancel</a>
-                    </div>
-                </div>
-
-            </fieldset>
-        </form>
-    </div>
-
-    <!-- Modal for cropping image -->
-    <div class="modal fade" id="imageModal" tabindex="1" aria-labelledby="imageModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="imageModalLabel">Crop Image</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <img id="modalImage" src="" class="img-fluid">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" id="cropButton" class="btn btn-primary">Crop</button>
-                </div>
+<!-- Modal for cropping image -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Crop Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <img id="modalImage" src="" class="img-fluid">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="cropButton" class="btn btn-primary">Crop</button>
             </div>
         </div>
     </div>
-    <%- include('footer') %>
+</div>
+
+<%- include('footer') %>
 
 
         <script>
@@ -228,10 +242,10 @@
                     validationMessages[7].innerHTML = 'Please select an image';
                     validate = false;
                 }
-                if (productImage.files.length > 4) {
-                    validationMessages[7].innerHTML = 'Do not choose upto 4 images';
-                    validate = false;
-                }
+                // if (productImage.files.length > 4) {
+                //     validationMessages[7].innerHTML = 'Do not choose upto 4 images';
+                //     validate = false;
+                // }
 
                 if (validate) {
                     addProductForm.submit();

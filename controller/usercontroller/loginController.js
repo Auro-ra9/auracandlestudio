@@ -2,7 +2,8 @@ const userSchema = require('../../model/userSchema')
 const bcrypt = require('bcrypt')
 const passport = require('passport')
 require('../../services/auth')
-
+const generateOTP = require('../../services/generateOTP')
+const emailSender = require('../../services/emailSender')
 
 //rendering lpgin page
 const loginRender = (req, res) => {
@@ -76,7 +77,6 @@ const registerPost = async (req, res) => {
             phone: phone
         }
 
-        console.log(userData);
         //to check whether the useremail already exists in the database or not
         const checkUserExist = await userSchema.find({ email: email })
 
@@ -84,12 +84,17 @@ const registerPost = async (req, res) => {
         //if is a new user then storing it to the db
         if (checkUserExist.length === 0) {
 
-            userSchema.insertMany(userData).then((result) => {
-                req.flash('errorMessage', "User registration is successful")
-                return res.redirect('/login')
-            }).catch((err) => {
-                console.log(`Error while inserting new user${err}`)
-            })
+            const otp = generateOTP()
+            emailSender(email, otp)
+            req.session.otp = otp
+            req.session.otpCreatedAt = Date.now()
+            req.session.name = name
+            req.session.email = email
+            req.session.password = await bcrypt.hash(password, 10),
+                req.session.phone = phone
+
+            res.redirect('/otp')
+
         } else {
             req.flash('errorMessage', 'user already exist')
             return res.redirect('/login')
@@ -141,11 +146,66 @@ const googleCallback = (req, res, next) => {
 
 const otpRender = (req, res) => {
     try {
-        res.render('user/otp', { title: 'login', alertMessage: req.flash('errorMessage') })
+        res.render('user/otp', { title: 'login', alertMessage: req.flash('errorMessage'), otpCreatedAt: req.session.otpCreatedAt })
     } catch (err) {
         console.log(`Error on otp render get ${err}`);
     }
 }
+const otpPost = async (req, res) => {
+    try {
+
+        if (Date.now() - req.session.otpCreatedAt > 1 * 60 * 1000) { // 2 minutes in milliseconds
+            req.flash('errorMessage', "OTP Expired please try to send again");
+            res.redirect('/otp');
+        }
+
+
+        const otpArray = req.body.otp;
+        const otp = Number(otpArray.join(""))
+
+        if (Number(req.session.otp) === otp) {
+            const newUser = new userSchema({
+                name: req.session.name,
+                email: req.session.email,
+                password: req.session.password,
+                phone: req.session.phone
+            })
+            await newUser.save()
+
+            // save the user id in session
+            req.session.user = newUser.id
+            res.redirect('/register-confirmed')
+        } else {
+            req.flash('errorMessage', "Invalid OTP please try to register again")
+            res.redirect('/register')
+
+        }
+
+    } catch (err) {
+        console.log(`Error on otp post ${err}`);
+    }
+}
+
+
+
+
+const resendOTP = (req, res) => {
+    try {
+
+        const otp = generateOTP()
+        emailSender(email, otp)
+        req.session.otp = otp
+        req.session.otpCreatedAt = Date.now()
+        console.log(otp)
+        return res.status(200).json({ message: "OTP resend" })
+
+    } catch (err) {
+        console.log(`Error on otp resend ${err}`);
+    }
+}
+
+
+
 const verificationRender = (req, res) => {
     try {
         res.render('user/verification', { title: 'veirification', alertMessage: req.flash('errorMessage') })
@@ -160,6 +220,20 @@ const confirmPasswordRender = (req, res) => {
         console.log(`Error on confirm password render get ${err}`);
     }
 }
+
+const registerConfirmed = (req, res) => {
+    try {
+        res.render('user/registeredSuccessful',
+            {
+                title: 'register-confirmed',
+                alertMessage:
+                    req.flash('errorMessage')
+            })
+    } catch (err) {
+        console.log('error on register confirm page rendering get:', err)
+    }
+}
+
 
 
 
@@ -187,8 +261,11 @@ module.exports = {
     googleRender,
     googleCallback,
     otpRender,
+    otpPost,
+    resendOTP,
     verificationRender,
     confirmPasswordRender,
+    registerConfirmed,
     logout,
 
 

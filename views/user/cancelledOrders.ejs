@@ -72,6 +72,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+
     }
 </style>
 
@@ -81,15 +82,13 @@
         <nav class="nav nav-borders">
             <a class="nav-link  ms-0" href="/profile" target="__blank">Profile</a>
             <a class="nav-link  " href="/security" target="__blank">Security</a>
-            <a class="nav-link active " href="/orders" target="__blank">Orders</a>
-            <a class="nav-link  " href="/cancelled-orders" target="__blank">Cancelled Orders</a>
-
+            <a class="nav-link  " href="/orders" target="__blank">Orders</a>
+            <a class="nav-link  active " href="/cancelled-orders" target="__blank">Cancelled Orders</a>
         </nav>
         <hr class="mt-0 mb-4">
         <div class="row">
             <div class="container pt-5 cart-container">
                 <div class="row">
-
                     <%if(orders.length!=0){ %>
                         <% orders.forEach((order,index)=>{ %>
                             <div class="col-xl-8">
@@ -101,16 +100,17 @@
                                             <!-- row start -->
                                             <div class="d-flex align-items-start border-bottom pb-3">
                                                 <div class="me-4">
-                                                    <a href="/product-view/<%= product.productID.id %>">
+                                                    <a href="/product-view/">
                                                         <img src="../../<%=product.productImage%>" alt=""
                                                             class="avatar-lg rounded"></a>
                                                 </div>
                                                 <div class="flex-grow-1 align-self-center overflow-hidden">
                                                     <div>
-                                                        <h5 class="text-truncate font-size-18">
-                                                                class="text-dark"><a href="/product-view/<%= product.productID.id %>"><%= product.productName%></a>
-                                                                
-                                                            </h5>
+                                                        <h5 class="text-truncate font-size-18"><a
+                                                                href="/product-view/<%= product.id %>"
+                                                                class="text-dark">
+                                                                <%= product.productName%>
+                                                            </a></h5>
                                                         <p class="text-muted mb-0">
                                                             <i class="bx bxs-star text-warning"></i>
                                                             <i class="bx bxs-star text-warning"></i>
@@ -179,10 +179,7 @@
                                 <div class="card border shadow-none">
                                     <div class="card-body">
                                         <div class="flex-shrink-0 ms-2">
-                                            <ul class="list-inline font-size-16">
-                                                <button class="btn btn-danger"
-                                                    onclick="cancelOrder('<%= order.id%>')">Cancel Order</button>
-                                            </ul>
+
                                         </div>
                                         <p><b>Address: </b>
                                             <%= order.address.homeAddress%>,
@@ -198,13 +195,17 @@
                                         <p> <b style="color: #ff6200;">Order placed on :</b>
                                             <%=order.createdAt.toLocaleString() %>
                                         </p>
+                                        <p> <b style="color: #4000ff;">Reason:</b>
+                                            <%= order.reasonForCancel %>
+                                        </p>
+
 
                                     </div>
                                 </div>
                             </div>
                             <% }) %>
                                 <% }else{ %>
-                                    <div class="empty-cart">No Orders yet</div>
+                                    <div class="empty-cart">Haven't Cancelled any orders yet</div>
                                     <% } %>
 
                 </div>
@@ -216,33 +217,6 @@
 
 
     <%- include('footer') %>
-
-        <!-- The Modal -->
-        <div class="modal" id="cancellation-modal">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                        <h4 class="modal-title">Reason for Cancellation</h4>
-                    </div>
-
-                    <!-- Modal Body -->
-                    <div class="modal-body">
-                        <form id="reasonForm" method="post" action="/cancel-order">
-                            <div class="form-group">
-                                <textarea class="form-control" rows="8" id="message" name="cancelledReason"></textarea>
-                            </div>
-                            <div class="form-group mt-4 text-center">
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-success">Save</button>
-                            </div>
-
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
 
 
         <script>
@@ -275,44 +249,5 @@
                 }
             });
 
-            function cancelOrder(orderid) {
-                swal.fire({
-                    icon: 'warning',
-                    title: 'Cancel Order',
-                    text: 'Are you sure, do you want to cancel the order?',
-                    showCancelButton: true
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        var cancelModal = new bootstrap.Modal(document.getElementById('cancellation-modal'), {});
-                        cancelModal.show();
-                        document.getElementById('reasonForm').action = `/cancel-order/${orderid}`
-                    }
-                })
-            }
-
-
-            function proceedCancellation() {
-                const URL = `/cancel-order`
-                fetch(URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({})
-                }).then((res) => {
-                    if (res.ok) {
-                        swal.fire({
-                            icon: 'success',
-                            text: 'Ordered Canceled',
-                            showConfirmButton: false,
-                            timer: 900
-                        }).then(() => {
-                            window.location.reload()
-                        })
-                    }
-                }).catch((err) => {
-                    console.log('error on canceling order', err)
-                })
-            }
 
         </script>
