@@ -19,14 +19,18 @@ user.get('/auth/google', loginController.googleRender)
 user.get('/auth/google/callback', loginController.googleCallback);
 
 //otp 
-
 user.get('/otp', checkUserLogin, loginController.otpRender)
 user.post('/otp', checkUserLogin, loginController.otpPost)
 user.post('/resend-otp', checkUserLogin, loginController.resendOTP)
-user.get('/verification', checkUserLogin, loginController.verificationRender)
-user.get('/confirmPassword', checkUserLogin, loginController.confirmPasswordRender)
 user.get('/register-confirmed',checkUserSessionBlocked,loginController.registerConfirmed)
-
+//password resent with forget methos
+user.get('/forgot-password', checkUserLogin, loginController.forgotPasswordRender)
+user.post('/forgot-password', checkUserLogin, loginController.forgotPasswordPost)
+user.get('/forgot-otp', checkUserLogin, loginController.passwordOtpRender)
+user.post('/forgot-otp', checkUserLogin, loginController.passwordOtpPost)
+user.post('/password-resend-otp', checkUserLogin, loginController.passwordResendOTP)
+user.get('/reset-password', checkUserLogin, loginController.resetPasswordRender)
+user.post('/reset-password', checkUserLogin, loginController.resetPasswordPost)
 
 
 

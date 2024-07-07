@@ -6,6 +6,7 @@ const dashboardController = require('../controller/admincontroller/dashboardCont
 const categoryController = require('../controller/admincontroller/categoryController')
 const productController = require('../controller/admincontroller/productController')
 const userController = require('../controller/admincontroller/userController')
+const orderController = require('../controller/admincontroller/orderController')
 const upload = require('../middleware/multer')
 
 //admin login 
@@ -40,6 +41,13 @@ admin.put('/unblock-product/:productID', adminSession, productController.unblock
 //edit product
 admin.get('/edit-product/:productId',adminSession, productController.getEditProduct);
 admin.post('/edit-product/:id',adminSession,upload.array("productImage", 4),productController.editProductPost)
+
+//orders
+admin.get('/orders', adminSession, orderController.orderList)
+admin.get('/edit-order/:orderID', adminSession, orderController.editOrder)
+admin.post('/edit-order/:orderID', adminSession, orderController.editOrderPost)
+
+
 
 
 

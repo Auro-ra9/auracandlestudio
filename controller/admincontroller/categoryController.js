@@ -2,13 +2,30 @@ const categorySchema = require('../../model/categorySchema')
 
 const categoryRender = async (req, res) => {
     try {
-        const categorys = await categorySchema.find().sort({ createdAt: -1 })
+        // Pagination parameters
+        const categoryPerPage = 8;
+        const currentPage = parseInt(req.query.page) || 1
+        const skip = (currentPage - 1) * categoryPerPage;
 
-        res.render('admin/category', { title: 'category', categorys, alertMessage: req.flash('errorMessage') })
+        // Counting the total number of category
+        const categoryCount = await categorySchema.countDocuments()
+
+        // Fetching the category for the current page
+        const categorys = await categorySchema.find().sort({ createdAt: -1 }).skip(skip).limit(categoryPerPage)
+
+        res.render('admin/category',
+            {
+                title: 'Category',
+                alertMessage: req.flash('errorMessage'),
+                categorys,
+                currentPage,
+                totalPages: Math.ceil(categoryCount / categoryPerPage),
+            })
     } catch (err) {
         console.log(`Error on category render get ${err}`);
     }
 }
+
 
 
 const addCategoryPost = async (req, res) => {

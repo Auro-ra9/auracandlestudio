@@ -101,7 +101,7 @@
             Please enter the code in the field below.
           </p>
 
-          <form class="row mt-4 pt-2" action="/otp" method="post">
+          <form class="row mt-4 pt-2" action="/forgot-otp" method="post">
             <div class="col">
               <input type="text" class="form-control form-control-lg text-center py-4" maxlength="1" autofocus=""
                 name="otp[]">
@@ -149,7 +149,7 @@
       const checkTimeOut = setInterval(() => {
 
         // maximum OTP timer is set for two seconds
-        let otpMaxTimer = 60000
+        let otpMaxTimer = 120000
 
         // current date in milliseconds
         let currentDate = Date.now()
@@ -163,6 +163,7 @@
         // difference between the maximum time and time left
         let displayTimer = otpMaxTimer - timeLeft
 
+
         // Calculate minutes and seconds
         let minutes = Math.floor((displayTimer % (1000 * 60 * 60)) / (1000 * 60));
         let seconds = Math.floor((displayTimer % (1000 * 60)) / 1000);
@@ -173,11 +174,13 @@
         // Update the timer display
         otpTimer.innerHTML = formattedTime;
 
+        if (timeLeft > 120000) {
+          otpTimer.innerHTML = '00:00';
+          clearInterval(checkTimeOut)
+        }
+
       }, 1000);
 
-      setTimeout(() => {
-        clearInterval(checkTimeOut)
-      }, 10000)
 
 
 

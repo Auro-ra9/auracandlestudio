@@ -1,115 +1,182 @@
 <style>
-    .navbar-light {
-        background: #C3BAA9;
-    }
+  /* Color palette based on #C3BAA9 */
+  :root {
+    --primary-color: #C3BAA9;
+    --secondary-color: #8C7A5B;
+    --accent-color: #5B4E3B;
+    --text-color: #2C2518;
+    --light-color: #F0EBE1;
+  }
 
-    .navbar-light .navbar-nav .nav-link {
-        color: #000;
-    }
+  .navbar-light {
+    background: var(--primary-color);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
+  .navbar-light .navbar-nav .nav-link {
+    color: var(--text-color);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s ease;
+  }
+
+  .navbar-light .navbar-nav .nav-link:hover {
+    color: var(--accent-color);
+  }
+
+  .navbar-light .navbar-nav .nav-link i {
+    margin-right: 8px;
+    font-size: 1.1em;
+  }
+
+  .navbar-brand img {
+    height: 50px;
+    transition: transform 0.3s ease;
+  }
+
+  .navbar-brand img:hover {
+    transform: scale(1.05);
+  }
+
+  .navbar-toggler {
+    border: none;
+    color: var(--accent-color);
+  }
+
+  .navbar-toggler:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(91, 78, 59, 0.25);
+  }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    background-color: var(--light-color);
+    border-radius: 25px;
+    padding: 5px 15px;
+    width: 400px;
+    margin-right: 15px;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .search-bar:focus-within {
+    box-shadow: 0 0 0 2px var(--secondary-color);
+  }
+
+  .search-bar input {
+    border: none;
+    outline: none;
+    width: 100%;
+    padding: 8px;
+    background: transparent;
+    color: var(--text-color);
+  }
+
+  .search-bar button {
+    border: none;
+    background: none;
+    outline: none;
+    cursor: pointer;
+  }
+
+  .search-bar i {
+    color: var(--secondary-color);
+  }
+
+  .btn-dark {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    transition: all 0.3s ease;
+  }
+
+  .btn-dark:hover {
+    background-color: var(--secondary-color);
+    border-color: var(--secondary-color);
+  }
+
+  @media (max-width: 992px) {
     .navbar-brand img {
-        height: 50px;
+      height: 40px;
     }
 
-    .navbar-toggler {
-        border: none;
-    }
-
-    .navbar-toggler:focus {
-        outline: none;
+    .nav-item {
+      text-align: center;
+      margin-bottom: 10px;
     }
 
     .search-bar {
-        display: flex;
-        align-items: center;
-        background-color: #ffffff;
-        border-radius: 5px;
-        padding: 5px 10px;
-        width: 400px;
+      margin: 10px 0;
+      width: 100%;
     }
 
-    .search-bar input {
-        border: none;
-        outline: none;
-        width: 100%;
-        padding: 5px;
+    .navbar-nav {
+      background-color: var(--light-color);
+      border-radius: 10px;
+      padding: 10px;
+      margin-top: 10px;
     }
-
-    .search-bar i {
-        color: #888;
-        margin-right: 10px;
-    }
-
-    @media (max-width: 768px) {
-        .navbar-brand img {
-            height: 40px;
-        }
-
-        .nav-item {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        .search-bar {
-            margin-top: 10px;
-            width: 100%;
-        }
-    }
+  }
 </style>
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light py-3">
-    <div class="container">
-        <a class="navbar-brand" href="/home">
-            <img id="MDB-logo" src="../../images/AURA.jpg" draggable="false" class="rounded" />
-        </a>
-        <button class="navbar-toggler" type="button" data-mdb-toggle="collapse"
-            data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-            aria-label="Toggle navigation">
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <form class="d-flex search-bar">
-                <input type="search" placeholder="What are you looking for?" aria-label="Search">
-                <button type="submit" class="btn p-0"><i class="fas fa-search"></i></button>
-            </form>
-            <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="/home">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="#!">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="#!">Contact</a>
+  <div class="container">
+    <a class="navbar-brand" href="/home">
+      <img id="MDB-logo" src="../../images/AURA.jpg" draggable="false" class="rounded" />
+    </a>
+    <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <form class="d-flex search-bar">
+          <input type="search" placeholder="What are you looking for?" aria-label="Search" name="search">
+          <button type="submit" class="btn p-0"><i class="fas fa-search"></i></button>
+        </form>
+        <!-- <li class="nav-item">
+                    <a class="nav-link mx-2" href="/home">
+                        <i class="fas fa-home"></i> Home
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link mx-2" href="#!">
-                        <i class="fa-regular fa-heart"></i>
+                        <i class="fas fa-info-circle"></i> About
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link mx-2" href="/cart">
-                        <i class="fa-solid fa-bag-shopping"></i>
+                    <a class="nav-link mx-2" href="#!">
+                        <i class="fas fa-envelope"></i> Contact
                     </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="/profile">
-                        <i class="fa-regular fa-user"></i> </a>
-                </li>
-                <% if(user) { %>
-                    <li class="nav-item ms-3">
-                        <a class="btn btn-black btn-rounded" href="/logout"><i class="fa-solid fa-power-off"></i></a>
-                    </li>
-                    <% } else { %>
-                        <li class="nav-item ms-3">
-                            <a class="btn btn-black btn-rounded" href="/login"><i class="fa-solid fa-right-to-bracket"
-                                    style="color: #111212;"></i></a>
-                        </li>
-                        <% } %>
-            </ul>
-        </div>
+                </li> -->
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="/wishlist">
+            <i class="fas fa-heart"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="/cart">
+            <i class="fas fa-shopping-bag"></i>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link mx-2" href="/profile">
+            <i class="fas fa-user"></i>
+          </a>
+        </li>
+        <% if(user) { %>
+          <li class="nav-item ms-3">
+            <a class="btn btn-dark btn-rounded" href="/logout"><i class="fas fa-power-off"></i></a>
+          </li>
+          <% } else { %>
+            <li class="nav-item ms-3">
+              <a class="btn btn-dark btn-rounded" href="/login"><i class="fas fa-sign-in-alt"></i></a>
+            </li>
+            <% } %>
+      </ul>
     </div>
+  </div>
 </nav>
 <!-- Navbar -->
 

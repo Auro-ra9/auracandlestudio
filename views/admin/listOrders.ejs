@@ -1,0 +1,125 @@
+<style>
+    .product-name {
+        max-width: 200px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .product-name:hover {
+        max-width: 200px;
+        overflow: visible;
+        white-space: wrap;
+        /* text-overflow: ellipsis; */
+    }
+</style>
+
+
+<%- include('navbar') %>
+
+    <div class="container my-5" style="min-height: 100vh;">
+        <h3 style="display: flex; justify-content: center; color: green; font-weight: bold;">Orders</h3>
+        <div class="table-responsive">
+            <table class="table table-hover mt-3">
+                <thead class="thead-dark">
+                    <tr>
+                        <th scope="col">Sl.no:</th>
+                        <th scope="col">OrderID</th>
+                        <th scope="col">Ordered Date</th>
+                        <th scope="col">Payment method</th>
+                        <th scope="col">Order Status</th>
+                        <th scope="col" class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orders.forEach((order, index)=> { %>
+                        <tr>
+                            <th scope="row" data-label="Sl.no:">
+                                <%= (currentPage - 1) * 8 + index + 1 %>
+                            </th>
+                            <td class="product-name" data-label="OrderID">
+                                <%= order.id %>
+                            </td>
+                            <td data-label="Ordered Date">
+                                <%= order.createdAt.toLocaleString() %>
+                            </td>
+                            <td data-label="Payment method">
+                                <%= order.paymentMethod %>
+                            </td>
+                            <td data-label="Order Status">
+                                <b class="mb-0 mt-2 badge">
+                                    <%= order.orderStatus %>
+                                </b>
+                            </td>
+                            <td class="text-center" data-label="Actions">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <a href="/admin/edit-order/<%= order._id %>" class="text-warning me-2">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination controls -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <% if (currentPage> 1) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <% } %>
+                        <% for (let i=1; i <=totalPages; i++) { %>
+                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>">
+                                    <%= i %>
+                                </a>
+                            </li>
+                            <% } %>
+                                <% if (currentPage < totalPages) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    <% } %>
+            </ul>
+        </nav>
+    </div>
+
+    <%- include('footer') %>
+
+        <script>
+            //adding different colors according to the order statuys
+
+            const paymentBadge = document.querySelectorAll('.badge')
+
+            paymentBadge.forEach(element => {
+                if (element.innerHTML.trim() === 'Pending') {
+                    element.classList.add('bg-primary', 'text-white')
+                }
+                if (element.innerHTML.trim() === 'Confirmed') {
+                    element.classList.add('bg-success', 'text-white')
+                }
+                if (element.innerHTML.trim() === 'Shipping') {
+                    element.classList.add('bg-info', 'text-white')
+                }
+                if (element.innerHTML.trim() === 'Delivered') {
+                    element.classList.add('bg-success', 'text-white')
+                }
+                if (element.innerHTML.trim() === 'Pending-Returned') {
+                    element.classList.add('bg-warning', 'text-dark')
+                }
+                if (element.innerHTML.trim() === 'Returned') {
+                    element.classList.add('bg-warning', 'text-dark')
+                }
+                if (element.innerHTML.trim() === 'Cancelled') {
+                    element.classList.add('bg-danger', 'text-white')
+                }
+            })
+        </script>

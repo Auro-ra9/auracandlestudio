@@ -7,12 +7,21 @@ const fs = require('fs');
 
 const productRender = async (req, res) => {
     try {
+        // Pagination parameters
+        const productsPerPage = 8;
+        const currentPage = parseInt(req.query.page) || 1
+        const skip = (currentPage - 1) * productsPerPage;
 
-        const products = await productSchema.find().sort({ createdAt: -1 }).populate('category')
+        // Counting the total number of product
+        const productsCount = await productSchema.countDocuments()
+        
+        const products = await productSchema.find().sort({ createdAt: -1 }).populate('category').skip(skip).limit(productsPerPage)
         res.render('admin/product', {
             title: 'product',
             alertMessage: req.flash('errorMessage'),
             products,
+            currentPage,
+            totalPages: Math.ceil(productsCount / productsPerPage)
         })
 
     } catch (err) {

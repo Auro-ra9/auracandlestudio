@@ -76,7 +76,7 @@
         pointer-events: none;
     }
 
-    .empty-cart{
+    .empty-cart {
         min-height: 80vh;
         display: flex;
         align-items: center;
@@ -90,119 +90,121 @@
     <div class="container pt-5 cart-container">
         <div class="row">
             <div class="col-xl-8">
-                
+
                 <% if(productInCart.length!=0){ %>
-                <% productInCart.items.forEach((product,index)=>{ %>
+                    <% productInCart.items.forEach((product,index)=>{ %>
 
 
-                    <div class="card border shadow-none">
-                        <div class="card-body">
+                        <div class="card border shadow-none">
+                            <div class="card-body">
 
-                            <div class="d-flex align-items-start border-bottom pb-3">
-                                <div class="me-4">
-                                    <a href="/product-view/<%= product.productID.id %>">
-                                        <img src="../../<%= product.productID.image[0] %>" alt=""
-                                            class="avatar-lg rounded"></a>
-                                </div>
-                                <div class="flex-grow-1 align-self-center overflow-hidden">
-                                    <div>
-                                        <h5 class="text-truncate font-size-18"><a
-                                                href="/product-view/<%= product.productID.id %>" class="text-dark">
-                                                <%= product.productID.productName %>
-                                            </a></h5>
-                                        <p class="text-muted mb-0">
-                                            <i class="bx bxs-star text-warning"></i>
-                                            <i class="bx bxs-star text-warning"></i>
-                                            <i class="bx bxs-star text-warning"></i>
-                                            <i class="bx bxs-star text-warning"></i>
-                                            <i class="bx bxs-star-half text-warning"></i>
-                                        </p>
-                                        <p class="mb-0 mt-1">Brand : <span class="fw-medium">
-                                                <%= product.productID.brand %>
-                                            </span></p>
-                                        <% if(product.productID.productQuantity<10){%>
-                                            <p class="mb-0 mt-1"><b class="fw-medium text-danger">
-                                                   only <%= product.productID.productQuantity %> stock left
-                                            </b></p>
-                                            <% } %>
+                                <div class="d-flex align-items-start border-bottom pb-3">
+                                    <div class="me-4">
+                                        <a href="/product-view/<%= product.productID.id %>">
+                                            <img src="../../<%= product.productID.image[0] %>" alt=""
+                                                class="avatar-lg rounded"></a>
                                     </div>
-                                </div>
-                                <div class="flex-shrink-0 ms-2">
-                                    <ul class="list-inline mb-0 font-size-16">
-                                        <li class="list-inline-item">
-                                            <i class="mdi mdi-trash-can-outline"
-                                                onclick="deleteCart('<%= product.productID._id %>')"></i>
-                                        </li>
-                                        <li class="list-inline-item">
-                                            <i class="mdi mdi-heart-outline"></i>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-
-                            <div>
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="mt-3">
-                                            <p class="text-muted mb-2">Price</p>
-                                            <h5 class="mb-0 mt-2"><span class="text-muted me-2"><del
-                                                        class="font-size-16 fw-normal">&#8377; <%=
-                                                            product.productID.productPrice %></del></span>
-                                                            &#8377; <%=(product.productID.productPrice*(1-product.productID.discount/100)).toLocaleString() %>
-                                            </h5>
+                                    <div class="flex-grow-1 align-self-center overflow-hidden">
+                                        <div>
+                                            <h5 class="text-truncate font-size-18"><a
+                                                    href="/product-view/<%= product.productID.id %>" class="text-dark">
+                                                    <%= product.productID.productName %>
+                                                </a></h5>
+                                            <p class="text-muted mb-0">
+                                                <i class="bx bxs-star text-warning"></i>
+                                                <i class="bx bxs-star text-warning"></i>
+                                                <i class="bx bxs-star text-warning"></i>
+                                                <i class="bx bxs-star text-warning"></i>
+                                                <i class="bx bxs-star-half text-warning"></i>
+                                            </p>
+                                            <p class="mb-0 mt-1">Brand : <span class="fw-medium">
+                                                    <%= product.productID.brand %>
+                                                </span></p>
+                                            <% if(product.productID.productQuantity<10){%>
+                                                <p class="mb-0 mt-1"><b class="fw-medium text-danger">
+                                                        only <%= product.productID.productQuantity %> stock left
+                                                    </b></p>
+                                                <% } %>
                                         </div>
                                     </div>
-                                    <div class="col-md-5">
-                                        <div class="mt-3">
-                                            <p class="text-muted mb-2">Quantity</p>
-                                            <div class="d-inline-flex">
-                                                <div class="wrapper">
-                                                    <span class="minus"
-                                                        onclick="decreaseQuantity('<%= product.productID._id%>','<%= index %>')">-</span>
-                                                    <span class="num product-quantity-box">
-                                                        <%= product.productCount %>
-                                                    </span>
-                                                    <span class="plus"
-                                                        onclick="increaseQuantity('<%=product.productID._id%>','<%= index %>')">+</span>
+                                    <div class="flex-shrink-0 ms-2">
+                                        <ul class="list-inline mb-0 font-size-16">
+                                            <li class="list-inline-item">
+                                                <i class="mdi mdi-trash-can-outline"
+                                                    onclick="deleteCart('<%= product.productID._id %>')"></i>
+                                            </li>
+                                            <li class="list-inline-item">
+                                                <i class="mdi mdi-heart-outline"></i>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="mt-3">
+                                                <p class="text-muted mb-2">Price</p>
+                                                <h5 class="mb-0 mt-2"><span class="text-muted me-2"><del
+                                                            class="font-size-16 fw-normal">&#8377; <%=
+                                                                product.productID.productPrice %></del></span>
+                                                    &#8377;
+                                                    <%=(product.productID.productPrice*(1-product.productID.discount
+                                                        /100)).toLocaleString() %>
+                                                </h5>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <div class="mt-3">
+                                                <p class="text-muted mb-2">Quantity</p>
+                                                <div class="d-inline-flex">
+                                                    <div class="wrapper">
+                                                        <span class="minus"
+                                                            onclick="decreaseQuantity('<%= product.productID._id%>','<%= index %>')">-</span>
+                                                        <span class="num product-quantity-box">
+                                                            <%= product.productCount %>
+                                                        </span>
+                                                        <span class="plus"
+                                                            onclick="increaseQuantity('<%=product.productID._id%>','<%= index %>')">+</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <div class="mt-3">
-                                            <p class="text-muted mb-2 total-count-box  ">Total</p>
-                                            <h5 class="product-total-box">&#8377;<%=
-                                                    (product.productID.productPrice*(1-product.productID.discount/100)*(product.productCount)).toLocaleString()
-                                                    %>
-                                            </h5>
+                                        <div class="col-md-3">
+                                            <div class="mt-3">
+                                                <p class="text-muted mb-2 total-count-box  ">Total</p>
+                                                <h5 class="product-total-box">&#8377;<%=
+                                                        (product.productID.productPrice*(1-product.productID.discount/100)*(product.productCount)).toLocaleString()
+                                                        %>
+                                                </h5>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
-
                         </div>
-                    </div>
 
-                    <% }) %>
-                    <% }else{ %>
-                        <div class="empty-cart">Cart empty</div>
-                    <% } %>
+                        <% }) %>
+                            <% }else{ %>
+                                <div class="empty-cart">Cart empty</div>
+                                <% } %>
 
-                        <!-- end card -->
+                                    <!-- end card -->
 
 
-                        <div class="row my-4">
-                            <div class="col-sm-6">
-                                <a href="/home" class="btn btn-link text-muted">
-                                    <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping </a>
-                            </div> <!-- end col -->
-                            <div class="col-sm-6">
-                                <div class="text-sm-end mt-2 mt-sm-0">
-                                    <a href="/checkout" class="btn btn-success">
-                                        <i class="mdi mdi-cart-outline me-1"></i> Checkout </a>
-                                </div>
-                            </div> <!-- end col -->
-                        </div> <!-- end row-->
+                                    <div class="row my-4">
+                                        <div class="col-sm-6">
+                                            <a href="/home" class="btn btn-link text-muted">
+                                                <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping </a>
+                                        </div> <!-- end col -->
+                                        <div class="col-sm-6">
+                                            <div class="text-sm-end mt-2 mt-sm-0">
+                                                <a href="/checkout" class="btn btn-success">
+                                                    <i class="mdi mdi-cart-outline me-1"></i> Checkout </a>
+                                            </div>
+                                        </div> <!-- end col -->
+                                    </div> <!-- end row-->
             </div>
 
             <div class="col-xl-4">
@@ -231,7 +233,7 @@
                                             <td>Shipping Charge :</td>
                                             <td class="text-end">&#8377; 50</td>
                                         </tr>
-                    
+
                                         <tr class="bg-light">
                                             <th>Total :</th>
                                             <td class="text-end">
@@ -250,7 +252,32 @@
             </div>
         </div>
         <!-- end row -->
-
+        <!-- Pagination controls -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <% if (currentPage> 1) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <% } %>
+                        <% for (let i=1; i <=totalPages; i++) { %>
+                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>">
+                                    <%= i %>
+                                </a>
+                            </li>
+                            <% } %>
+                                <% if (currentPage < totalPages) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    <% } %>
+            </ul>
+        </nav>
     </div>
 
 

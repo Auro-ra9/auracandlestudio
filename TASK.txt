@@ -1,16 +1,15 @@
 *Admin side :
 //////Products must have multiple images (minimum 3 images).
-Images should be cropped and resized properly before upload.
+//////Images should be cropped and resized properly before upload.
 /////Admin sign in
 /////User management (list user, block/unblock).
 /////Category management (Add, Edit and Delete (soft delete))
 /////Product management(add, edit & delete(soft delete) products).
 
 User side :
-Sign up using OTP with OTP timer and Resend Otp
 ////List products on the user side.
 ///Product detailed page should contain following 
- Breadcrumbs 
+/ Breadcrumbs 
 / Ratings 
 / Price
 / Discounts or coupons applied
@@ -27,11 +26,7 @@ Sign up using OTP with OTP timer and Resend Otp
 
 SECOND WEEK
 User side : 
- ////User profile(show orders,cancel orders,forgot password, Show user details, show address, edit profile, ).
-////Cart management  Add to cart, list products in cart,(remove products from cart )
-////Qty (add to cart) should be controlled based on stocks left
-////Handle maximum qty per person to add to cart for a product 
-////Out of stock product need to shown or hidden based on filter
+Sign up using OTP with OTP timer and Resend Otp
 Advanced search with sort based on 
 Popularity 
 Price: low to high
@@ -41,15 +36,20 @@ Featured
 New arrivals 
 aA - zZ 
 zZ - aA 
+Admin Side: List orders, change order status, cancel orders
 Inventory/Stock management.
+////User profile(show orders,cancel orders,forgot password, Show user details, show address, edit profile, ).
+////Cart management  Add to cart, list products in cart,(remove products from cart )
+////Qty (add to cart) should be controlled based on stocks left
+////Handle maximum qty per person to add to cart for a product 
+////Out of stock product need to shown or hidden based on filter
 ////Checkout page(Multiple address,edit and saved address)
 /////Place order with Cash on Delivery(Address selection)
 /////Purchase with COD.
-Order Management-Order cancellation option, Order history and status.
+/////Order Management-Order cancellation option, Order history and status.
 
 Admin side : 
 Order Management
-Admin Side: List orders, change order status, cancel orders
 ////Stocks left - should be shown in product listing and product details page
 ////Add address management in user profile( Multiple Address, Add, Edit, Delete).
 

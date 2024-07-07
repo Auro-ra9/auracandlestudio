@@ -1,0 +1,247 @@
+<style>
+    .cart-container {
+        min-height: 100vh;
+    }
+
+    .avatar-lg {
+        height: 5rem;
+        width: 5rem;
+    }
+
+    .font-size-18 {
+        font-size: 18px !important;
+    }
+
+    .text-truncate {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    a {
+        text-decoration: none !important;
+    }
+
+    .w-xl {
+        min-width: 160px;
+    }
+
+    .card {
+        margin-bottom: 24px;
+        -webkit-box-shadow: 0 2px 3px #e4e8f0;
+        box-shadow: 0 2px 3px #e4e8f0;
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+        -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 1px solid #eff0f2;
+        border-radius: 1rem;
+    }
+
+    .nav-borders .nav-link.active {
+        color: #0061f2;
+        border-bottom-color: #0061f2;
+    }
+
+    .nav-borders .nav-link {
+        color: #69707a;
+        border-bottom-width: 0.125rem;
+        border-bottom-style: solid;
+        border-bottom-color: transparent;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+
+    .empty-cart {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+</style>
+
+<%- include('navbar') %>
+    <div class="container-xl px-4 mt-4">
+
+        <div class="row">
+            <div class="container pt-5 cart-container">
+                <div class="row">
+                    <strong class="card-title">Order ID: <%= order._id %></strong>
+                    <div class="col-xl-8">
+
+                        <div class="card border shadow-none">
+                            <div class="card-body">
+                                <p><strong style="color: #ff6200;">Order placed on:</strong>
+                                    <%= order.createdAt.toLocaleString() %>
+                                </p>
+                                <% order.products.forEach(product=> { %>
+                                    <div class="d-flex align-items-start border-bottom pb-3">
+                                        <div class="me-4">
+                                            <img src="../../<%= product.productImage %>" alt=""
+                                                class="avatar-lg rounded">
+                                        </div>
+                                        <div class="flex-grow-1 align-self-center overflow-hidden">
+                                            <h5 class="text-truncate font-size-18">
+                                                <a href="/product-view/<%= product.productID._id %>" class="text-dark">
+                                                    <%= product.productName %>
+                                                </a>
+                                            </h5>
+                                            <p class="mb-0 mt-1">Brand: <span class="fw-medium">
+                                                    <%= product.brand %>
+                                                </span></p>
+                                            <p class="mb-0 mt-1">Quantity: <span class="fw-medium">
+                                                    <%= product.quantity %>
+                                                </span></p>
+                                            <p class="mb-0 mt-1">Price: <span class="fw-medium">&#8377;<%= product.price
+                                                        %></span></p>
+                                        </div>
+                                    </div>
+                                    <% }) %>
+                            </div>
+                        </div>
+                        <div class="card border shadow-none">
+                            <div class="card-body">
+                                <div class="alignmnt" style="display: flex; justify-content: space-around;">
+                                    <div class="one">
+
+                                        <strong class="card-title">Payment method</strong>
+                                        <p>
+                                            <%= order.paymentMethod %>
+                                        </p>
+                                    </div>
+                                    <div class="two">
+                                        <strong class="card-title">Billing details</strong>
+                                        <p>
+                                            <%= order.address.homeAddress %>,<br>
+                                                <%= order.address.landmark %>,<br>
+                                                    <%= order.address.areaAddress %>,<br>
+                                                        <%= order.address.pincode %><br>
+                                                            <%= order.address.city %>,<br>
+                                                                <%= order.address.state %>
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-4">
+                        <div class="card border shadow-none">
+                            <div class="card-body">
+                                <strong class="card-title">Order Summary</strong>
+                                <p><strong>Total:</strong> &#8377;<%= order.totalPrice.toLocaleString() %>
+                                </p>
+
+                            </div>
+                        </div>
+                        <div class="card border shadow-none">
+                            <div class="card-body ">
+                                <strong class="card-title ">Current status: <div class="badge">
+                                        <%= order.orderStatus %>
+                                    </div></strong>
+
+                            </div>
+                        </div>
+                        <div class="card border shadow-none">
+                            <div class="card-body">
+                                <strong class="card-title">Edit Order Status</strong>
+                                <form action="/admin/edit-order/<%= order._id %>" method="post" id="order-status-form">
+                                    <div class="mb-3">
+                                        <label for="orderStatus" class="form-label">Order Status:</label>
+                                        <select name="orderStatus" id="orderStatus" class="form-select">
+                                            <option value="Confirmed">Confirmed</option>
+                                            <option value="Shipping">Shipping</option>
+                                            <option value="Delivered">Delivered</option>
+                                        </select>
+                                    </div>
+                                    <input type="hidden" id="currentStatus" name="currentStatus"
+                                        value="<%= order.orderStatus %>">
+
+                                    <button type="submit" class="btn btn-success">Change Status</button>
+                                </form>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('footer') %>
+        <script>
+            //adding different colors according to the order statuys
+
+            const paymentBadge = document.querySelectorAll('.badge')
+
+            paymentBadge.forEach(element => {
+                if (element.innerHTML.trim() === 'Pending') {
+                    element.classList.add('bg-primary', 'text-white')
+                }
+                if (element.innerHTML.trim() === 'Confirmed') {
+                    element.classList.add('bg-success', 'text-white')
+                }
+                if (element.innerHTML.trim() === 'Shipping') {
+                    element.classList.add('bg-info', 'text-white')
+                }
+                if (element.innerHTML.trim() === 'Delivered') {
+                    element.classList.add('bg-success', 'text-white')
+                }
+                if (element.innerHTML.trim() === 'Pending-Returned') {
+                    element.classList.add('bg-warning', 'text-dark')
+                }
+                if (element.innerHTML.trim() === 'Returned') {
+                    element.classList.add('bg-warning', 'text-dark')
+                }
+                if (element.innerHTML.trim() === 'Cancelled') {
+                    element.classList.add('bg-danger', 'text-white')
+                }
+            })
+
+            //validating form
+
+            const orderStatusForm = document.getElementById('order-status-form')
+            const currentStatusInput = document.getElementById('currentStatus')
+
+            orderStatusForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                // Get selected status from the form
+                const selectedStatus = document.getElementById('orderStatus').value
+                const currentStatus = currentStatusInput.value
+
+                let validate = true;
+
+                // Perform validation based on currentStatus and selectedStatus
+                if (currentStatus === 'Confirmed') {
+                    if (selectedStatus === 'Confirmed') {
+                        alert('Cannot change status to Confirmed again.')
+                        validate = false
+                    }
+                } else if (currentStatus === 'Shipping') {
+                    if (selectedStatus !== 'Delivered') {
+                        alert('Order must be Delivered to change from Shipping.')
+                        validate = false
+                    }
+                }
+
+                // If validation passes, submit the form
+                if (validate) {
+                    orderStatusForm.submit()
+                }
+            })
+
+        </script>

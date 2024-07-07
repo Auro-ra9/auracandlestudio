@@ -5,7 +5,7 @@ const orderSchema = require('../../model/orderSchema');
 
 const getOrders = async (req, res) => {
     try {
-        const orders = await orderSchema.find({ userID: req.session.user,orderStatus:{$in:['Pending', 'Confirmed', 'Shipping', 'Delivered']} }).sort({createdAt:-1})
+        const orders = await orderSchema.find({ userID: req.session.user,orderStatus:{$in:['Pending', 'Confirmed', 'Shipping', 'Delivered']} }) .populate('products.productID').sort({createdAt:-1})
 
     
         res.render('user/orders',
@@ -31,11 +31,12 @@ const cancelOrder=async(req,res)=>{
             return res.redirect('/checkout')
         }
 
+        //when tje product is being canceled then returninh the quantiy back to stock of admin
         for (let product of orderDetails.products){
             product.productID.productQuantity+=product.quantity
             await product.productID.save()
         }
-
+        //saving the new startus in the db
         orderDetails.orderStatus='Cancelled'
         orderDetails.isCancelled=true
         orderDetails.reasonForCancel=req.body.cancelledReason
@@ -52,7 +53,7 @@ const cancelOrder=async(req,res)=>{
 
 const getCancelledOrders = async (req, res) => {
     try {
-        const orders = await orderSchema.find({ userID: req.session.user,orderStatus:{$in:['Pending-Returned', 'Returned', 'Cancelled']} }).sort({updatedAt:-1})
+        const orders = await orderSchema.find({ userID: req.session.user,orderStatus:{$in:['Pending-Returned', 'Returned', 'Cancelled']} }) .populate('products.productID').sort({updatedAt:-1})
         res.render('user/cancelledOrders',
             {
                 title: 'orders',
@@ -60,6 +61,7 @@ const getCancelledOrders = async (req, res) => {
                     req.flash('errorMessage'),
                 orders
             })
+            console.log(orders)
     } catch (err) {
         console.log('error on getting orders page', err)
     }

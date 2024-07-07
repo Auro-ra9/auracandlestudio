@@ -741,30 +741,30 @@
                 }
 
 
-                if(parseInt(selectedPaymentOption)===0){
+                if (parseInt(selectedPaymentOption) === 0) {
                     const URL = '/checkout-submit'
-                fetch(URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ selectedAddressOption, selectedPaymentOption })
-                }).then((res) => {
-                    if (!res.ok) {
-                        swal.fire({
-                            icon: 'error',
-                            title: 'Order couldn\'t be placed',
-                            text: 'order cannot be placed at this moment,please try again later',
-                            showConfirmButton: false,
-                            timer: 9000
-                        })
-                    }
-                    return res.json()
-                }).then((data) => {
-                    window.location.href = '/order-confirmed'
-                }).catch((err) => {
-                    console.log('error on placing order', err)
-                })
+                    fetch(URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ selectedAddressOption, selectedPaymentOption })
+                    }).then((res) => {
+                        if (!res.ok) {
+                            swal.fire({
+                                icon: 'error',
+                                title: 'Order couldn\'t be placed',
+                                text: 'order cannot be placed at this moment,please try again later',
+                                showConfirmButton: false,
+                                timer: 9000
+                            })
+                        }
+                        return res.json()
+                    }).then((data) => {
+                        window.location.href = '/order-confirmed'
+                    }).catch((err) => {
+                        console.log('error on placing order', err)
+                    })
                 }
 
             }

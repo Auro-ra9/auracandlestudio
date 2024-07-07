@@ -146,15 +146,16 @@ const googleCallback = (req, res, next) => {
 
 const otpRender = (req, res) => {
     try {
-        res.render('user/otp', { title: 'login', alertMessage: req.flash('errorMessage'), otpCreatedAt: req.session.otpCreatedAt })
+        res.render('user/otp', { title: 'otp', alertMessage: req.flash('errorMessage'), otpCreatedAt: req.session.otpCreatedAt })
     } catch (err) {
         console.log(`Error on otp render get ${err}`);
     }
 }
+
 const otpPost = async (req, res) => {
     try {
 
-        if (Date.now() - req.session.otpCreatedAt > 1 * 60 * 1000) { // 2 minutes in milliseconds
+        if (Date.now() - req.session.otpCreatedAt > 2 * 60 * 1000) { // 1 minutes in milliseconds
             req.flash('errorMessage', "OTP Expired please try to send again");
             res.redirect('/otp');
         }
@@ -186,14 +187,11 @@ const otpPost = async (req, res) => {
     }
 }
 
-
-
-
 const resendOTP = (req, res) => {
     try {
 
         const otp = generateOTP()
-        emailSender(email, otp)
+        emailSender(req.session.email, otp)
         req.session.otp = otp
         req.session.otpCreatedAt = Date.now()
         console.log(otp)
@@ -204,23 +202,7 @@ const resendOTP = (req, res) => {
     }
 }
 
-
-
-const verificationRender = (req, res) => {
-    try {
-        res.render('user/verification', { title: 'veirification', alertMessage: req.flash('errorMessage') })
-    } catch (err) {
-        console.log(`Error on verification email render get ${err}`);
-    }
-}
-const confirmPasswordRender = (req, res) => {
-    try {
-        res.render('user/confirmPassword', { title: 'confirm-password', alertMessage: req.flash('errorMessage') })
-    } catch (err) {
-        console.log(`Error on confirm password render get ${err}`);
-    }
-}
-
+//welcome message for successful registration
 const registerConfirmed = (req, res) => {
     try {
         res.render('user/registeredSuccessful',
@@ -234,10 +216,150 @@ const registerConfirmed = (req, res) => {
     }
 }
 
+//password forgot setting up with otp
+const forgotPasswordRender = (req, res) => {
+    try {
+        res.render('user/forgotPassword', { title: 'forgot-password', alertMessage: req.flash('errorMessage') })
+    } catch (err) {
+        console.log(`Error on forgot password render get ${err}`);
+    }
+}
+
+//email verification for sending otp
+const forgotPasswordPost = async (req, res) => {
+    try {
+
+        const { email } = req.body
+        //Server-side validation
+        if (!email) {
+            req.flash('errorMessage', 'Email is required for sending otp');
+            return res.redirect('/user/login');
+        }
+
+        //to check whether the useremail already exists in the database or not
+        const checkUserExist = await userSchema.findOne({ email: email })
 
 
+        //if yes then sending otp to there
+        if (checkUserExist) {
+            const otp = generateOTP()
+            emailSender(email, otp)
+            req.session.otp = otp
+            req.session.otpCreatedAt = Date.now()
+            req.session.email = email
+            req.session.userId = checkUserExist._id 
+            res.redirect('/forgot-otp')
+
+        } else {
+            req.flash('errorMessage', 'we could not find the credentials ')
+            return res.redirect('/login')
+        }
+
+    } catch (err) {
+        console.log(`Error during password reset post ${err}`);
+
+    }
+}
+
+//password otp rendering 
+const passwordOtpRender = (req, res) => {
+    try {
+        res.render('user/forgotOtp', { title: 'otp', alertMessage: req.flash('errorMessage'), otpCreatedAt: req.session.otpCreatedAt })
+    } catch (err) {
+        console.log(`Error on otp forgot render get ${err}`);
+    }
+}
+
+//verifying the otps
+const passwordOtpPost = async (req, res) => {
+    try {
+
+        if (Date.now() - req.session.otpCreatedAt > 1 * 60 * 1000) { // 1 minutes in milliseconds
+            req.flash('errorMessage', "OTP Expired please try to send again");
+            res.redirect('/forgot-otp');
+        }
+
+        //checking the typed otp by user and here are same or not
+        const otpArray = req.body.otp;
+        const otp = Number(otpArray.join(""))
+
+        if (Number(req.session.otp) === otp) {
+            res.redirect('/reset-password')
+
+        } else {
+            req.flash('errorMessage', "Invalid OTP please try to register again")
+            res.redirect('/login')
+
+        }
+
+    } catch (err) {
+        console.log(`Error on otp post ${err}`);
+    }
+}
+
+//resend password changing otp
+const passwordResendOTP = (req, res) => {
+    try {
+
+        const otp = generateOTP()
+        emailSender(req.session.email, otp)
+        req.session.otp = otp
+        req.session.otpCreatedAt = Date.now()
+        console.log(otp)
+        return res.status(200).json({ message: "OTP resend" })
+
+    } catch (err) {
+        console.log(`Error on otp resend ${err}`);
+    }
+}
 
 
+//renderingh the new password change  page
+
+const resetPasswordRender = (req, res) => {
+    try {
+
+        res.render('user/resetPassword', {
+            title: 'reset-password',
+            alertMessage: req.flash('errorMessage'),
+        })
+
+    } catch (er) {
+        console.log(`error on reset-password page rendering: ${err}`)
+    }
+}
+//allowing to change the password funally
+const resetPasswordPost = async (req, res) => {
+    try {
+
+        //checking new passwords match or not
+        const newPassword = req.body.password
+        const confirmPassword = req.body.confirmPassword
+
+        if (newPassword != confirmPassword) {
+            req.flash('errorMessage', "the passwords do not match")
+            return res.redirect('/reset-password')
+        }
+
+        //hashing the pass to store in db
+        const hashedPassword = await bcrypt.hash(newPassword, 10)
+
+        //collecting the userID from email verifgication section
+        const userId = req.session.userId
+
+        //storung the new password to db
+        await userSchema.findByIdAndUpdate(userId, { password: hashedPassword })
+
+        req.flash('errorMessage', "Password changed successfully")
+        return res.redirect('/login')
+
+    } catch (err) {
+        console.log(`error on new password adding post: ${err}`)
+    }
+}
+
+
+//logout account
 const logout = (req, res) => {
     try {
         req.session.destroy((err) => {
@@ -263,8 +385,13 @@ module.exports = {
     otpRender,
     otpPost,
     resendOTP,
-    verificationRender,
-    confirmPasswordRender,
+    forgotPasswordRender,
+    forgotPasswordPost,
+    passwordOtpRender,
+    passwordOtpPost,
+    passwordResendOTP,
+    resetPasswordRender,
+    resetPasswordPost,
     registerConfirmed,
     logout,
 

@@ -108,9 +108,11 @@
                                                 <div class="flex-grow-1 align-self-center overflow-hidden">
                                                     <div>
                                                         <h5 class="text-truncate font-size-18">
-                                                                class="text-dark"><a href="/product-view/<%= product.productID.id %>"><%= product.productName%></a>
-                                                                
-                                                            </h5>
+                                                            <a href="/product-view/<%= product.productID.id %>">
+                                                                <%= product.productName%>
+                                                            </a>
+
+                                                        </h5>
                                                         <p class="text-muted mb-0">
                                                             <i class="bx bxs-star text-warning"></i>
                                                             <i class="bx bxs-star text-warning"></i>
@@ -242,6 +244,32 @@
                     </div>
                 </div>
             </div>
+            <!-- Pagination controls -->
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <% if (currentPage> 1) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <% } %>
+                            <% for (let i=1; i <=totalPages; i++) { %>
+                                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>">
+                                        <%= i %>
+                                    </a>
+                                </li>
+                                <% } %>
+                                    <% if (currentPage < totalPages) { %>
+                                        <li class="page-item">
+                                            <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                        <% } %>
+                </ul>
+            </nav>
         </div>
 
 
@@ -252,28 +280,29 @@
 
 
             paymentBadge.forEach(element => {
-                if (element.innerHTML.trim() === 'Confirmed') {
-                    element.classList.add('bg-success')
-                }
-                if (element.innerHTML.trim() === 'Delivered') {
-                    element.classList.add('bg-success')
-                }
-                if (element.innerHTML.trim() === 'Pending-Returned') {
-                    element.classList.add('bg-warning')
-                }
-                if (element.innerHTML.trim() === 'Returned') {
-                    element.classList.add('bg-warning')
-                }
-                if (element.innerHTML.trim() === 'Cancelled') {
-                    element.classList.add('bg-danger')
-                }
                 if (element.innerHTML.trim() === 'Pending') {
-                    element.classList.add('bg-primary')
+                    element.classList.add('bg-primary', 'text-white')
+                }
+                if (element.innerHTML.trim() === 'Confirmed') {
+                    element.classList.add('bg-success', 'text-white')
                 }
                 if (element.innerHTML.trim() === 'Shipping') {
-                    element.classList.add('bg-primary')
+                    element.classList.add('bg-info', 'text-white')
                 }
-            });
+                if (element.innerHTML.trim() === 'Delivered') {
+                    element.classList.add('bg-success', 'text-white')
+                }
+                if (element.innerHTML.trim() === 'Pending-Returned') {
+                    element.classList.add('bg-warning', 'text-dark')
+                }
+                if (element.innerHTML.trim() === 'Returned') {
+                    element.classList.add('bg-warning', 'text-dark')
+                }
+                if (element.innerHTML.trim() === 'Cancelled') {
+                    element.classList.add('bg-danger', 'text-white')
+                }
+            })
+
 
             function cancelOrder(orderid) {
                 swal.fire({
