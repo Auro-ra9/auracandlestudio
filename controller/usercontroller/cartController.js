@@ -1,15 +1,23 @@
-const userSchema = require('../../model/userSchema');
-const productSchema = require('../../model/productSchema');
-const cartSchema = require('../../model/cartSchema');
+const userSchema = require('../../model/userSchema')
+const productSchema = require('../../model/productSchema')
+const cartSchema = require('../../model/cartSchema')
 
 
 const viewCart = async (req, res) => {
-    try {
+    // Pagination parameters
+    const cartPerPage = 8
+    const currentPage = parseInt(req.query.page) || 1
+    const skip = (currentPage - 1) * cartPerPage
 
+    try {
         const productInCart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID')
 
         if (productInCart) {
             productInCart.items.sort((productA, productB) => productB.createdAt - productA.createdAt)
+
+            // Calculate total number of items and pages
+            const totalItems = productInCart.items.length
+            const totalPages = Math.ceil(totalItems / cartPerPage)
 
             let subTotal = 0
             let total = 0
@@ -20,30 +28,34 @@ const viewCart = async (req, res) => {
                 total += (product.productID.productPrice * (1 - product.productID.discount / 100) * (product.productCount))
             })
             totalDiscount = subTotal - total
-            res.render('user/cart', {
-                title: 'cart',
-                alertMessage: req.flash('errorMessge'),
-                productInCart,
-                subTotal,
-                total,
-                totalDiscount
-    
-            })
-        }else{
+
             res.render('user/cart', {
                 title: 'cart',
                 alertMessage: req.flash('errorMessage'),
-                productInCart:[],
-                subTotal:0,
-                total:0,
-                totalDiscount:0
-    
+                productInCart,
+                subTotal,
+                total,
+                totalDiscount,
+                currentPage,
+                totalPages,
+                query: req.query
+            })
+        } else {
+            res.render('user/cart', {
+                title: 'cart',
+                alertMessage: req.flash('errorMessage'),
+                productInCart: [],
+                subTotal: 0,
+                total: 0,
+                totalDiscount: 0,
+                currentPage,
+                totalPages: 1,
+                query: req.query
             })
         }
 
-        
     } catch (err) {
-        console.log(`error on cart ${err}`);
+        console.log(`error on cart ${err}`)
     }
 }
 
@@ -124,10 +136,10 @@ const deleteFromCart = async (req, res) => {
 
         return res.status(200).json({ success: "Product removed from cart" })
     } catch (err) {
-        console.log(`error on deleting from cart ${err}`);
+        console.log(`error on deleting from cart ${err}`)
         return res.status(500).json({ message: 'Failed to remove product from cart' })
     }
-};
+}
 
 //increase the quantity in the cart
 
@@ -141,8 +153,8 @@ const increaseQuantity = async (req, res) => {
             return res.status(404).json({ message: 'Cart not found' })
         }
 
-        let productTotal = 0;
-        let productCount = 0;
+        let productTotal = 0
+        let productCount = 0
         for (const checkProduct of cart.items) {
             if (checkProduct.productID.id === productID) {
                 if (checkProduct.productCount >= 10) {
@@ -151,15 +163,15 @@ const increaseQuantity = async (req, res) => {
                 if (checkProduct.productID.productQuantity < checkProduct.productCount + 1) {
                     return res.status(404).json({ stockReached: `only ${checkProduct.productID.productQuantity} left` })
                 }
-                checkProduct.productCount++;
+                checkProduct.productCount++
                 productTotal = checkProduct.productCount * (checkProduct.productID.productPrice * (1 - checkProduct.productID.discount / 100))
-                productCount = checkProduct.productCount;
+                productCount = checkProduct.productCount
                 await cart.save()
             }
         }
 
         //changing and showing the total amounts and discounts in the frontend
-        let totalAmount = 0;
+        let totalAmount = 0
         let totalWithoutDiscount = 0
         let totalDiscount = 0
 
@@ -177,10 +189,10 @@ const increaseQuantity = async (req, res) => {
             totalAmount,
             totalWithoutDiscount,
             totalDiscount
-        });
+        })
     } catch (err) {
         console.log(`error on increasing quantity post ${err}`)
-        return res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Internal server error' })
 
     }
 }
@@ -197,22 +209,22 @@ const decreaseQuantity = async (req, res) => {
             return res.status(404).json({ message: 'Cart not found' })
         }
 
-        let productTotal = 0;
-        let productCount = 0;
+        let productTotal = 0
+        let productCount = 0
         for (const checkProduct of cart.items) {
             if (checkProduct.productID.id === productID) {
                 if (checkProduct.productCount <= 1) {
                     return res.status(400).json({ limitReached: "product count must have at least one" })
                 }
-                checkProduct.productCount--;
+                checkProduct.productCount--
                 productTotal = checkProduct.productCount * (checkProduct.productID.productPrice * (1 - checkProduct.productID.discount / 100))
-                productCount = checkProduct.productCount;
+                productCount = checkProduct.productCount
                 await cart.save()
             }
         }
 
         //changing and showing the total amounts and discounts in the frontend
-        let totalAmount = 0;
+        let totalAmount = 0
         let totalWithoutDiscount = 0
         let totalDiscount = 0
 
@@ -228,10 +240,10 @@ const decreaseQuantity = async (req, res) => {
             totalAmount,
             totalWithoutDiscount,
             totalDiscount
-        });
+        })
     } catch (err) {
         console.log(`error on decreasing quantity post ${err}`)
-        return res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Internal server error' })
 
     }
 }

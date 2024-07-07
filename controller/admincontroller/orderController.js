@@ -25,7 +25,7 @@ const orderList = async (req, res) => {
             orders,
             currentPage,
             totalPages: Math.ceil(ordersCount / ordersPerPage)
-        });
+        })
     } catch (err) {
         console.log(`Error on order list render: ${err}`);
     }
