@@ -7,7 +7,9 @@ const categoryController = require('../controller/admincontroller/categoryContro
 const productController = require('../controller/admincontroller/productController')
 const userController = require('../controller/admincontroller/userController')
 const orderController = require('../controller/admincontroller/orderController')
+const couponController = require('../controller/admincontroller/couponController')
 const upload = require('../middleware/multer')
+const testController=require('../controller/admincontroller/testController')
 
 //admin login 
 admin.get('/', loginController.admin)
@@ -46,11 +48,26 @@ admin.post('/edit-product/:id',adminSession,upload.array("productImage", 4),prod
 admin.get('/orders', adminSession, orderController.orderList)
 admin.get('/edit-order/:orderID', adminSession, orderController.editOrder)
 admin.post('/edit-order/:orderID', adminSession, orderController.editOrderPost)
+admin.put('/approve-return/:orderID', adminSession, orderController.approveReturn)
+admin.put('/reject-return/:orderID', adminSession, orderController.rejectReturn)
+
+//coupons
+admin.get('/coupons',adminSession, couponController.coupons)
+admin.get('/add-coupons',adminSession, couponController.addCouponsGet)
+admin.post('/add-coupons',adminSession, couponController.addCouponsPost)
+admin.delete('/delete-coupon/:couponID',adminSession, couponController.deleteCoupon)
+admin.put('/block-coupon/:couponID',adminSession, couponController.blockCoupon)
+admin.put('/unblock-coupon/:couponID',adminSession, couponController.unblockCoupon)
+admin.get('/edit-coupon/:couponID',adminSession, couponController.editCouponGet)
+admin.post('/edit-coupon/:couponID',adminSession, couponController.editCoupon)
 
 
 
 
 
+
+//test before running
+admin.get('/test-run',testController.testRun)
 //logout admin
 admin.get('/logout', loginController.logout)
 

@@ -402,7 +402,6 @@
 
     <%- include('footer') %>
 
-        `
         <script>
 
             function checkTextField(text) {
@@ -429,15 +428,14 @@
                 document.getElementsByClassName('validate')[1].innerHTML = ""
 
 
-                if (name.value.trim() === "" || name.value.length > 30 || checkTextField(name.value)) {
-                    validate = false
-                    document.getElementsByClassName('validate')[0].innerHTML = "Must have at least 7 characters";
-
+                if (name.value.trim() === "" || name.value.length < 7 || name.value.length > 30 || /\s/.test(name.value) || /[^a-zA-Z]/.test(name.value)) {
+                    validate = false;
+                    document.getElementsByClassName('validate')[0].innerHTML = "Name must be between 7 and 30 characters, contain only letters, and no spaces or special characters.";
                 }
 
-                if (phone.value.length != 10 || isNaN(phone.value)) {
+                if (phone.value.length != 10 || isNaN(phone.value) || /^0+$/.test(phone.value)) {
                     validate = false
-                    document.getElementsByClassName('validate')[1].innerHTML = "Number must be less than 10"
+                    document.getElementsByClassName('validate')[1].innerHTML = "Invalid phone-number, must be a 10-digit number"
                 }
                 if (validate) {
                     form.submit()
@@ -478,7 +476,7 @@
 
 
 
-                if (city.value.trim() === "" || city.value.length > 30 || checkTextField(city.value)) {
+                if (city.value.trim() === "" || city.value.length > 30 || checkTextField(city.value) || /\s/.test(city.value) || /[^a-zA-Z]/.test(city.value)) {
                     validate = false
                     document.getElementsByClassName('AddValidate')[0].innerHTML = "It is not a city name";
 
@@ -501,7 +499,7 @@
                 }
 
 
-                if (state.value.trim() === "" || state.value.length > 30 || checkTextField(state.value)) {
+                if (state.value.trim() === "" || state.value.length > 30 || checkTextField(state.value)|| /\s/.test(state.value) || /[^a-zA-Z]/.test(state.value)) {
                     validate = false
                     document.getElementsByClassName('AddValidate')[4].innerHTML = "enter a correct state name";
 

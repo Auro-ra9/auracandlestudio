@@ -6,6 +6,7 @@ const productController = require('../controller/usercontroller/productControlle
 const cartController = require('../controller/usercontroller/cartController')
 const checkoutController = require('../controller/usercontroller/checkoutController')
 const orderController=require('../controller/usercontroller/orderController')
+const wishlistController=require('../controller/usercontroller/wishlistController')
 const user = express.Router()
 
 //login
@@ -53,6 +54,11 @@ user.delete('/delete-address/:index', checkUserSession, userHomeController.delet
 user.get('/security', checkUserSession, userHomeController.security)
 user.post('/newSecurity', checkUserSession, userHomeController.newSecurity)
 
+//wishlist
+user.get('/wishlist', checkUserSession, wishlistController.viewWishlist)
+user.post('/addToWishlist/:productID', checkUserSession, wishlistController.addToWishlist)
+user.delete('/delete-wishlist-item/:productID', checkUserSession, wishlistController.deleteFromWishlist)
+
 
 //cart
 user.get('/cart', checkUserSession, cartController.viewCart)
@@ -60,6 +66,7 @@ user.post('/addToCart/:productID', checkUserSession, cartController.addToCart)
 user.delete('/delete-cart-item/:productID', checkUserSession, cartController.deleteFromCart)
 user.put('/increase-quantity/:productID', checkUserSession, cartController.increaseQuantity)
 user.put('/decrease-quantity/:productID', checkUserSession, cartController.decreaseQuantity)
+user.post('/validate-checkout', checkUserSession, cartController.validateCheckout)
 
 // checkout 
 user.get('/checkout', checkUserSession, checkoutController.checkoutRender)
@@ -68,11 +75,18 @@ user.post('/edit-address-checkout/:index', checkUserSession, checkoutController.
 user.delete('/delete-address/:index', checkUserSession, checkoutController.deleteAddress)
 user.post('/checkout-submit',checkUserSession,checkoutController.postOrderPlaced)
 user.get('/order-confirmed',checkUserSession,checkoutController.orderConfirmed)
+user.post('/get-coupon',checkUserSession,checkoutController.getCoupon)
+user.post('/apply-coupon',checkUserSession,checkoutController.applyCoupon)
+user.put('/remove-coupon',checkUserSession,checkoutController.removeCoupon)
+user.post('/render-razorPay',checkUserSession,checkoutController.renderRazorPay)
+user.post('/payment-pending',checkUserSession,checkoutController.pendingRazorPay)
+user.get('/order-pending',checkUserSession,checkoutController.paymentFailedMessage)
 
 //orders
 user.get('/orders',checkUserSession,orderController.getOrders)
 user.post('/cancel-order/:orderid', checkUserSession,orderController.cancelOrder)
 user.get('/cancelled-orders',checkUserSession,orderController.getCancelledOrders)
+user.post('/return-request-order/:orderid', checkUserSession,orderController.returnOrder)
 
 
 

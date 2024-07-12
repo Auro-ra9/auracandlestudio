@@ -187,69 +187,74 @@
 
                         <% }) %>
                             <% }else{ %>
-                                <div class="empty-cart">Cart empty</div>
+                                <div class="empty-cart"><a href="/home" >
+                                    <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping </a></div>
                                 <% } %>
 
                                     <!-- end card -->
-
-
+                                    <% if(productInCart.length!=0){%>
                                     <div class="row my-4">
                                         <div class="col-sm-6">
                                             <a href="/home" class="btn btn-link text-muted">
                                                 <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping </a>
-                                        </div> <!-- end col -->
-                                        <div class="col-sm-6">
-                                            <div class="text-sm-end mt-2 mt-sm-0">
-                                                <a href="/checkout" class="btn btn-success">
-                                                    <i class="mdi mdi-cart-outline me-1"></i> Checkout </a>
-                                            </div>
-                                        </div> <!-- end col -->
-                                    </div> <!-- end row-->
+                                            </div> <!-- end col -->
+                                            <div class="col-sm-6">
+                                                <div class="text-sm-end mt-2 mt-sm-0">
+                                                    <button onclick="checkout()" class="btn btn-success">
+                                                        <i class="mdi mdi-cart-outline me-1"></i> Checkout </button>
+                                                </div>
+                                            </div> <!-- end col -->
+                                        </div> <!-- end row-->
+                                        <% }%>
+
             </div>
-
-            <div class="col-xl-4">
-                <div class="mt-5 mt-lg-0">
-                    <div class="card border shadow-none">
-                        <div class="card-header bg-transparent border-bottom py-3 px-4">
-                            <h5 class="font-size-16 mb-0">Order Summary <span class="float-end">#MN0124</span></h5>
-                        </div>
-                        <div class="card-body p-4 pt-2">
-
-                            <div class="table-responsive">
-                                <table class="table mb-0">
-                                    <tbody>
-                                        <tr>
-                                            <td>Sub Total :</td>
-                                            <td class="text-end " id="sub-total-box">&#8377; <%= subTotal%>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Discount : </td>
-                                            <td class="text-end " id="total-discount">
-                                                <%= (totalDiscount).toLocaleString() %>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>Shipping Charge :</td>
-                                            <td class="text-end">&#8377; 50</td>
-                                        </tr>
-
-                                        <tr class="bg-light">
-                                            <th>Total :</th>
-                                            <td class="text-end">
-                                                <span class="fw-bold" id="total-box">
-                                                    &#8377;<%=(total).toLocaleString() %>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+            <% if(productInCart.length!=0){%>
+                <div class="col-xl-4">
+                    <div class="mt-5 mt-lg-0">
+                        <div class="card border shadow-none">
+                            <div class="card-header bg-transparent border-bottom py-3 px-4">
+                                <h5 class="font-size-16 mb-0">Order Summary <span class="float-end"></span></h5>
                             </div>
-                            <!-- end table-responsive -->
+                            <div class="card-body p-4 pt-2">
+
+                                <div class="table-responsive">
+                                    <table class="table mb-0">
+                                        <tbody>
+                                            <tr>
+                                                <td>Sub Total :</td>
+                                                <td class="text-end " id="sub-total-box">&#8377; <%= subTotal%>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Discount : </td>
+                                                <td class="text-end " id="total-discount">
+                                                    <%= (totalDiscount).toLocaleString() %>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Shipping Charge :</td>
+                                                <td class="text-end">&#8377; <%=
+                                                        productInCart.payableAmount<550?"50":"00" %>
+                                                </td>
+                                            </tr>
+
+                                            <tr class="bg-light">
+                                                <th>Total :</th>
+                                                <td class="text-end">
+                                                    <span class="fw-bold" id="total-box">
+                                                        &#8377;<%=(total).toLocaleString() %>
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- end table-responsive -->
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <%}%>
         </div>
         <!-- end row -->
         <!-- Pagination -->
@@ -380,6 +385,31 @@
                     }
                 }).catch((err) => {
                     console.log(`error on decrasing quantity in fetch cart${err}`)
+                })
+            }
+
+
+            function checkout() {
+                const URL = "/validate-checkout"
+                fetch(URL, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': "applicaion/json"
+                    }
+                }).then((res) => {
+                    if (res.ok) {
+                        window.location.href = "/checkout"
+                    }
+                    return res.json()
+                }).then((data) => {
+                    if (data.error) {
+                        iziToast.error({
+                            message: data.error + " || " + data.product
+                        });
+                    }
+
+                }).catch((err) => {
+                    console.log(err)
                 })
             }
         </script>

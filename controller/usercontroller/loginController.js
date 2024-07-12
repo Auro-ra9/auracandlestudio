@@ -155,7 +155,7 @@ const otpRender = (req, res) => {
 const otpPost = async (req, res) => {
     try {
 
-        if (Date.now() - req.session.otpCreatedAt > 2 * 60 * 1000) { // 1 minutes in milliseconds
+        if (Date.now() - req.session.otpCreatedAt > 2 * 60 * 1000) { // 2 minutes in milliseconds
             req.flash('errorMessage', "OTP Expired please try to send again");
             res.redirect('/otp');
         }

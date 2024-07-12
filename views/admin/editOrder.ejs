@@ -141,40 +141,68 @@
                         <div class="card border shadow-none">
                             <div class="card-body">
                                 <strong class="card-title">Order Summary</strong>
+                                <p><strong>Coupon discount:</strong> <%= order.couponDiscount.toLocaleString()!=0?"&#8377; order.couponDiscount.toLocaleString()":"no coupon discount" %>
+                                </p>
+                                <p><strong>Shipping charges:</strong> &#8377;<%= order.totalPrice <550?"50":"00" %>
+                                </p>
                                 <p><strong>Total:</strong> &#8377;<%= order.totalPrice.toLocaleString() %>
                                 </p>
-
+                                
                             </div>
                         </div>
+
                         <div class="card border shadow-none">
                             <div class="card-body ">
                                 <strong class="card-title ">Current status: <div class="badge">
                                         <%= order.orderStatus %>
                                     </div></strong>
-
+                            </div>
+                            <div class="mb-3">
+                                <% if(order.orderStatus==='Pending-Returned' ){%>
+                                    <h6>Request for return:<p class="text-danger">
+                                            <%= order.reasonForRejection%>
+                                        </p>
+                                    </h6>
+                                    <%} %>
                             </div>
                         </div>
-                        <div class="card border shadow-none">
-                            <div class="card-body">
-                                <strong class="card-title">Edit Order Status</strong>
-                                <form action="/admin/edit-order/<%= order._id %>" method="post" id="order-status-form">
-                                    <div class="mb-3">
-                                        <label for="orderStatus" class="form-label">Order Status:</label>
-                                        <select name="orderStatus" id="orderStatus" class="form-select">
-                                            <option value="Confirmed">Confirmed</option>
-                                            <option value="Shipping">Shipping</option>
-                                            <option value="Delivered">Delivered</option>
-                                        </select>
+                        <% if(order.orderStatus==='Pending-Returned' ){%>
+                            <div class="card border shadow-none">
+                                <div class="card-body ">
+                                    <strong class="card-title ">Edit Status: </strong>
+                                </div>
+                                <div class="mb-3">
+                                    <button class="btn btn-primary" onclick="approveReturn('<%= order._id%>')">Approve
+                                        return</button>
+                                    <button class="btn btn-warning" onclick="rejectReturn('<%= order._id%>')">Reject
+                                        return</button>
+                                </div>
+                            </div>
+                            <%}else{%>
+                                <div class="card border shadow-none">
+                                    <div class="card-body">
+                                        <strong class="card-title">Edit Order Status</strong>
+                                        <form action="/admin/edit-order/<%= order._id %>" method="post"
+                                            id="order-status-form">
+                                            <div class="mb-3">
+                                                <label for="orderStatus" class="form-label">Order Status:</label>
+                                                <select name="orderStatus" id="orderStatus" class="form-select">
+                                                    <option value="" selected disabled><%= order.orderStatus %></option>
+                                                    <option value="Confirmed" >Confirmed</option>
+                                                    <option value="Shipping" >Shipping</option>
+                                                    <option value="Delivered">Delivered</option>
+                                                    
+                                                </select>
+                                            </div>
+                                            <input type="hidden" id="currentStatus" name="currentStatus"
+                                                value="<%= order.orderStatus %>">
+
+                                            <button type="submit" class="btn btn-success">Change Status</button>
+                                        </form>
+
                                     </div>
-                                    <input type="hidden" id="currentStatus" name="currentStatus"
-                                        value="<%= order.orderStatus %>">
-
-                                    <button type="submit" class="btn btn-success">Change Status</button>
-                                </form>
-                            </div>
-                        </div>
-
-
+                                </div>
+                                <%}%>
                     </div>
                 </div>
             </div>
@@ -228,13 +256,31 @@
                 // Perform validation based on currentStatus and selectedStatus
                 if (currentStatus === 'Confirmed') {
                     if (selectedStatus === 'Confirmed') {
-                        alert('Cannot change status to Confirmed again.')
                         validate = false
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Cannot change status to Confirmed again.',
+                        });
                     }
                 } else if (currentStatus === 'Shipping') {
                     if (selectedStatus !== 'Delivered') {
-                        alert('Order must be Delivered to change from Shipping.')
                         validate = false
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Order must be Delivered to change from Shipping.',
+                        });
+                    }
+                }
+                else if (currentStatus === 'Delivered') {
+                    if (selectedStatus !== 'Shipping' || selectedStatus !== 'Confirmed') {
+                        validate = false
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Order cannot confirmed or shipped after been delivered.',
+                        });
                     }
                 }
 
@@ -243,5 +289,76 @@
                     orderStatusForm.submit()
                 }
             })
+
+            //return order approval
+            function approveReturn(orderID) {
+                const URL = `/admin/approve-return/${orderID}`;
+
+                fetch(URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then((res) => {
+                        if (res.ok) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Approved return',
+                                showConfirmButton: false,
+                                timer: 900
+                            }).then(() => {
+                                window.location.reload();
+                            });
+                        } else {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Failed to approve return',
+                                text: 'Please try again later',
+                            });
+                        }
+                    })
+                    .catch((err) => {
+                        console.log('Error approving return order', err);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Failed to approve return',
+                            text: 'Please try again later',
+                        });
+                    });
+            }
+
+
+            function rejectReturn(orderID) {
+                const URL = `/admin/reject-return/${orderID}`
+
+                fetch(URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then((res) => {
+                    if (res.ok) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Rejected return',
+                            showConfirmButton: false,
+                            timer: 900
+                        }).then(() => {
+                            window.location.reload()
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Failed to reject return',
+                            text: 'Please try again later',
+                        });
+                    }
+                }).catch((err) => {
+                    console.log('Error rejecting return order', err)
+                });
+            }
+
+
 
         </script>

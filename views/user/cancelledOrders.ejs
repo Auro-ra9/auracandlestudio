@@ -184,9 +184,15 @@
                                         <p><b style="color: #ff6200;">Order placed on:</b>
                                             <%= order.createdAt.toLocaleString() %>
                                         </p>
-                                        <p><b style="color: #4000ff;">Reason:</b>
+                                        <% if(order.reasonForCancel){%>
+                                        <p><b style="color: #fff200;">Reason for cancel:</b>
                                             <%= order.reasonForCancel %>
                                         </p>
+                                        <%}else{%>
+                                        <p><b style="color: #0beefa;">Reason for return:</b>
+                                            <%= order.reasonForRejection %>
+                                        </p>
+                                        <%}%>
                                     </div>
                                 </div>
                             </div>

@@ -187,7 +187,7 @@ const getEditProduct = async (req, res) => {
 
 const editProductPost = async (req, res) => {
     try {
-        const { productPrice, productDescription, productQuantity, productName,productBrand } = req.body
+        const { productPrice, productDescription, productQuantity, productName,productBrand,productDiscount } = req.body
 
 
         // get the id of the product
@@ -218,7 +218,8 @@ const editProductPost = async (req, res) => {
                 brand:productBrand, 
                 productPrice: productPrice, 
                 productDescription: productDescription, 
-                productQuantity: productQuantity 
+                productQuantity: productQuantity,
+                discount:productDiscount
             })
             .then((elem) => {
                 req.flash('errorMessage', 'Product Updated successfully');

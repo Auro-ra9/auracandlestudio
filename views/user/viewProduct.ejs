@@ -44,11 +44,18 @@
                 </span>
               </div>
               <!-- <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span> -->
-              <% if(productDetail.productQuantity>0){ %>
-                <b class="text-success ms-2">In stock</b>
-                <% }else{ %>
-                  <b class="text-danger ms-2">Out of stock</b>
-                  <% } %>
+              <% if (productDetail.productQuantity > 0) { %>
+                <% if (productDetail.productQuantity <= 10) { %>
+                    <b class="text-danger ms-2">Only <%= productDetail.productQuantity %> left </b>
+                    <br>
+                    <b>Purchase your favourite product fast</b>
+                <% } else { %>
+                    <b class="text-success ms-2">In stock</b>
+                <% } %>
+            <% } else { %>
+                <b class="text-danger ms-2">Out of stock</b>
+            <% } %>
+            
             </div>
             <% if(productDetail.discount>0){ %>
               <div class="mb-3">
@@ -86,11 +93,12 @@
                   </div>
                   <hr />
                   <!-- <a href="#" class="btn btn-warning shadow-0"> Buy now </a> -->
-                  <button class="btn btn-primary shadow-0" onclick="addToCart('<%=productDetail.id%>')"> <i
+                  <button class="btn btn-secondary shadow-0" onclick="addToCart('<%=productDetail.id%>')"> <i
                       class="me-1 fa fa-shopping-basket"></i> Add to cart
                   </button>
-                  <a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i
-                      class="me-1 fa fa-heart fa-lg"></i> Save </a>
+                  <button class="btn   py-2 icon-hover px-3"
+                    onclick="addToWishlist('<%=productDetail.id%>')"> <i class="me-1 fa fa-heart fa-lg"></i>
+                  </button>
           </div>
         </main>
       </div>
@@ -145,7 +153,7 @@
           }).then((data) => {
             if (data.existInCart) {
               iziToast.warning({
-                message: 'Product alreday in cart'
+                message: data.existInCart
               });
             }
             if (data.success) {
@@ -156,6 +164,37 @@
           }).catch((err) => {
             window.location.href = '/login'
             console.log(`error while adding to cart${err}`)
+
+          })
+        }
+
+        //add to wishlist button
+
+        function addToWishlist(productID) {
+          console.log(productID);
+
+          const URL = `/addToWishlist/${productID}`
+          fetch(URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }).then((res) => {
+            return res.json()
+          }).then((data) => {
+            if (data.existInWishlist) {
+              iziToast.warning({
+                message: 'Product alreday in wishlist'
+              });
+            }
+            if (data.success) {
+              iziToast.success({
+                message: 'Added'
+              })
+            }
+          }).catch((err) => {
+            window.location.href = '/login'
+            console.log(`error while adding to wishlist${err}`)
 
           })
         }

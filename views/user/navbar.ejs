@@ -1,10 +1,10 @@
 <style>
   /* Color palette based on #C3BAA9 */
   :root {
-    --primary-color: #C3BAA9;
-    --secondary-color: #8C7A5B;
-    --accent-color: #5B4E3B;
-    --text-color: #2C2518;
+    /* --primary-color: #f6edbd; */
+    /* --secondary-color: #8C7A5B; */
+    --accent-color: #1d1c1c;
+    --text-color: #100f0f;
     --light-color: #F0EBE1;
   }
 
@@ -31,7 +31,7 @@
   }
 
   .navbar-brand img {
-    height: 50px;
+    height: 60px;
     transition: transform 0.3s ease;
   }
 
@@ -123,18 +123,19 @@
 <nav class="navbar navbar-expand-lg navbar-light py-3">
   <div class="container">
     <a class="navbar-brand" href="/home">
-      <img id="MDB-logo" src="../../images/AURA.jpg" draggable="false" class="rounded" />
+      <img id="MDB-logo" src="../../images/AURA-removebg-preview.png" draggable="false" class="rounded" />
     </a>
-    <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent"
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <i class="fas fa-bars"></i>
     </button>
+    <form class="d-flex search-bar">
+      <input type="search" placeholder="What are you looking for?" aria-label="Search" name="search">
+      <button type="submit" class="btn p-0"><i class="fas fa-search"></i></button>
+    </form>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ms-auto align-items-center">
-        <form class="d-flex search-bar">
-          <input type="search" placeholder="What are you looking for?" aria-label="Search" name="search">
-          <button type="submit" class="btn p-0"><i class="fas fa-search"></i></button>
-        </form>
+        
         <!-- <li class="nav-item">
                     <a class="nav-link mx-2" href="/home">
                         <i class="fas fa-home"></i> Home
@@ -150,6 +151,7 @@
                         <i class="fas fa-envelope"></i> Contact
                     </a>
                 </li> -->
+                <% if(user) { %>
         <li class="nav-item">
           <a class="nav-link mx-2" href="/wishlist">
             <i class="fas fa-heart"></i>
@@ -165,13 +167,13 @@
             <i class="fas fa-user"></i>
           </a>
         </li>
-        <% if(user) { %>
+        
           <li class="nav-item ms-3">
-            <a class="btn btn-dark btn-rounded" href="/logout"><i class="fas fa-power-off"></i></a>
+            <a class="btn btn-rounded" href="/logout"><i class="fas fa-power-off"></i></a>
           </li>
           <% } else { %>
             <li class="nav-item ms-3">
-              <a class="btn btn-dark btn-rounded" href="/login"><i class="fas fa-sign-in-alt"></i></a>
+              <a class="btn btn-rounded" href="/login"><h5 class="text-dark"> Login</h5></a>
             </li>
             <% } %>
       </ul>

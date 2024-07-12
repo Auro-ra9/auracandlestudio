@@ -1,3 +1,34 @@
+third or 10th week
+user side
+Wallet (for canceled orders)
+
+Admin side : 
+Offer module(Product offer, Category offer, Referral offer).
+Sales
+//Change order status(cancel,return etc.)
+
+remove add to cart option for the products which is zero stock
+/////Integrate online payment method(Razorpay or Paypal). 
+/////Coupon Management (Apply Coupon, Remove Coupon) 
+////Coupon Management (Create, Delete)
+////Wishlist (Add, Remove)
+////Search, Category filtering
+_________
+Pendings
+User
+- profile input validation
+- improve address validation
+- show offer only if there’s an offer
+- display strong password rules when asking for strong password
+- sort and filter
+- quantity check in checkout and on creating order
+- order detail page
+Admin
+- disallow negative discounts
+- order status dropdown doesn’t indicate current status
+- disallow reverse progression of order status
+_______________________________________________________________________________________________
+
 *Admin side :
 //////Products must have multiple images (minimum 3 images).
 //////Images should be cropped and resized properly before upload.
@@ -11,10 +42,10 @@ User side :
 ///Product detailed page should contain following 
 / Breadcrumbs 
 / Ratings 
-/ Price
 / Discounts or coupons applied
 / Reviews 
-/ Stock 
+//// Price
+//// Stock 
 ////Proper error handles Sold out / unavailable  and  out of stock EXAMPLE
 ////Highlights / specs of product 
 //// Related product recommendations*/
@@ -26,18 +57,18 @@ User side :
 
 SECOND WEEK
 User side : 
-Sign up using OTP with OTP timer and Resend Otp
-Advanced search with sort based on 
-Popularity 
-Price: low to high
-Price : high to low 
-Average ratings 
-Featured 
-New arrivals 
-aA - zZ 
-zZ - aA 
-Admin Side: List orders, change order status, cancel orders
-Inventory/Stock management.
+////Sign up using OTP with OTP timer and Resend Otp
+////Advanced search with sort based on 
+////Popularity 
+////Price: low to high
+////Price : high to low 
+////Average ratings 
+////Featured 
+////New arrivals 
+////aA - zZ 
+////zZ - aA 
+////Admin Side: List orders, change order status, cancel orders
+////Inventory/Stock management.
 ////User profile(show orders,cancel orders,forgot password, Show user details, show address, edit profile, ).
 ////Cart management  Add to cart, list products in cart,(remove products from cart )
 ////Qty (add to cart) should be controlled based on stocks left

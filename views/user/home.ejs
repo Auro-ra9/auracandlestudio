@@ -362,11 +362,11 @@
                                         <a href="/product-view/<%= product._id %>"><img
                                                 src="../../<%= product.image[0] %>" alt="Product" class="img-fluid"></a>
                                         <div class="hover">
-                                            <a href="javascript:void(0);" class="btn btn-dark btn-sm waves-effect"><i
-                                                    class="fa-solid fa-heart"></i></a>
+                                            <button onclick="addToWishlist('<%= product._id%>')" class="btn btn-dark btn-sm waves-effect"><i
+                                                    class="fa-solid fa-heart"></i></button>
 
-                                            <a href="javascript:void(0);" class="btn btn-dark btn-sm waves-effect"><i
-                                                    class="fa-solid fa-cart-shopping"></i></a>
+                                            <button onclick="addToCart('<%= product._id%>')"  class="btn btn-dark btn-sm waves-effect"><i
+                                                    class="fa-solid fa-cart-shopping"></i></button>
                                         </div>
                                     </div>
                                     <div class="product_details">
@@ -414,3 +414,66 @@
 
 
         <%- include('footer') %>
+
+            <script>
+                //add to cart button
+                function addToCart(productID) {
+                    console.log(productID);
+
+                    const URL = `/addToCart/${productID}`
+                    fetch(URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then((res) => {
+                        return res.json()
+                    }).then((data) => {
+                        if (data.existInCart) {
+                            iziToast.warning({
+                                message: 'Product alreday in cart'
+                            });
+                        }
+                        if (data.success) {
+                            iziToast.success({
+                                message: 'Added'
+                            })
+                        }
+                    }).catch((err) => {
+                        window.location.href = '/login'
+                        console.log(`error while adding to cart${err}`)
+
+                    })
+                }
+
+                //add to wishlist button
+
+                function addToWishlist(productID) {
+                    console.log(productID);
+
+                    const URL = `/addToWishlist/${productID}`
+                    fetch(URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }).then((res) => {
+                        return res.json()
+                    }).then((data) => {
+                        if (data.existInWishlist) {
+                            iziToast.warning({
+                                message: 'Product alreday in wishlist'
+                            });
+                        }
+                        if (data.success) {
+                            iziToast.success({
+                                message: 'Added'
+                            })
+                        }
+                    }).catch((err) => {
+                        window.location.href = '/login'
+                        console.log(`error while adding to wishlist${err}`)
+
+                    })
+                }
+            </script>

@@ -10,7 +10,7 @@ const viewCart = async (req, res) => {
     const skip = (currentPage - 1) * cartPerPage
 
     try {
-        const productInCart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID')
+        const productInCart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID').sort({'items.createdAt':-1})
 
         if (productInCart) {
             productInCart.items.sort((productA, productB) => productB.createdAt - productA.createdAt)
@@ -62,6 +62,7 @@ const viewCart = async (req, res) => {
 const addToCart = async (req, res) => {
     try {
         const productID = req.params.productID
+        console.log(productID);
         if (!productID) {
             return res.status(404).json({ message: 'product could not find' })
         }
@@ -92,7 +93,12 @@ const addToCart = async (req, res) => {
             for (const checkProduct of cart.items) {
                 if (checkProduct.productID.id === productID) {
                     productInCart = true
-                    return res.status(404).json({ existInCart: 'product already in cart' })
+                    if(checkProduct.productCount<10){
+                        checkProduct.productCount++
+                    }else{
+
+                        return res.status(404).json({ existInCart: 'product limit reached in cart' })
+                    }
                 }
             }
 
@@ -102,8 +108,8 @@ const addToCart = async (req, res) => {
                     productCount: 1
                 })
 
-                await cart.save()
             }
+            await cart.save()
         }
 
         return res.status(200).json({ success: "Product addded to cart" })
@@ -248,11 +254,49 @@ const decreaseQuantity = async (req, res) => {
     }
 }
 
+const validateCheckout=async(req,res)=>{
+    try {
+        const cart=await cartSchema.findOne({userID:req.session.user}).populate('items.productID')
+
+        for(const item of cart.items){
+            if(item.productCount>item.productID.productQuantity){
+                return res.status(404).json({error:"Product count unavailable",product:item.productID.productName})
+            }
+        }
+
+        let subTotal = 0
+        let total = 0
+
+        cart.items.forEach((product) => {
+            subTotal += product.productCount * (product.productID.productPrice)
+            total += (product.productID.productPrice * (1 - product.productID.discount / 100) * (product.productCount))
+        })
+
+        cart.payableAmount=total
+        cart.totalPrice=subTotal
+
+        if(cart.payableAmount<500){
+            cart.payableAmount+=50
+        }
+
+        cart.couponID="";
+        cart.couponDiscount=0
+        await cart.save()
+       
+
+        return res.status(200).json({message:"Proceed to checkout"})
+        
+    } catch (err) {
+        console.log("Error on checkout valiidation ",err);
+    }
+}
+
 module.exports = {
     viewCart,
     addToCart,
     deleteFromCart,
     increaseQuantity,
     decreaseQuantity,
+    validateCheckout
 
 }

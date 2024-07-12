@@ -12,7 +12,7 @@ const getOrders = async (req, res) => {
 
         // Counting the total number of orders
         const ordersCount = await orderSchema.countDocuments()
-        const orders = await orderSchema.find({ userID: req.session.user, orderStatus: { $in: ['Pending', 'Confirmed', 'Shipping', 'Delivered'] } }).populate('products.productID').sort({ createdAt: -1 }).skip(skip).limit(ordersPerPage)
+        const orders = await orderSchema.find({ userID: req.session.user, orderStatus: { $in: ['Pending', 'Confirmed', 'Shipping', 'Delivered','Pending-Returned'] } }).populate('products.productID').sort({ createdAt: -1 }).skip(skip).limit(ordersPerPage)
 
 
         res.render('user/orders',
@@ -65,7 +65,7 @@ const getCancelledOrders = async (req, res) => {
         const ordersPerPage = 8;
         const currentPage = parseInt(req.query.page) || 1
         const skip = (currentPage - 1) * ordersPerPage;
-
+        
         // Counting the total number of orders
         const ordersCount = await orderSchema.countDocuments()
         const orders = await orderSchema.find({ userID: req.session.user, orderStatus: { $in: ['Pending-Returned', 'Returned', 'Cancelled'] } }).populate('products.productID').sort({ updatedAt: -1 }).skip(skip).limit(ordersPerPage)
@@ -85,8 +85,35 @@ const getCancelledOrders = async (req, res) => {
 }
 
 
+const returnOrder = async (req, res) => {
+    try {
+        const orderid = req.params.orderid
+        const orderDetails = await orderSchema.findById(orderid).populate('products.productID')
+        if (!orderDetails) {
+            req.flash('errorMessage', 'Order id could/t find')
+            return res.redirect('/checkout')
+        }
+
+        // //when tje product is being canceled then returninh the quantiy back to stock of admin
+        // for (let product of orderDetails.products) {
+        //     product.productID.productQuantity += product.quantity
+        //     await product.productID.save()
+        // }
+        //saving the new startus in the db
+        orderDetails.orderStatus = 'Pending-Returned'
+        orderDetails.reasonForRejection = req.body.returningReason
+        await orderDetails.save()
+
+        req.flash('errorMessage', 'request for return send successfully')
+        res.redirect('/orders')
+
+    } catch (err) {
+        console.log(`Error on requesting return order post${err}`)
+    }
+}
 module.exports = {
     getOrders,
     cancelOrder,
-    getCancelledOrders
+    getCancelledOrders,
+    returnOrder
 }

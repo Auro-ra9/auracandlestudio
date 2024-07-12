@@ -159,6 +159,40 @@
         font-weight: 500;
         padding: 1px 22px;
     }
+
+    .coupon-card {
+        width: 300px;
+        padding: 10px;
+        border-radius: 20px;
+        background: orange;
+        border: none;
+        color: #fff;
+        height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+
+
+
+
+
+
+
+    /* .image {
+        position: absolute;
+        opacity: .1;
+        left: 0;
+        top: 0;
+    }
+
+    .image2 {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        opacity: .1;
+    } */
 </style>
 
 <%- include('navbar') %>
@@ -339,6 +373,30 @@
 
             <div class="col-xl-4">
                 <div class="mt-5 mt-lg-0">
+                    <div class="d-flex justify-content-center align-items-center ">
+                        <div class="d-flex card text-center coupon-card">
+
+                            <h1 id="couponDiscount"><span id="coupon-value">Coupon</span> OFF</h1>
+                            <h5 class="d-block">Minimum Purchase: <span id="minAmount"></span></h5>
+                            <form action="">
+                                <select class="form-select" id="couponSelect">
+                                    <option value="" selected disabled>Select a coupon</option>
+                                    <% coupons.forEach((coupon)=> { %>
+                                        <option value="<%= coupon._id %>">
+                                            <%= coupon.couponName %>
+                                        </option>
+                                        <% }) %>
+                                </select>
+                                <div class="pt-3">
+                                    <button type="button" class="btn btn-primary" onclick="applyCoupon()">Apply</button>
+                                    <button type="button" class="btn btn-danger"
+                                        onclick="removeCoupon()">Remove</button>
+                                </div>
+                            </form>
+                        </div>
+
+
+                    </div>
                     <div class="card border shadow-none">
                         <div class="card-header bg-transparent border-bottom py-3 px-4">
                             <h5 class="font-size-16 mb-0">Order Summary </h5>
@@ -349,29 +407,37 @@
                                 <table class="table mb-0">
                                     <tbody>
                                         <tr>
-                                            <td>Sub Total :</td>
-                                            <td class="text-end " id="sub-total-box">&#8377; <%= subTotal%>
+                                            <td>Sub Total </td>
+                                            <td>:</td>
+                                            <td class="text-end " id="sub-total-box">&#8377; <%=
+                                                    productInCart.totalPrice %>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>Discount : </td>
-                                            <td class="text-end " id="total-discount">
-                                                <%= (totalDiscount).toLocaleString() %>
+                                            <td>Discount </td>
+                                            <td>:</td>
+                                            <td class="text-end " id="total-discount">&#8377;
+                                                <%= (productInCart.totalPrice-productInCart.payableAmount).toLocaleString()
+                                                    %>
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>Shipping Charge :</td>
-                                            <td class="text-end">&#8377; 5</td>
+                                            <td>Coupon discount </td>
+                                            <td>:</td>
+                                            <td class="text-end" id="coupon-discount-box">&#8377; 00:00</td>
                                         </tr>
                                         <tr>
-                                            <td>Estimated Tax : </td>
-                                            <td class="text-end">&#8377; 18.20</td>
+                                            <td>Shipping Charge </td>
+                                            <td>:</td>
+                                            <td class="text-end">&#8377;<%= productInCart.payableAmount<550?"50":"00" %>
+                                            </td>
                                         </tr>
                                         <tr class="bg-light">
-                                            <th>Total :</th>
+                                            <th>Total </th>
+                                            <td>:</td>
                                             <td class="text-end">
                                                 <span class="fw-bold" id="total-box">
-                                                    &#8377;<%=(total).toLocaleString() %>
+                                                    &#8377;<%= productInCart.payableAmount.toLocaleString() %>
                                                 </span>
                                             </td>
                                         </tr>
@@ -392,7 +458,7 @@
                                 <thead>
                                     <tr>
                                         <th class="border-top-0" style="width: 110px;" scope="col">Product</th>
-                                        <th class="border-top-0" scope="col">Product Desc</th>
+                                        <th class="border-top-0" scope="col">Product Description</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -416,7 +482,7 @@
                                                     <i class="bx bxs-star-half text-warning"></i>
                                                 </p>
                                                 <p class="text-muted mb-0 mt-1">&#8377; <%=
-                                                        product.productID.productPrice.toLocaleString() %> x <%=
+                                                        Math.round((product.productID.productPrice)*(1-(product.productID.discount/100))).toLocaleString() %> x <%=
                                                             product.productCount%>
                                                 </p>
                                             </td>
@@ -562,7 +628,7 @@
     <!-- end of the edit modal -->
 
     <%- include('footer') %>
-
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
         <script>
 
@@ -766,9 +832,197 @@
                         console.log('error on placing order', err)
                     })
                 }
+                if (parseInt(selectedPaymentOption) === 1) {
+
+                    const URL = '/render-razorPay'
+                    fetch(URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                    }).then((res) => {
+                        return res.json()
+                    }).then((data) => {
+                        if (data.orderID) {
+                            var options = {
+                                "key": "rzp_test_fJQUYeRarb4G8S", 
+                                "amount": Math.round(data.totalAmount * 100), 
+                                "currency": "INR",
+                                "name": "Aura Candle Studio", 
+                                "description": "Thanks for shopping",
+                                "order_id": data.orderID,
+                                "handler": function (response) {
+                                    const URL = '/checkout-submit'
+                                    fetch(URL, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({ selectedAddressOption, selectedPaymentOption })
+                                    }).then((res) => {
+                                        if (!res.ok) {
+                                            swal.fire({
+                                                icon: 'error',
+                                                title: 'Order couldn\'t be placed',
+                                                text: 'order cannot be placed at this moment,please try again later',
+                                                showConfirmButton: false,
+                                                timer: 9000
+                                            })
+                                        }
+                                        return res.json()
+                                    }).then((data) => {
+                                        window.location.href = '/order-confirmed'
+                                    }).catch((err) => {
+                                        console.log('error on placing order', err)
+                                    })
+                                },
+                                "prefill": { 
+                                    "name": data.userName,
+                                    "email": data.email,
+                                    "contact": data.phone 
+                                },
+                                "notes": {
+                                    "address": "Razorpay Corporate Office"
+                                },
+                                "theme": {
+                                    "color": "#3399cc"
+                                }
+                            };
+                            const rzp1 = new Razorpay(options);
+                            rzp1.on('payment.failed', function (response) {
+                                const URL = '/payment-pending'
+                                    fetch(URL, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify({ selectedAddressOption, selectedPaymentOption })
+                                    }).then((res) => {
+                                        if (!res.ok) {
+                                            swal.fire({
+                                                icon: 'error',
+                                                title: 'Order couldn\'t be placed',
+                                                text: 'order cannot be placed at this moment,please try again later',
+                                                showConfirmButton: false,
+                                                timer: 9000
+                                            })
+                                        }
+                                        return res.json()
+                                    }).then((data) => {
+                                        window.location.href = '/order-pending'
+                                    }).catch((err) => {
+                                        console.log('error on cancel razorpay placing order', err)
+                                    })
+                            });
+                            rzp1.open();
+                        }
+
+                    }).catch((err) => {
+                        console.log('error on render razor pay instance', err)
+                    })
+
+
+                }
 
             }
 
+            //coupon
 
+            const couponSelect = document.getElementById('couponSelect')
+            couponSelect.addEventListener('change', (e) => {
+
+                const URL = "/get-coupon";
+                fetch(URL, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ coupon: e.target.value })
+                }).then((res) => {
+                    return res.json()
+                }).then((data) => {
+                    document.getElementById('coupon-value').innerHTML = "&#8377;" + data.discount
+                    document.getElementById('minAmount').innerHTML = data.minPurchase
+                }).catch((err) => {
+                    console.log(err)
+                })
+            })
+
+
+            function applyCoupon() {
+                if (!couponSelect.value) {
+                    Swal.fire({
+                        icon: "info",
+                        title: "Select a coupon"
+                    })
+
+                } else {
+                    const URL = "/apply-coupon";
+                    fetch(URL, {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ couponID: couponSelect.value })
+                    }).then((res) => {
+                        return res.json()
+                    }).then((data) => {
+
+                        if (data.minNotreached) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "min purchase not reached"
+                            })
+                        }
+
+                        if (data.success) {
+                            Swal.fire({
+                                icon: "success",
+                                title: "coupon applied",
+                                showConfirmButton: false,
+                                timer: 700
+                            }).then(() => {
+                                document.getElementById('total-box').innerHTML = "&#8377;" + data.payableAmount.toLocaleString()
+                                document.getElementById('coupon-discount-box').innerHTML = data.discount.toLocaleString()
+                            })
+
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                }
+            }
+
+
+            function removeCoupon() {
+
+                const URL = "/remove-coupon";
+                fetch(URL, {
+                    method: "PUT",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+
+                }).then((res) => {
+                    return res.json()
+                }).then((data) => {
+
+                    if (data.success) {
+                        Swal.fire({
+                            icon: "success",
+                            title: "coupon removed",
+                            showConfirmButton: false,
+                            timer: 700
+                        }).then(() => {
+                            document.getElementById('total-box').innerHTML = "&#8377;" + data.payableAmount.toLocaleString()
+                            document.getElementById('coupon-discount-box').innerHTML = "00:00"
+                        })
+
+                    }
+                }).catch((err) => {
+                    console.log(err)
+                })
+            }
+            
 
         </script>

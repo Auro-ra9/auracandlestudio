@@ -76,6 +76,59 @@ const editOrderPost = async (req, res) => {
         res.redirect('/admin/orders')
     }
 }
+// editing order status
+const approveReturn = async (req, res) => {
+    try {
+        const orderID = req.params.orderID
+        const currentOrder = await orderSchema.findById(orderID)
+
+        console.log(currentOrder);
+
+        if (!currentOrder) {
+            return res.status(404).json({message:'could not find the order status'})
+        }  
+        
+        if (currentOrder.orderStatus === 'Pending-Returned') {
+            const newStatus= 'Returned'
+            
+            // Update order status
+            await orderSchema.findByIdAndUpdate(orderID, { orderStatus: newStatus })
+            return res.status(200).json({message:'successfully updated the status'})
+            
+        }
+        
+    } catch (err) {
+        console.log(`Error on admin approve return order post: ${err}`);
+        return res.status(404).json({message:'error on approving the return request'})
+        
+    }
+}
+
+// rejecting return order 
+const rejectReturn = async (req, res) => {
+    try {
+        const orderID = req.params.orderID
+        const currentOrder = await orderSchema.findById(orderID)
+
+        if (!currentOrder.orderStatus) {
+            return res.status(404).json({message:'could not find the order status'})
+            
+        }  if (currentOrder.orderStatus === 'Pending-Returned') {
+            const newStatus= 'Delivered'
+            
+            // Update order status
+            await orderSchema.findByIdAndUpdate(orderID, { orderStatus: newStatus })
+            return res.status(200).json({message:'successfully updated the status'})
+
+            
+        }
+
+    } catch (err) {
+        console.log(`Error on admin reject return order post: ${err}`);
+        return res.status(404).json({message:'error on approving the return request'})
+
+    }
+}
 
 
 
@@ -84,5 +137,7 @@ module.exports = {
     orderList,
     editOrder,
     editOrderPost,
+    approveReturn,
+    rejectReturn,
 
 }

@@ -1,0 +1,56 @@
+<style>
+    .card-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.card {
+  width: 40rem; 
+  height: 30rem; 
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+  padding: 20px;
+}
+</style>
+
+
+<div class="card-container">
+    <div class="card">
+        <b class="text-success">Add New Coupon</b>
+      <div class="card-body">
+        <form action="/admin/add-coupons" method="POST">
+          <div class="mb-3">
+            <label for="couponName" class="form-label">Coupon Name</label>
+            <input type="text" class="form-control" id="couponName" name="couponName" required>
+          </div>
+          
+          <div class="mb-3">
+            <label for="discount" class="form-label">Discount </label>
+            <input type="number" class="form-control" id="discount" name="discount" required>
+          </div>
+          <div class="mb-3">
+            <label for="minAmount" class="form-label">Minimum Amount</label>
+            <input type="number" class="form-control" id="minAmount" name="minAmount" required>
+          </div>
+          <div class="mb-3">
+            <label for="expiryDate" class="form-label">Expiry Date</label>
+            <input type="date" class="form-control" id="expiryDate" name="expiryDate" required>
+          </div>
+          <button type="submit" class="btn btn-warning">Add Coupon</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    
+  </script>
