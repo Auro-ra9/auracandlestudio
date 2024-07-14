@@ -20,7 +20,8 @@ const schema = new mongoose.Schema({
 
     },
     discount: {
-        type: Number
+        type: Number,
+        default:0
     },
     image: {
         type: [String]

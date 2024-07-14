@@ -74,13 +74,12 @@
 
 <%- include('navbar') %>
     <div class="container-xl px-4 mt-4">
-
+        <h5 style="font-family: 'Montserrat', sans-serif; display: flex; justify-content: center;">Edit Order</h5>
         <div class="row">
             <div class="container pt-5 cart-container">
                 <div class="row">
                     <strong class="card-title">Order ID: <%= order._id %></strong>
                     <div class="col-xl-8">
-
                         <div class="card border shadow-none">
                             <div class="card-body">
                                 <p><strong style="color: #ff6200;">Order placed on:</strong>
@@ -106,16 +105,17 @@
                                                 </span></p>
                                             <p class="mb-0 mt-1">Price: <span class="fw-medium">&#8377;<%= product.price
                                                         %></span></p>
+                                            <p class="mb-0 mt-1">Discount: <span class="fw-medium">&#8377;<%=
+                                                        product.discount %></span></p>
                                         </div>
                                     </div>
-                                    <% }) %>
+                                    <% }); %>
                             </div>
                         </div>
                         <div class="card border shadow-none">
                             <div class="card-body">
                                 <div class="alignmnt" style="display: flex; justify-content: space-around;">
                                     <div class="one">
-
                                         <strong class="card-title">Payment method</strong>
                                         <p>
                                             <%= order.paymentMethod %>
@@ -133,7 +133,6 @@
                                         </p>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -141,44 +140,45 @@
                         <div class="card border shadow-none">
                             <div class="card-body">
                                 <strong class="card-title">Order Summary</strong>
-                                <p><strong>Coupon discount:</strong> <%= order.couponDiscount.toLocaleString()!=0?"&#8377; order.couponDiscount.toLocaleString()":"no coupon discount" %>
+                                <p><strong>Coupon discount:</strong>
+                                    <%= order.couponDiscount.toLocaleString() !=0 ? "&#8377;" +
+                                        order.couponDiscount.toLocaleString() : "no coupon discount" %>
                                 </p>
-                                <p><strong>Shipping charges:</strong> &#8377;<%= order.totalPrice <550?"50":"00" %>
+                                <p><strong>Shipping charges:</strong> &#8377;<%= order.totalPrice < 550 ? "50" : "00" %>
                                 </p>
                                 <p><strong>Total:</strong> &#8377;<%= order.totalPrice.toLocaleString() %>
                                 </p>
-                                
                             </div>
                         </div>
-
                         <div class="card border shadow-none">
-                            <div class="card-body ">
-                                <strong class="card-title ">Current status: <div class="badge">
+                            <div class="card-body">
+                                <strong class="card-title">Current status: <div class="badge">
                                         <%= order.orderStatus %>
                                     </div></strong>
                             </div>
-                            <div class="mb-3">
-                                <% if(order.orderStatus==='Pending-Returned' ){%>
-                                    <h6>Request for return:<p class="text-danger">
-                                            <%= order.reasonForRejection%>
-                                        </p>
-                                    </h6>
-                                    <%} %>
-                            </div>
+                            <% if (order.orderStatus==='Pending-Returned' || order.orderStatus==='Returned' ) { %>
+                                <div class="card-body">
+                                    <strong class="card-title">Request for return: <div class="text-danger">
+                                            <%= order.reasonForRejection %>
+                                        </div></strong>
+                                </div>
+                                <% } %>
                         </div>
-                        <% if(order.orderStatus==='Pending-Returned' ){%>
+
+                        <% if (order.orderStatus==='Pending-Returned' ) { %>
                             <div class="card border shadow-none">
-                                <div class="card-body ">
-                                    <strong class="card-title ">Edit Status: </strong>
+                                <div class="card-body">
+                                    <strong class="card-title">Edit Status:</strong>
                                 </div>
-                                <div class="mb-3">
-                                    <button class="btn btn-primary" onclick="approveReturn('<%= order._id%>')">Approve
+                                <div class="card-body">
+                                    <button class="btn btn-primary" onclick="approveReturn('<%= order._id %>')">Approve
                                         return</button>
-                                    <button class="btn btn-warning" onclick="rejectReturn('<%= order._id%>')">Reject
+                                    <button class="btn btn-warning" onclick="rejectReturn('<%= order._id %>')">Reject
                                         return</button>
                                 </div>
                             </div>
-                            <%}else{%>
+
+                            <% } else if (order.orderStatus !=='Returned' ) { %>
                                 <div class="card border shadow-none">
                                     <div class="card-body">
                                         <strong class="card-title">Edit Order Status</strong>
@@ -187,22 +187,21 @@
                                             <div class="mb-3">
                                                 <label for="orderStatus" class="form-label">Order Status:</label>
                                                 <select name="orderStatus" id="orderStatus" class="form-select">
-                                                    <option value="" selected disabled><%= order.orderStatus %></option>
-                                                    <option value="Confirmed" >Confirmed</option>
-                                                    <option value="Shipping" >Shipping</option>
+                                                    <option value="" selected disabled>
+                                                        <%= order.orderStatus %>
+                                                    </option>
+                                                    <option value="Confirmed">Confirmed</option>
+                                                    <option value="Shipping">Shipping</option>
                                                     <option value="Delivered">Delivered</option>
-                                                    
                                                 </select>
                                             </div>
                                             <input type="hidden" id="currentStatus" name="currentStatus"
                                                 value="<%= order.orderStatus %>">
-
                                             <button type="submit" class="btn btn-success">Change Status</button>
                                         </form>
-
                                     </div>
                                 </div>
-                                <%}%>
+                                <% } %>
                     </div>
                 </div>
             </div>
@@ -210,6 +209,36 @@
     </div>
 
     <%- include('footer') %>
+
+        <!-- The Modal for return-request -->
+        <div class="modal" id="return-request-modal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Reason for Requesting return order</h4>
+                    </div>
+                    <!-- Modal Body -->
+                    <div class="modal-body">
+                        <!-- cancellation modal of the user's return cancel copied -->
+                        <form id="returnRequestForm" method="post" action="/admin/reject-return">
+                            <div class="form-group">
+                                <textarea class="form-control" rows="8" id="rejectReason"
+                                    name="rejectingReturn"></textarea>
+                            </div>
+                            <div class="form-group mt-4 text-center">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-success">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end of the modal -->
+
+
+
         <script>
             //adding different colors according to the order statuys
 
@@ -290,60 +319,91 @@
                 }
             })
 
-            //return order approval
+            // Return order approval
             function approveReturn(orderID) {
-                const URL = `/admin/approve-return/${orderID}`;
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'Do you want to approve this request for return?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const URL = `/admin/approve-return/${orderID}`;
 
-                fetch(URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
+                        fetch(URL, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        })
+                            .then((res) => {
+                                if (res.ok) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Approved return',
+                                        showConfirmButton: false,
+                                        timer: 900
+                                    }).then(() => {
+                                        window.location.reload();
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Failed to approve return',
+                                        text: 'Please try again later',
+                                    });
+                                }
+                            })
+                            .catch((err) => {
+                                console.log('Error approving return order', err);
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Failed to approve return',
+                                    text: 'Please try again later',
+                                });
+                            });
                     }
-                })
-                    .then((res) => {
-                        if (res.ok) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Approved return',
-                                showConfirmButton: false,
-                                timer: 900
-                            }).then(() => {
-                                window.location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Failed to approve return',
-                                text: 'Please try again later',
-                            });
-                        }
-                    })
-                    .catch((err) => {
-                        console.log('Error approving return order', err);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Failed to approve return',
-                            text: 'Please try again later',
-                        });
-                    });
+                });
             }
 
-
+            // Function to  return request rejection
             function rejectReturn(orderID) {
-                const URL = `/admin/reject-return/${orderID}`
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'Do you want to reject this request for return?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        //  rejection reason modal
+                        var returnRequestModal = new bootstrap.Modal(document.getElementById('return-request-modal'));
+                        returnRequestModal.show();
+
+                        document.getElementById('returnRequestForm').action = `/admin/reject-return/${orderID}`;
+                    }
+                });
+            }
+
+            // Function to handle form submission for rejecting return
+            const rejectReturnForm = document.getElementById('returnRequestForm');
+            rejectReturnForm.addEventListener('submit',(e)=>{
+                // form valildation
+                const formData = new FormData(rejectReturnForm);
+                const URL = form.action;
 
                 fetch(URL, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    body: JSON.stringify(Object.fromEntries(formData))
                 }).then((res) => {
                     if (res.ok) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Rejected return',
                             showConfirmButton: false,
-                            timer: 900
+                            timer: 1500
                         }).then(() => {
                             window.location.reload()
                         });
@@ -356,9 +416,14 @@
                     }
                 }).catch((err) => {
                     console.log('Error rejecting return order', err)
-                });
-            }
-
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed to reject return',
+                        text: 'Please try again later',
+                    })
+                })
+            })
+            
 
 
         </script>

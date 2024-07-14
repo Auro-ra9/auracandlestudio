@@ -1,13 +1,14 @@
 third or 10th week
 user side
-Wallet (for canceled orders)
+/////Wallet (for canceled orders)
 
 Admin side : 
 Offer module(Product offer, Category offer, Referral offer).
 Sales
+coupon validation pending
 //Change order status(cancel,return etc.)
 
-remove add to cart option for the products which is zero stock
+/////remove add to cart option for the products which is zero stock
 /////Integrate online payment method(Razorpay or Paypal). 
 /////Coupon Management (Apply Coupon, Remove Coupon) 
 ////Coupon Management (Create, Delete)

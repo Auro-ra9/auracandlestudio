@@ -8,6 +8,7 @@ const productController = require('../controller/admincontroller/productControll
 const userController = require('../controller/admincontroller/userController')
 const orderController = require('../controller/admincontroller/orderController')
 const couponController = require('../controller/admincontroller/couponController')
+const offerController = require('../controller/admincontroller/offerController')
 const upload = require('../middleware/multer')
 const testController=require('../controller/admincontroller/testController')
 
@@ -18,6 +19,7 @@ admin.post('/login', loginController.loginPost)
 
 //dashboard
 admin.get('/dashboard', adminSession, dashboardController.dashboardRender)
+admin.post('/custom-sales-report', adminSession, dashboardController.customSalesReport)
 
 //customers 
 admin.get('/customers', adminSession, userController.userRender);
@@ -51,6 +53,7 @@ admin.post('/edit-order/:orderID', adminSession, orderController.editOrderPost)
 admin.put('/approve-return/:orderID', adminSession, orderController.approveReturn)
 admin.put('/reject-return/:orderID', adminSession, orderController.rejectReturn)
 
+
 //coupons
 admin.get('/coupons',adminSession, couponController.coupons)
 admin.get('/add-coupons',adminSession, couponController.addCouponsGet)
@@ -60,6 +63,15 @@ admin.put('/block-coupon/:couponID',adminSession, couponController.blockCoupon)
 admin.put('/unblock-coupon/:couponID',adminSession, couponController.unblockCoupon)
 admin.get('/edit-coupon/:couponID',adminSession, couponController.editCouponGet)
 admin.post('/edit-coupon/:couponID',adminSession, couponController.editCoupon)
+//offers
+admin.get('/offers',adminSession, offerController.offers)
+admin.get('/add-offers',adminSession, offerController.addOffersGet)
+admin.post('/add-offers',adminSession, offerController.addOffersPost)
+admin.delete('/delete-offer/:offerID',adminSession, offerController.deleteOffer)
+admin.put('/block-offer/:offerID',adminSession, offerController.blockOffer)
+admin.put('/unblock-offer/:offerID',adminSession, offerController.unblockOffer)
+admin.get('/edit-offer/:offerID',adminSession, offerController.editOfferGet)
+admin.post('/edit-offer/:offerID',adminSession, offerController.editOffer)
 
 
 

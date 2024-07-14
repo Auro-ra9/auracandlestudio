@@ -56,7 +56,7 @@ const addProductPost = async (req, res) => {
         let actualCategory = req.body.product_categorie.trim()
         let actualQuantity = req.body.available_quantity
         let actualdescription = req.body.product_description.trim()
-        let actualDiscount = req.body.percentage_discount
+        // let actualDiscount = req.body.percentage_discount
 
         const imageArray = []
         console.log(req.files);
@@ -66,7 +66,7 @@ const addProductPost = async (req, res) => {
 
 
         //checkin the fields
-        if (!actualProduct && !actualPrice && !actualBrand && !actualCategory && !actualQuantity && !actualdescription && !actualDiscount) {
+        if (!actualProduct && !actualPrice && !actualBrand && !actualCategory && !actualQuantity && !actualdescription ) {
             req.flash('errorMessage', 'Product not found')
             return res.redirect('/admin/products')
         }
@@ -87,7 +87,7 @@ const addProductPost = async (req, res) => {
             category: actualCategory,
             productQuantity: actualQuantity,
             productDescription: actualdescription,
-            discount: actualDiscount,
+         // discount: actualDiscount,
             image: imageArray
         })
 
@@ -187,7 +187,7 @@ const getEditProduct = async (req, res) => {
 
 const editProductPost = async (req, res) => {
     try {
-        const { productPrice, productDescription, productQuantity, productName,productBrand,productDiscount } = req.body
+        const { productPrice, productDescription, productQuantity, productName,productBrand } = req.body
 
 
         // get the id of the product
@@ -219,7 +219,7 @@ const editProductPost = async (req, res) => {
                 productPrice: productPrice, 
                 productDescription: productDescription, 
                 productQuantity: productQuantity,
-                discount:productDiscount
+                // discount:productDiscount
             })
             .then((elem) => {
                 req.flash('errorMessage', 'Product Updated successfully');

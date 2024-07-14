@@ -72,6 +72,10 @@ const addToCart = async (req, res) => {
         if (!productDetails) {
             return res.status(404).json({ message: 'product could not find' })
         }
+        if (productDetails.productQuantity === 0) {
+            return res.status(404).json({ message: 'Product is out of stock' });
+        }
+
         //checking whether the user already have the cart, if it yes then adding to the existing or creating new
 
         const cart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID')
@@ -119,6 +123,8 @@ const addToCart = async (req, res) => {
     }
 }
 
+
+//delete cart
 const deleteFromCart = async (req, res) => {
     try {
         const productID = req.params.productID

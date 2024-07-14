@@ -2,6 +2,7 @@ const userSchema = require('../../model/userSchema');
 const productSchema = require('../../model/productSchema');
 const cartSchema = require('../../model/cartSchema');
 const orderSchema = require('../../model/orderSchema');
+const walletSchema = require('../../model/walletSchema');
 
 const getOrders = async (req, res) => {
     try {
@@ -44,11 +45,31 @@ const cancelOrder = async (req, res) => {
             product.productID.productQuantity += product.quantity
             await product.productID.save()
         }
+
+    
         //saving the new startus in the db
         orderDetails.orderStatus = 'Cancelled'
         orderDetails.isCancelled = true
         orderDetails.reasonForCancel = req.body.cancelledReason
         await orderDetails.save()
+
+        //wallet finding
+        const wallet= await walletSchema.findOne({userID:req.session.user}) 
+
+
+        if(orderDetails.paymentMethod==='Razor pay' || orderDetails.paymentMethod==='Wallet'){
+            if(wallet){
+                wallet.balance+= orderDetails.totalPrice
+                await wallet.save()
+            }else{
+                const newWallet= new walletSchema({
+                    userID:req.session.user,
+                    balance:orderDetails.totalPrice,
+                })
+                await newWallet.save()
+            }
+        }
+
 
         req.flash('errorMessage', 'product canceled successfully')
         res.redirect('/cancelled-orders')
@@ -93,15 +114,9 @@ const returnOrder = async (req, res) => {
             req.flash('errorMessage', 'Order id could/t find')
             return res.redirect('/checkout')
         }
-
-        // //when tje product is being canceled then returninh the quantiy back to stock of admin
-        // for (let product of orderDetails.products) {
-        //     product.productID.productQuantity += product.quantity
-        //     await product.productID.save()
-        // }
         //saving the new startus in the db
         orderDetails.orderStatus = 'Pending-Returned'
-        orderDetails.reasonForRejection = req.body.returningReason
+        orderDetails.returnRequest = req.body.returningReason
         await orderDetails.save()
 
         req.flash('errorMessage', 'request for return send successfully')
@@ -111,9 +126,12 @@ const returnOrder = async (req, res) => {
         console.log(`Error on requesting return order post${err}`)
     }
 }
+
+
+
 module.exports = {
     getOrders,
     cancelOrder,
     getCancelledOrders,
-    returnOrder
+    returnOrder,
 }

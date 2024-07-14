@@ -44,18 +44,18 @@
                 </span>
               </div>
               <!-- <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span> -->
-              <% if (productDetail.productQuantity > 0) { %>
-                <% if (productDetail.productQuantity <= 10) { %>
-                    <b class="text-danger ms-2">Only <%= productDetail.productQuantity %> left </b>
-                    <br>
-                    <b>Purchase your favourite product fast</b>
-                <% } else { %>
+              <% if (productDetail.productQuantity> 0) { %>
+                <% if (productDetail.productQuantity <=10) { %>
+                  <b class="text-danger ms-2">Only <%= productDetail.productQuantity %> left </b>
+                  <br>
+                  <b>Purchase your favourite product fast</b>
+                  <% } else { %>
                     <b class="text-success ms-2">In stock</b>
-                <% } %>
-            <% } else { %>
-                <b class="text-danger ms-2">Out of stock</b>
-            <% } %>
-            
+                    <% } %>
+                      <% } else { %>
+                        <b class="text-danger ms-2">Out of stock</b>
+                        <% } %>
+
             </div>
             <% if(productDetail.discount>0){ %>
               <div class="mb-3">
@@ -70,9 +70,9 @@
               </div>
               <% }else{ %>
                 <div class="mb-3">
-                  <span class="h5">&#8377;<s>
+                  <span class="h5">&#8377;
                       <%= productDetail.productPrice.toLocaleString() %>
-                    </s></span>
+                    </span>
                 </div>
                 <% } %>
 
@@ -96,8 +96,8 @@
                   <button class="btn btn-secondary shadow-0" onclick="addToCart('<%=productDetail.id%>')"> <i
                       class="me-1 fa fa-shopping-basket"></i> Add to cart
                   </button>
-                  <button class="btn   py-2 icon-hover px-3"
-                    onclick="addToWishlist('<%=productDetail.id%>')"> <i class="me-1 fa fa-heart fa-lg"></i>
+                  <button class="btn   py-2 icon-hover px-3" onclick="addToWishlist('<%=productDetail.id%>')"> <i
+                      class="me-1 fa fa-heart fa-lg"></i>
                   </button>
           </div>
         </main>
@@ -140,34 +140,38 @@
         //add to cart button
 
         function addToCart(productID) {
-          console.log(productID);
+                console.log(productID);
 
-          const URL = `/addToCart/${productID}`
-          fetch(URL, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }).then((res) => {
-            return res.json()
-          }).then((data) => {
-            if (data.existInCart) {
-              iziToast.warning({
-                message: data.existInCart
-              });
-            }
-            if (data.success) {
-              iziToast.success({
-                message: 'Added'
-              })
-            }
-          }).catch((err) => {
-            window.location.href = '/login'
-            console.log(`error while adding to cart${err}`)
+                const URL = `/addToCart/${productID}`
+                fetch(URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }).then((res) => {
+                    return res.json()
+                }).then((data) => {
+                    if (data.existInCart) {
+                        iziToast.warning({
+                            message: 'Product alreday in cart'
+                        });
+                    }
+                    if (data.message) {
+                        iziToast.error({
+                            message: 'Out of stock, we will notify when it is available'
+                        });
+                    }
+                    if (data.success) {
+                        iziToast.success({
+                            message: 'Added'
+                        })
+                    }
+                }).catch((err) => {
+                    window.location.href = '/login'
+                    console.log(`error while adding to cart${err}`)
 
-          })
-        }
-
+                })
+            }
         //add to wishlist button
 
         function addToWishlist(productID) {

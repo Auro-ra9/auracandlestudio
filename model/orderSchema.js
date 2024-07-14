@@ -67,6 +67,9 @@ const schema = new mongoose.Schema({
     reasonForCancel: {
         type: String
     },
+    returnRequest: {
+        type: String
+    },
     reasonForRejection: {
         type: String
     }

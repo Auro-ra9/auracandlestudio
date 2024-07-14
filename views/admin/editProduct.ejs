@@ -73,7 +73,7 @@
 
     <div class="container mt-5">
         <div class="add-product-container p-4">
-            <legend class="text-center mb-4 font-weight-bold">Edit PRODUCT</legend>
+            <legend style="font-family: 'Montserrat', sans-serif; display: flex; justify-content: center;">Edit PRODUCT</legend>
             <form action="/admin/edit-product/<%= product.id %>" method="post" enctype="multipart/form-data"
                 id="add-product-form">
                 <fieldset>
@@ -90,7 +90,7 @@
                     <div class="form-group row mb-3">
                         <label class="col-md-4 col-form-label text-md-right" for="productPrice">PRODUCT PRICE</label>
                         <div class="col-md-6">
-                            <input type="number" name="productPrice" class="form-control"
+                            <input type="text" name="productPrice" class="form-control"
                                 value="<%= product.productPrice %>" required>
                         </div>
                     </div>
@@ -100,7 +100,7 @@
                         <label class="col-md-4 col-form-label text-md-right" for="productQuantity">Product
                             Quantity</label>
                         <div class="col-md-6">
-                            <input type="number" name="productQuantity" class="form-control"
+                            <input type="text" name="productQuantity" class="form-control"
                                 value="<%= product.productQuantity %>" required>
                         </div>
                     </div>
@@ -136,19 +136,19 @@
                         <label class="col-md-4 col-form-label text-md-right" for="productDescription">Product
                             Description</label>
                         <div class="col-md-6">
-                            <textarea class="form-control" name="productDescription" id="product-description" rows="5"
+                            <textarea class="form-control" name="productDescription" id="product-description" rows="8"
                                 required><%= product.productDescription %></textarea>
                         </div>
                     </div>
 
                     <!-- Discount -->
-                    <div class="form-group row mb-3">
+                    <!-- <div class="form-group row mb-3">
                         <label class="col-md-4 col-form-label text-md-right" for="productDiscount">DISCOUNT</label>
                         <div class="col-md-6">
-                            <input type="number" name="productDiscount" class="form-control"
+                            <input type="text" name="productDiscount" class="form-control"
                                 value="<%= product.discount %>" required>
                         </div>
-                    </div>
+                    </div> -->
 
                     <!-- Images -->
                     <div class="text-center mt-4">
@@ -255,6 +255,10 @@
                         errorMessage = 'Product description must be between 10 to 80 words';
                         isValid = false;
                     }
+                    // if (isNaN(productDiscount.value) || parseInt(productDiscount.value) < 0 || parseInt(productDiscount.value) > 99) {
+                    //     errorMessage = 'Product discout should be a number and it must be greater than or equal to zero and less than 100';
+                    //     isValid = false;
+                    // }
 
                     if (!isValid) {
                         Swal.fire({

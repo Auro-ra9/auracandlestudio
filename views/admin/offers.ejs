@@ -18,41 +18,37 @@
 <%- include('navbar') %>
 
     <div class="container my-5" style="min-height: 100vh;">
-        <h5 style="font-family: 'Montserrat', sans-serif; display: flex; justify-content: center;">Available coupons</h5>
-        <a href="/admin/add-coupons" class="btn btn-secondary">Add Coupon</a>
+        <h5 style="font-family: 'Montserrat', sans-serif; display: flex; justify-content: center;">Available offers</h5>
+        <a href="/admin/add-offers" class="btn btn-secondary" style="font-family: 'Montserrat', sans-serif;">Add offer</a>
 
         <table class="table table-hover mt-3">
             <thead class="thead-dark">
                 <tr>
                     <th scope="col">Sl.no:</th>
-                    <th scope="col">Coupon</th>
+                    <th scope="col">offer added on</th>
                     <th scope="col">Discount</th>
-                    <th scope="col">Minimum Amount</th>
-                    <th scope="col">Expiry date</th>
+                    <th scope="col">Type</th>
                     <th scope="col">Status</th>
                     <th scope="col" class="text-center">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <% coupons.forEach((coupon,index)=> { %>
+                <% offers.forEach((offer,index)=> { %>
                     <tr>
                         <th scope="row">
                             <%= (currentPage - 1) * 8 + index + 1 %>
                         </th>
-                        <td class="product-name">
-                            <%= coupon.couponName %>
+                        <td>
+                             <%= offer.createdAt.toLocaleDateString() %> 
                         </td>
                         <td>
-                             <%= coupon.discount %> 
+                             <%= offer.discountPercent %> 
                         </td>
                         <td>
-                            <%= coupon.minAmount %>
+                            <%= offer.offerType %>
                         </td>
                         <td>
-                            Expires on: <%= new Date(coupon.expiryDate).toLocaleDateString() %>
-                        </td>
-                        <td>
-                            <% if(coupon.isActive){ %>
+                            <% if(offer.isActive){ %>
                                 <span class="badge bg-success">Active</span>
                                 <% }else{ %>
                                     <span class="badge bg-danger">Inactive</span>
@@ -60,18 +56,18 @@
                           </td>
                         <td class="text-center">
                             <div class="d-flex justify-content-center align-items-center">
-                                <a href="/admin/edit-coupon/<%= coupon._id %>" class="text-dark me-2">
+                                <a href="/admin/edit-offer/<%= offer._id %>" class="text-dark me-2">
                                     <i class="fas fa-edit"></i>
                                 </a>
-                                <% if(coupon.isActive){ %>
-                                    <button class="btn text-danger me-2" onclick="blockCoupon('<%= coupon._id %>')"><i
+                                <% if(offer.isActive){ %>
+                                    <button class="btn text-danger me-2" onclick="blockOffer('<%= offer._id %>')"><i
                                             class="fa-solid fa-lock"></i></button>
                                     <% } else { %>
                                         <button class="btn text-success me-2"
-                                            onclick="unblockCoupon('<%= coupon._id %>')"><i
+                                            onclick="unblockOffer('<%= offer._id %>')"><i
                                                 class="fa-solid fa-lock-open"></i></button>
                                         <% } %>
-                                        <button class="btn text-primary" onclick="deleteCoupon('<%= coupon._id %>')">
+                                        <button class="btn text-primary" onclick="deleteOffer('<%= offer._id %>')">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
                             </div>
@@ -112,16 +108,16 @@
     <%- include('footer') %>
 
         <script>
-            //Delete coupon
-            function deleteCoupon(couponID) {
+            //Delete offer
+            function deleteOffer(offerID) {
         Swal.fire({
             icon: "question",
-            title: "Delete coupon",
-            text: "Are you sure you want to remove the coupon?",
+            title: "Delete offer",
+            text: "Are you sure you want to remove the offer?",
             showCancelButton: true
         }).then((result) => {
             if (result.isConfirmed) {
-                const URL = `/admin/delete-coupon/${couponID}`
+                const URL = `/admin/delete-offer/${offerID}`
                 fetch(URL, {
                     method: 'DELETE',
                     headers: {
@@ -131,7 +127,7 @@
                     if (res.ok) {
                         Swal.fire({
                             icon: 'success',
-                            title: "Coupon deleted",
+                            title: "offer deleted",
                             showConfirmButton: false,
                             timer: 900
                         }).then(() => {
@@ -141,30 +137,30 @@
                         Swal.fire({
                             icon: 'error',
                             title: "Error",
-                            text: "Failed to delete the coupon"
+                            text: "Failed to delete the offer"
                         })
                     }
                 }).catch((err) => {
-                    console.log("Error on coupon deleting", err)
+                    console.log("Error on offer deleting", err)
                     Swal.fire({
                         icon: 'error',
                         title: "Error",
-                        text: "Failed to delete the coupon"
+                        text: "Failed to delete the offer"
                     })
                 })
             }
         })
     }
-            //block coupon
-            function blockCoupon(couponID) {
+            //block offer
+            function blockOffer(offerID) {
                 Swal.fire({
                     icon: 'question',
-                    title: "block coupon",
-                    text: "Are you sure, you want to block the coupon?",
+                    title: "block offer",
+                    text: "Are you sure, you want to block the offer?",
                     showCancelButton: true,
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        const URL = `/admin/block-coupon/${couponID}`
+                        const URL = `/admin/block-offer/${offerID}`
                         fetch(URL, {
                             method: 'PUT',
                             headers: {
@@ -174,7 +170,7 @@
                             if (res.ok) {
                                 Swal.fire({
                                     icon: 'success',
-                                    title: 'coupon Blocked ',
+                                    title: 'offer Blocked ',
                                     showConfirmButton: false,
                                     timer: 900
                                 }).then(() => {
@@ -182,23 +178,23 @@
                                 })
                             }
                         }).catch((err) => {
-                            console.log(`error on coupon blocking ${err}`);
+                            console.log(`error on offer blocking ${err}`);
                         })
                     }
                 })
             }
 
 
-            //unblock coupon
-            function unblockCoupon(couponID) {
+            //unblock offer
+            function unblockOffer(offerID) {
                 Swal.fire({
                     icon: "question",
-                    title: "Unblock coupon",
-                    text: "Are you sure want to unblock the coupon?",
+                    title: "Unblock offer",
+                    text: "Are you sure want to unblock the offer?",
                     showCancelButton: true
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        const URL = `/admin/unblock-coupon/${couponID}`
+                        const URL = `/admin/unblock-offer/${offerID}`
                         fetch(URL, {
                             method: 'PUT',
                             headers: {
@@ -208,7 +204,7 @@
                             if (res.ok) {
                                 Swal.fire({
                                     icon: 'success',
-                                    title: "coupon unblocked",
+                                    title: "offer unblocked",
                                     showConfirmButton: false,
                                     timer: 900
                                 }).then(() => {
@@ -216,7 +212,7 @@
                                 })
                             }
                         }).catch((err) => {
-                            console.log("error on coupon unblocking", err);
+                            console.log("error on offer unblocking", err);
                         })
                     }
                 })

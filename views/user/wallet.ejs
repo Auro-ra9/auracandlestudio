@@ -1,0 +1,212 @@
+<style>
+  .img-account-profile {
+    height: 10rem;
+  }
+
+  .rounded-circle {
+    border-radius: 50% !important;
+  }
+
+  .card {
+    box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+  }
+
+  .card .card-header {
+    font-weight: 500;
+  }
+
+  .card-header:first-child {
+    border-radius: 0.35rem 0.35rem 0 0;
+  }
+
+  .card-header {
+    padding: 1rem 1.35rem;
+    margin-bottom: 0;
+    background-color: rgba(33, 40, 50, 0.03);
+    border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+  }
+
+  .form-control,
+  .dataTable-input {
+    display: block;
+    width: 100%;
+    padding: 0.875rem 1.125rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1;
+    color: #69707a;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #c5ccd6;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0.35rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  }
+
+  .nav-borders .nav-link.active {
+    color: #0061f2;
+    border-bottom-color: #0061f2;
+  }
+
+  .nav-borders .nav-link {
+    color: #69707a;
+    border-bottom-width: 0.125rem;
+    border-bottom-style: solid;
+    border-bottom-color: transparent;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
+  .btn-danger-soft {
+    color: #000;
+    background-color: #f1e0e3;
+    border-color: #f1e0e3;
+  }
+
+  .coupon-card {
+    width: 330px;
+    padding: 10px;
+    /* border-radius: 20px; */
+    background: #f67134;
+    border: none;
+    color: #fff;
+    height: 170px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+
+
+<%- include('navbar') %>
+  <div class="container-xl px-4 mt-4">
+
+    <!-- Account page navigation-->
+    <nav class="nav nav-borders">
+      <a class="nav-link  ms-0" href="/profile" target="__blank">Profile</a>
+      <a class="nav-link " href="/security" target="__blank">Security</a>
+      <a class="nav-link " href="/orders" target="__blank">Orders</a>
+      <a class="nav-link  " href="/cancelled-orders" target="__blank">Cancelled Orders</a>
+      <a class="nav-link active  " href="/wallet" target="__blank">Wallet</a>
+    </nav>
+    <hr class="mt-0 mb-4">
+    <div class="row">
+      <div class="col-xl-4">
+        <div class="card-body">
+          <div class="d-flex card text-center coupon-card">
+            <h4 id="couponDiscount"><span id="coupon-value">&#8377; <%= balance.toLocaleString() %></span><br> Balance
+              in your wallet</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-12">
+        <!-- Wallet details-->
+        <div class="card mt-4 mb-4">
+          <div class="card-header">Refund details</div>
+          <div class="card-body">
+            <table class="table table-hover mt-3">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">Sl.no:</th>
+                  <th scope="col">Order ID</th>
+                  <th scope="col">Order Date</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Payment method</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <% orders.forEach((order,index)=>{ %>
+                  <tr>
+                    <th scope="row">
+                      <%= (currentPage - 1) * 8 + index + 1 %>
+                    </th>
+
+                    </th>
+                    <td>
+                      <%= order._id %>
+                    </td>
+                    <td>
+                      <%= order.createdAt.toDateString() %>
+                    </td>
+                    <td>
+                      <b class="mb-0 mt-2 badge">
+                        <%= order.orderStatus %>
+                      </b>
+                    </td>
+                    <td>
+                     <b> <%= order.paymentMethod%></b>
+
+                    </td>
+                    <td>
+                      &#8377;<%= order.totalPrice.toLocaleString() %>
+                    </td>
+                  </tr>
+                  <% }) %>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </div>
+
+
+    </div>
+  </div>
+  <!-- Pagination controls -->
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      <% if (currentPage> 1) { %>
+        <li class="page-item">
+          <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <% } %>
+          <% for (let i=1; i <=totalPages; i++) { %>
+            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+              <a class="page-link" href="?page=<%= i %>">
+                <%= i %>
+              </a>
+            </li>
+            <% } %>
+              <% if (currentPage < totalPages) { %>
+                <li class="page-item">
+                  <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+                <% } %>
+    </ul>
+  </nav>
+
+  </div>
+
+  <%- include('footer') %>
+
+
+    <script>
+
+      //adding different colors according to the order statuys
+
+      const paymentBadge = document.querySelectorAll('.badge')
+
+      paymentBadge.forEach(element => {
+
+        if (element.innerHTML.trim() === 'Returned') {
+          element.classList.add('bg-warning', 'text-dark')
+        }
+        if (element.innerHTML.trim() === 'Cancelled') {
+          element.classList.add('bg-danger', 'text-white')
+        }
+       
+      })
+    </script>

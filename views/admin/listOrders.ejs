@@ -18,7 +18,7 @@
 <%- include('navbar') %>
 
     <div class="container my-5" style="min-height: 100vh;">
-        <h3 style="display: flex; justify-content: center; color: green; font-weight: bold;">Orders</h3>
+        <h3 style="font-family: 'Montserrat', sans-serif; display: flex; justify-content: center;">Orders</h3>
         <div class="table-responsive">
             <table class="table table-hover mt-3">
                 <thead class="thead-dark">
@@ -104,7 +104,7 @@
                     element.classList.add('bg-primary', 'text-white')
                 }
                 if (element.innerHTML.trim() === 'Confirmed') {
-                    element.classList.add('bg-success', 'text-white')
+                    element.classList.add('bg-primary', 'text-white')
                 }
                 if (element.innerHTML.trim() === 'Shipping') {
                     element.classList.add('bg-info', 'text-white')

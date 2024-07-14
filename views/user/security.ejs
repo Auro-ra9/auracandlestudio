@@ -80,6 +80,7 @@
             <a class="nav-link active" href="/security" target="__blank">Security</a>
             <a class="nav-link " href="/orders" target="__blank">Orders</a>
             <a class="nav-link  " href="/cancelled-orders" target="__blank">Cancelled Orders</a>
+            <a class="nav-link   " href="/wallet" target="__blank">Wallet</a>
 
         </nav>
         <hr class="mt-0 mb-4">
@@ -102,8 +103,24 @@
                                 <input class="form-control" id="newPassword" type="password"
                                     placeholder="Enter new password" name="newPassword">
                                 <label for="password" class="text-danger password-validate"></label>
+                                <p type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample"
+                                    aria-expanded="false" aria-controls="collapseExample">
+                                    <i class="fa-solid fa-caret-down"></i> Password Criteria
+                                </p>
+                                <div class="collapse" id="collapseExample">
+                                    <ul>
+                                        <li>Mix of Numbers letters and symbols</li>
+                                        <li>At least one UpperCase letter</li>
+                                        <li>At least one LowerCase letter</li>
+                                        <li>At least one Special characer or symbol</li>
+                                        <li>At least one Number</li>
+                                        <li>No spaces</li>
+                                    </ul>
+                                </div>
 
                             </div>
+
+
                             <!-- Form Group (confirm password)-->
                             <div class="mb-3">
                                 <label class="small mb-1" for="confirmPassword">Confirm Password</label>

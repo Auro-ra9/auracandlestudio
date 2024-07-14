@@ -71,7 +71,7 @@
 
     <div class="container mt-5">
         <!-- Form Name -->
-        <legend class="text-center mb-4 font-weight-bold">Add PRODUCTS</legend>
+        <legend class="text-center mb-4 font-weight-bold" style="font-family: 'Montserrat', sans-serif;">Add products</legend>
         <form id="form-add-product" class="form-horizontal mb-5 p-4 border rounded" action="/admin/addProduct"
             method="post" enctype="multipart/form-data">
             <fieldset>
@@ -139,13 +139,13 @@
                 </div>
 
                 <!-- Discount -->
-                <div class="form-group row mb-3">
+                <!-- <div class="form-group row mb-3">
                     <label class="col-md-4 col-form-label text-md-right" for="percentage_discount">DISCOUNT</label>
                     <div class="col-md-6">
                         <input id="percentage_discount" name="percentage_discount" class="form-control" type="text">
                         <label class="col-md-12 text-danger validate-add-product" for="percentage_discount"></label>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Image Upload -->
                 <div class="text-center mt-4">
@@ -240,10 +240,7 @@
                     validationMessages[5].innerHTML = 'Description cannot be empty and must be at least 6 characters';
                     validate = false;
                 }
-                if (discount.value > 1000000 || isNaN(discount.value) || discount.value <= 0) {
-                    validationMessages[6].innerHTML = 'Fill discount field';
-                    validate = false;
-                }
+              
                 if (!productImage.files || productImage.files.length === 0) {
                     validationMessages[7].innerHTML = 'Please select an image';
                     validate = false;

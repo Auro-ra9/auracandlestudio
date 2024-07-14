@@ -1,0 +1,141 @@
+<style>
+  .card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .card {
+    width: 40rem;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .card-body {
+    padding: 20px;
+  }
+</style>
+
+
+<div class="card-container">
+  <div class="card">
+    <b class="text-success" style="font-family: 'Montserrat', sans-serif;">Add New Offer</b>
+    <div class="card-body">
+      <form action="/admin/add-offers" method="POST" id="add-offer-form">
+        <div class="mb-3">
+          <label for="select-offer-type" class="form-label"> Offer Type</label>
+          <select name="offerType" id="select-offer-type" class="form-select">
+            <option value="" selected disabled>Select Offer Type</option>
+            <option value="category">Category</option>
+            <option value="product">Product</option>
+          </select>
+          <label for="offer-target" class="validateOffer text-danger"></label>
+        </div>
+        <div class="mb-3" id="category-offer-div" style="display: none;">
+          <label for="select-category" class="form-label">Category</label>
+          <select name="referenceId" id="select-category" class="form-select">
+            <option value="category"> Select Category</option>
+            <!-- Add category options here -->
+            <% category.forEach((category)=> { %>
+              <option value="<%= category._id %>">
+                <%= category.categoryName %>
+              </option>
+              <% }) %>
+
+          </select>
+          <label for="category-offer" class="validateOffer text-danger"></label>
+        </div>
+
+        <div class="mb-3" id="product-offer-div" style="display: none;">
+          <label for="select-product" class="form-label">Product</label>
+          <select name="referenceId" id="select-product" class="form-select">
+            <option value="product"> Select product</option>
+            <!-- Add product options here -->
+            <% product.forEach((product)=> { %>
+              <option value="<%= product._id %>">
+                <%= product.productName %>
+              </option>
+              <% }) %>
+          </select>
+          <label for="product-offer" class="validateOffer text-danger"></label>
+        </div>
+        <div class="mb-3">
+          <label for="discount" class="form-label">Discount</label>
+          <input type="text" class="form-control" id="discount" name="discountPercent">
+          <label for="discountAmount" class="validateOffer text-danger"></label>
+        </div>
+        <button type="submit" class="btn btn-warning">Add Offer</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  const offerTarget = document.getElementById('select-offer-type')
+  const productDiv = document.getElementById('product-offer-div')
+  const categoryDiv = document.getElementById('category-offer-div')
+
+  offerTarget.addEventListener('change', (e) => {
+    if (e.target.value === "product") {
+      productDiv.style.display = "block";
+      categoryDiv.style.display = "none";
+    } else if (e.target.value === "category") {
+      categoryDiv.style.display = "block";
+      productDiv.style.display = "none";
+    }
+  })
+
+  const categoryOffer = document.getElementById("select-category")
+  const productOffer = document.getElementById("select-product")
+  const discountAmount = document.getElementById("discount")
+
+
+  // add offer validation
+  const offerAddForm = document.getElementById("add-offer-form");
+  offerAddForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    let validateOffer = true;
+    document.getElementsByClassName("validateOffer")[0].innerHTML = "";
+    document.getElementsByClassName("validateOffer")[1].innerHTML = "";
+    document.getElementsByClassName("validateOffer")[2].innerHTML = "";
+    document.getElementsByClassName("validateOffer")[3].innerHTML = "";
+
+    if (!offerTarget.value) {
+      document.getElementsByClassName("validateOffer")[0].innerHTML =
+        "Select a offer type";
+      validateOffer = false;
+    }
+
+    if (offerTarget.value === "CATEGORY" && !categoryOffer.value) {
+      document.getElementsByClassName("validateOffer")[1].innerHTML =
+        "Select a category";
+      validateOffer = false;
+    }
+
+    if (offerTarget.value === "PRODUCT" && !productOffer.value) {
+      document.getElementsByClassName("validateOffer")[2].innerHTML =
+        "Select a product";
+      validateOffer = false;
+    }
+
+    if (
+      discountAmount.value.trim() === 0 || isNaN(discountAmount.value) || discountAmount.value >= 100 || discountAmount.value < 1
+    ) {
+      document.getElementsByClassName("validateOffer")[3].innerHTML =
+        "Enter a valid discount between(1- 99)";
+      validateOffer = false;
+    }
+
+
+    if (validateOffer) {
+      offerAddForm.submit();
+    }
+  });
+
+
+</script>

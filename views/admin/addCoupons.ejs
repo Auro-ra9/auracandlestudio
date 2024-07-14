@@ -1,56 +1,120 @@
 <style>
-    .card-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-}
+  .card-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
 
-.card {
-  width: 40rem; 
-  height: 30rem; 
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
+  .card {
+    width: 40rem;
+    height: 30rem;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
 
-.card-body {
-  padding: 20px;
-}
+  .card-body {
+    padding: 20px;
+  }
 </style>
 
 
 <div class="card-container">
-    <div class="card">
-        <b class="text-success">Add New Coupon</b>
-      <div class="card-body">
-        <form action="/admin/add-coupons" method="POST">
-          <div class="mb-3">
-            <label for="couponName" class="form-label">Coupon Name</label>
-            <input type="text" class="form-control" id="couponName" name="couponName" required>
-          </div>
-          
-          <div class="mb-3">
-            <label for="discount" class="form-label">Discount </label>
-            <input type="number" class="form-control" id="discount" name="discount" required>
-          </div>
-          <div class="mb-3">
-            <label for="minAmount" class="form-label">Minimum Amount</label>
-            <input type="number" class="form-control" id="minAmount" name="minAmount" required>
-          </div>
-          <div class="mb-3">
-            <label for="expiryDate" class="form-label">Expiry Date</label>
-            <input type="date" class="form-control" id="expiryDate" name="expiryDate" required>
-          </div>
-          <button type="submit" class="btn btn-warning">Add Coupon</button>
-        </form>
-      </div>
+  <div class="card">
+    <b class="text-success" style="font-family: 'Montserrat', sans-serif;">Add New Coupon</b>
+    <div class="card-body">
+      <form action="/admin/add-coupons" method="POST" id="add-coupon-form">
+        <div class="mb-3">
+          <label for="couponName" class="form-label">Coupon Name</label>
+          <input type="text" class="form-control" id="couponName" name="couponName" required>
+          <div class="validateCoupon"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="discountAmount" class="form-label">Discount Amount</label>
+          <input type="number" class="form-control" id="discountAmount" name="discount">
+          <div class="validateCoupon"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="minAmount" class="form-label">Minimum Amount</label>
+          <input type="number" class="form-control" id="minAmount" name="minAmount">
+          <div class="validateCoupon"></div>
+        </div>
+
+        <div class="mb-3">
+          <label for="expiryDate" class="form-label">Expiry Date</label>
+          <input type="date" class="form-control" id="expiryDate" name="expiryDate">
+          <div class="validateCoupon"></div>
+        </div>
+
+        <button type="submit" class="btn btn-warning">Add Coupon</button>
+      </form>
     </div>
   </div>
+</div>
 
-  <script>
+<script>
+  const addCouponForm = document.getElementById('add-coupon-form');
 
-    
-  </script>
+  addCouponForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    let formValid = true;
+
+    // Clear previous validation messages
+    document.querySelectorAll('.validateCoupon').forEach(element => {
+      element.innerHTML = '';
+    });
+
+    const couponName = document.getElementById('couponName');
+    const discountAmount = document.getElementById('discountAmount');
+    const minAmount = document.getElementById('minAmount');
+    const expiryDate = document.getElementById('expiryDate');
+    // Regex pattern to match valid coupon name
+    const validCouponNamePattern = /^[a-zA-Z ]+$/;
+
+    if (couponName.value.trim() === '' || couponName.value.length > 30 || !validCouponNamePattern.test(couponName.value)) {
+      formValid = false;
+      document.querySelector('#couponName + .validateCoupon').innerHTML = "Invalid coupon name. Must be alphabetic and not exceed 30 characters.";
+    }
+
+    if (isNaN(discountAmount.value) || discountAmount.value.trim() === '' || discountAmount.value > 10000) {
+      formValid = false;
+      document.querySelector('#discountAmount + .validateCoupon').innerHTML = "Invalid Discount Amount";
+    }
+
+    if (isNaN(minAmount.value) || minAmount.value.trim() === '' || minAmount.value > 1000000) {
+      formValid = false;
+      document.querySelector('#minAmount + .validateCoupon').innerHTML = "Invalid Minimum Purchase Amount";
+    }
+
+    if (!isAtLeastOneDayAfterToday(expiryDate.value) || expiryDate.value.trim() === '') {
+      formValid = false;
+      document.querySelector('#expiryDate + .validateCoupon').innerHTML = "Invalid Expiry Date";
+    }
+
+    if (Number(discountAmount.value) >= Number(minAmount.value)) {
+      formValid = false;
+      document.querySelector('#discountAmount + .validateCoupon').innerHTML = "Discount amount must be lower than minimum purchase";
+      document.querySelector('#minAmount + .validateCoupon').innerHTML = "Minimum purchase must be higher than discount amount";
+    }
+
+    if (formValid) {
+      addCouponForm.submit();
+    }
+  });
+
+  function isAtLeastOneDayAfterToday(inputDate) {
+    if (inputDate) {
+      let dateInput = new Date(inputDate);
+      let today = new Date();
+      let tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      return dateInput > tomorrow;
+    }
+  }
+</script>

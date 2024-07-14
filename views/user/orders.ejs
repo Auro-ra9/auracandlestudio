@@ -83,6 +83,8 @@
             <a class="nav-link  " href="/security" target="__blank">Security</a>
             <a class="nav-link active " href="/orders" target="__blank">Orders</a>
             <a class="nav-link  " href="/cancelled-orders" target="__blank">Cancelled Orders</a>
+            <a class="nav-link   " href="/wallet" target="__blank">Wallet</a>
+
 
         </nav>
         <hr class="mt-0 mb-4">
@@ -123,18 +125,29 @@
                                                         <p class="mb-0 mt-1">Brand : <span class="fw-medium">
                                                                 <%= product.brand%>
                                                             </span></p>
-                                                        <p class="mb-0 mt-1">Quantity : <span class="fw-medium">
-                                                                <%= product.quantity %>
-                                                            </span></p>
-                                                        <p class="mb-0 mt-1">Price : <span class="fw-medium">
-                                                                <span class="text-muted me-2"><del
-                                                                        class="font-size-16 fw-normal">&#8377; <%=
-                                                                            product.price%>
-                                                                    </del></span>
-                                                                &#8377; <%=
-                                                                    (product.price*(1-product.discount/100)).toLocaleString()%>
-                                                            </span></p>
-
+                                                        <%if(product.discount>0){%>
+                                                            <p class="mb-0 mt-1">Discount : <span class="fw-medium">
+                                                                    <%= product.discount%>
+                                                                </span></p>
+                                                            <%}%>
+                                                                <p class="mb-0 mt-1">Quantity : <span class="fw-medium">
+                                                                        <%= product.quantity %>
+                                                                    </span></p>
+                                                                <%if(product.discount>0){%>
+                                                                    <p class="mb-0 mt-1">Price : <span
+                                                                            class="fw-medium">
+                                                                            <span class="text-muted me-2"><del
+                                                                                    class="font-size-16 fw-normal">&#8377;
+                                                                                    <%= product.price%>
+                                                                                </del></span>
+                                                                            &#8377; <%=
+                                                                                (product.price*(1-product.discount/100)).toLocaleString()%>
+                                                                        </span></p>
+                                                                    <%}else{%>
+                                                                        <p class="mb-0 mt-1">Price :
+                                                                            &#8377; <%= product.price.toLocaleString()%>
+                                                                                </span></p>
+                                                                        <%}%>
 
                                                     </div>
                                                 </div>
@@ -367,30 +380,7 @@
             }
 
 
-            function proceedCancellation() {
-                const URL = `/cancel-order`
-                fetch(URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({})
-                }).then((res) => {
-                    if (res.ok) {
-                        swal.fire({
-                            icon: 'success',
-                            text: 'Ordered Canceled',
-                            showConfirmButton: false,
-                            timer: 900
-                        }).then(() => {
-                            window.location.reload()
-                        })
-                    }
-                }).catch((err) => {
-                    console.log('error on canceling order', err)
-                })
-            }
-
+            //return order
             function returnOrder(orderid) {
                 swal.fire({
                     icon: 'warning',
@@ -403,29 +393,6 @@
                         cancelModal.show();
                         document.getElementById('returnRequestForm').action = `/return-request-order/${orderid}`
                     }
-                })
-            }
-            function proceedCancellation() {
-                const URL = `/return-request-order`
-                fetch(URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({})
-                }).then((res) => {
-                    if (res.ok) {
-                        swal.fire({
-                            icon: 'success',
-                            text: 'Requested for return order',
-                            showConfirmButton: false,
-                            timer: 900
-                        }).then(() => {
-                            window.location.reload()
-                        })
-                    }
-                }).catch((err) => {
-                    console.log('error on requesting return order', err)
                 })
             }
 

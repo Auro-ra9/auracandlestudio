@@ -7,6 +7,7 @@ const cartController = require('../controller/usercontroller/cartController')
 const checkoutController = require('../controller/usercontroller/checkoutController')
 const orderController=require('../controller/usercontroller/orderController')
 const wishlistController=require('../controller/usercontroller/wishlistController')
+const walletController=require('../controller/usercontroller/walletController')
 const user = express.Router()
 
 //login
@@ -87,6 +88,9 @@ user.get('/orders',checkUserSession,orderController.getOrders)
 user.post('/cancel-order/:orderid', checkUserSession,orderController.cancelOrder)
 user.get('/cancelled-orders',checkUserSession,orderController.getCancelledOrders)
 user.post('/return-request-order/:orderid', checkUserSession,orderController.returnOrder)
+
+//wallet
+user.get('/wallet',checkUserSession,walletController.walletGet)
 
 
 
