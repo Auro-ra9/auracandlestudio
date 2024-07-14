@@ -125,30 +125,29 @@
                                                         <p class="mb-0 mt-1">Brand : <span class="fw-medium">
                                                                 <%= product.brand%>
                                                             </span></p>
+                                                        <p class="mb-0 mt-1">Quantity : <span class="fw-medium">
+                                                                <%= product.quantity %>
+                                                            </span></p>
                                                         <%if(product.discount>0){%>
-                                                            <p class="mb-0 mt-1">Discount : <span class="fw-medium">
-                                                                    <%= product.discount%>
+                                                            <span class="badge bg-danger">
+                                                                <%=product.discount %> % OFF
+                                                            </span>
+                                                            <p class="mb-0 mt-1">Price : <span class="fw-medium">
+                                                                    <span class="text-muted me-2"><del
+                                                                            class="font-size-16 fw-normal">&#8377;
+                                                                            <%= product.price%>
+                                                                        </del></span>
+                                                                    &#8377; <%=
+                                                                        (product.price*(1-product.discount/100)).toLocaleString()%>
                                                                 </span></p>
-                                                            <%}%>
-                                                                <p class="mb-0 mt-1">Quantity : <span class="fw-medium">
-                                                                        <%= product.quantity %>
-                                                                    </span></p>
-                                                                <%if(product.discount>0){%>
-                                                                    <p class="mb-0 mt-1">Price : <span
-                                                                            class="fw-medium">
-                                                                            <span class="text-muted me-2"><del
-                                                                                    class="font-size-16 fw-normal">&#8377;
-                                                                                    <%= product.price%>
-                                                                                </del></span>
-                                                                            &#8377; <%=
-                                                                                (product.price*(1-product.discount/100)).toLocaleString()%>
+                                                            <%}else{%>
+                                                                <span class="badge bg-dark">
+                                                                    offer unavailable
+                                                                </span>
+                                                                <p class="mb-0 mt-1">Price :
+                                                                    &#8377; <%= product.price.toLocaleString()%>
                                                                         </span></p>
-                                                                    <%}else{%>
-                                                                        <p class="mb-0 mt-1">Price :
-                                                                            &#8377; <%= product.price.toLocaleString()%>
-                                                                                </span></p>
-                                                                        <%}%>
-
+                                                                <%}%>
                                                     </div>
                                                 </div>
 

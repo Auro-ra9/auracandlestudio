@@ -381,6 +381,9 @@
                                                 <%= product.brand %>
                                             </a></h5>
                                             <%if(product.discount>0){%>
+                                                <span class="badge bg-danger">
+                                                    <%=product.discount %> % OFF
+                                                  </span>
                                         <ul class="product_price list-unstyled">
                                             <li class="old_price">&#8377;<s>
                                                     <%= product.productPrice %>
@@ -390,6 +393,10 @@
                                             </li>
                                         </ul>
                                         <%}else{%>
+                                            <span class="badge bg-dark">
+                                                Offer unavailable
+                                              </span>
+                                            
                                         <ul class="product_price list-unstyled">
                                             <li class="old_price">&#8377;
                                                     <%= product.productPrice.toLocaleString() %>

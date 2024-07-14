@@ -1,52 +1,3 @@
-<!-- <style>
-    .card-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-
-    .card {
-        width: 40rem; 
-        height: auto; 
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .card-body {
-        padding: 20px;
-    }
-</style>
-<%- include('navbar')%>
-<div class="card-container">
-    <div class="card">
-        <b class="text-success">Edit offer</b>
-        <div class="card-body">
-            <form action="/admin/edit-offer/<%= offer._id %>" method="POST">
-                <div class="mb-3">
-                    <label for="offerType" class="form-label">offer Type</label>
-                    <input type="text" class="form-control" id="offerType" name="offerType" value="<%= offer.offerType %>" required>
-                </div>
-        
-                
-                <div class="mb-3">
-                    <label for="discount" class="form-label">Discount</label>
-                    <input type="number" class="form-control" id="discount" name="discountPercent" value="<%= offer.discount %>" required>
-                </div>
-                
-                
-                <button type="submit" class="btn btn-warning">Update offer</button>
-            </form>
-        </div>
-    </div>
-</div>
-
-<%- include('footer')%> -->
-
-
 <style>
     .card-container {
         display: flex;
@@ -68,124 +19,114 @@
         padding: 20px;
     }
 </style>
-<%- include('navbar')%>
-    <div class="card-container">
-        <div class="card">
-            <b class="text-success" style="font-family: 'Montserrat', sans-serif; display: flex; justify-content: center;">Edit Offer</b>
-            <div class="card-body">
-                <form action="/admin/edit-offer/<%= offer._id %>" method="POST" id="edit-offer-form">
-                    <div class="mb-3">
-                        <label for="select-offer-type" class="form-label">Offer Type</label>
-                        <select name="offerType" id="select-offer-type" class="form-select">
-                            <option value="" selected disabled>Select Offer Type</option>
-                            <option value="category" <%=offer.offerType==='category' ? 'selected' : '' %>>Category
+
+
+<div class="card-container">
+    <div class="card">
+        <b class="text-success" style="font-family: 'Montserrat', sans-serif;">Edit Offer</b>
+        <div class="card-body">
+            <form action="/admin/edit-offer/<%= offer._id %>" method="POST" id="edit-offer-form">
+                <div class="mb-3">
+                    <label for="select-offer-type" class="form-label"> Offer Type</label>
+                    <select name="offerType" id="select-offer-type" class="form-select">
+                        <option value="" selected disabled>Select Offer Type</option>
+                        <option value="category">Category</option>
+                        <option value="product">Product</option>
+                    </select>
+                    <label for="offer-target" class="validateOffer text-danger"></label>
+                </div>
+                <div class="mb-3" id="category-offer-div" style="display: none;">
+                    <label for="select-category" class="form-label">Category</label>
+                    <select name="referenceIdCategory" id="select-category" class="form-select">
+                        <option value=""> Select Category</option>
+                        <!-- Add category options here -->
+                        <% category.forEach((category)=> { %>
+                            <option value="<%= category._id %>">
+                                <%= category.categoryName %>
                             </option>
-                            <option value="product" <%=offer.offerType==='product' ? 'selected' : '' %>>Product</option>
-                        </select>
-                        <label for="offer-target" class="validateOffer text-danger"></label>
-                    </div>
-                    <div class="mb-3" id="category-offer-div" style="display: none;">
-                        <label for="select-category" class="form-label">Category</label>
-                        <select name="referenceId" id="select-category" class="form-select">
-                            <option value="" selected disabled>Select Category</option>
-                            <% category.forEach((category)=> { %>
-                                <option value="<%= category._id %>" <%=offer.referenceId===category._id ? 'selected'
-                                    : '' %>>
-                                    <%= category.categoryName %>
-                                </option>
-                                <% }) %>
-                        </select>
-                        <label for="category-offer" class="validateOffer text-danger"></label>
-                    </div>
-                    <div class="mb-3" id="product-offer-div" style="display: none;">
-                        <label for="select-product" class="form-label">Product</label>
-                        <select name="referenceId" id="select-product" class="form-select">
-                            <option value="" selected disabled>Select Product</option>
-                            <% product.forEach((product)=> { %>
-                                <option value="<%= product._id %>" <%=offer.referenceId===product._id ? 'selected' : ''%>>
-                                    <%= product.productName %>
-                                </option>
-                                <% }) %>
-                        </select>
-                        <label for="product-offer" class="validateOffer text-danger"></label>
-                    </div>
-                    <div class="mb-3">
-                        <label for="discount" class="form-label">Discount</label>
-                        <input type="text" class="form-control" id="discount" name="discountPercent"
-                            value="<%= offer.discountPercent %>">
-                        <label for="discountAmount" class="validateOffer text-danger"></label>
-                    </div>
-                    <button type="submit" class="btn btn-warning">Update Offer</button>
-                </form>
-            </div>
+                            <% }) %>
+
+                    </select>
+                    <label for="category-offer" class="validateOffer text-danger"></label>
+                </div>
+
+                <div class="mb-3" id="product-offer-div" style="display: none;">
+                    <label for="select-product" class="form-label">Product</label>
+                    <select name="referenceIdProduct" id="select-product" class="form-select">
+                        <option value=""> Select product</option>
+                        <!-- Add product options here -->
+                        <% product.forEach((product)=> { %>
+                            <option value="<%= product._id %>">
+                                <%= product.productName %>
+                            </option>
+                            <% }) %>
+                    </select>
+                    <label for="product-offer" class="validateOffer text-danger"></label>
+                </div>
+                <div class="mb-3">
+                    <label for="discount" class="form-label">Discount</label>
+                    <input type="text" class="form-control" id="discount" name="discountPercent"
+                        value="<%= offer.discountPercent%>">
+                    <label for="discountAmount" class="validateOffer text-danger"></label>
+                </div>
+                <button type="submit" class="btn btn-warning">Edit Offer</button>
+            </form>
         </div>
     </div>
+</div>
 
-    <%- include('footer')%>
 
+<script>
+    const offerTarget = document.getElementById('select-offer-type');
+    const productDiv = document.getElementById('product-offer-div');
+    const categoryDiv = document.getElementById('category-offer-div');
 
-        <script>
-            const offerTarget = document.getElementById('select-offer-type');
-            const productDiv = document.getElementById('product-offer-div');
-            const categoryDiv = document.getElementById('category-offer-div');
+    offerTarget.addEventListener('change', (e) => {
+        if (e.target.value === "product") {
+            productDiv.style.display = "block";
+            categoryDiv.style.display = "none";
+        } else if (e.target.value === "category") {
+            categoryDiv.style.display = "block";
+            productDiv.style.display = "none";
+        }
+    });
 
-            // Show the correct div based on the initial offer type
-            if (offerTarget.value === "product") {
-                productDiv.style.display = "block";
-                categoryDiv.style.display = "none";
-            } else if (offerTarget.value === "category") {
-                categoryDiv.style.display = "block";
-                productDiv.style.display = "none";
-            }
+    const categoryOffer = document.getElementById("select-category");
+    const productOffer = document.getElementById("select-product");
+    const discountAmount = document.getElementById("discount");
 
-            offerTarget.addEventListener('change', (e) => {
-                if (e.target.value === "product") {
-                    productDiv.style.display = "block";
-                    categoryDiv.style.display = "none";
-                } else if (e.target.value === "category") {
-                    categoryDiv.style.display = "block";
-                    productDiv.style.display = "none";
-                }
-            });
+    const offerEditForm = document.getElementById("edit-offer-form");
+    offerEditForm.addEventListener("submit", (e) => {
+        e.preventDefault();
 
-            const categoryOffer = document.getElementById("select-category");
-            const productOffer = document.getElementById("select-product");
-            const discountAmount = document.getElementById("discount");
+        let validateOffer = true;
+        document.getElementsByClassName("validateOffer")[0].innerHTML = "";
+        document.getElementsByClassName("validateOffer")[1].innerHTML = "";
+        document.getElementsByClassName("validateOffer")[2].innerHTML = "";
+        document.getElementsByClassName("validateOffer")[3].innerHTML = "";
 
-            const editOfferForm = document.getElementById("edit-offer-form");
-            editOfferForm.addEventListener("submit", (e) => {
-                e.preventDefault();
+        if (!offerTarget.value) {
+            document.getElementsByClassName("validateOffer")[0].innerHTML = "Select an offer type";
+            validateOffer = false;
+        }
 
-                let validateOffer = true;
-                document.getElementsByClassName("validateOffer")[0].innerHTML = "";
-                document.getElementsByClassName("validateOffer")[1].innerHTML = "";
-                document.getElementsByClassName("validateOffer")[2].innerHTML = "";
-                document.getElementsByClassName("validateOffer")[3].innerHTML = "";
+        if (offerTarget.value === "category" && !categoryOffer.value) {
+            document.getElementsByClassName("validateOffer")[1].innerHTML = "Select a category";
+            validateOffer = false;
+        }
 
-                if (!offerTarget.value) {
-                    document.getElementsByClassName("validateOffer")[0].innerHTML = "Select an offer type";
-                    validateOffer = false;
-                }
+        if (offerTarget.value === "product" && !productOffer.value) {
+            document.getElementsByClassName("validateOffer")[2].innerHTML = "Select a product";
+            validateOffer = false;
+        }
 
-                if (offerTarget.value === "category" && !categoryOffer.value) {
-                    document.getElementsByClassName("validateOffer")[1].innerHTML = "Select a category";
-                    validateOffer = false;
-                }
+        if (discountAmount.value.trim() === "" || isNaN(discountAmount.value) || discountAmount.value >= 100 || discountAmount.value < 1) {
+            document.getElementsByClassName("validateOffer")[3].innerHTML = "Enter a valid discount between (1-99)";
+            validateOffer = false;
+        }
 
-                if (offerTarget.value === "product" && !productOffer.value) {
-                    document.getElementsByClassName("validateOffer")[2].innerHTML = "Select a product";
-                    validateOffer = false;
-                }
-
-                if (
-                    discountAmount.value.trim() === '' || isNaN(discountAmount.value) || discountAmount.value >= 100 || discountAmount.value < 1
-                ) {
-                    document.getElementsByClassName("validateOffer")[3].innerHTML = "Enter a valid discount between (1-99)";
-                    validateOffer = false;
-                }
-
-                if (validateOffer) {
-                    editOfferForm.submit();
-                }
-            });
-        </script>
+        if (validateOffer) {
+            offerEditForm.submit();
+        }
+    });
+</script>

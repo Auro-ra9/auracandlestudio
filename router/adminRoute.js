@@ -63,15 +63,16 @@ admin.put('/block-coupon/:couponID',adminSession, couponController.blockCoupon)
 admin.put('/unblock-coupon/:couponID',adminSession, couponController.unblockCoupon)
 admin.get('/edit-coupon/:couponID',adminSession, couponController.editCouponGet)
 admin.post('/edit-coupon/:couponID',adminSession, couponController.editCoupon)
+
 //offers
 admin.get('/offers',adminSession, offerController.offers)
 admin.get('/add-offers',adminSession, offerController.addOffersGet)
 admin.post('/add-offers',adminSession, offerController.addOffersPost)
-admin.delete('/delete-offer/:offerID',adminSession, offerController.deleteOffer)
-admin.put('/block-offer/:offerID',adminSession, offerController.blockOffer)
-admin.put('/unblock-offer/:offerID',adminSession, offerController.unblockOffer)
-admin.get('/edit-offer/:offerID',adminSession, offerController.editOfferGet)
-admin.post('/edit-offer/:offerID',adminSession, offerController.editOffer)
+admin.delete('/delete-offer/:id',adminSession, offerController.deleteOffer)
+// admin.put('/block-offer/:offerID',adminSession, offerController.blockOffer)
+// admin.put('/unblock-offer/:offerID',adminSession, offerController.unblockOffer)
+admin.get('/edit-offer/:id',adminSession, offerController.editOfferGet)
+admin.post('/edit-offer/:id',adminSession, offerController.editOffer)
 
 
 

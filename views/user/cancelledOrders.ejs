@@ -130,6 +130,9 @@
                                                                         <%= product.quantity %>
                                                                     </span></p>
                                                                 <%if(product.discount>0){%>
+                                                                    <span class="badge bg-danger">
+                                                                        <%=product.productID.discount %> % OFF
+                                                                    </span>
                                                                     <p class="mb-0 mt-1">Price: <span class="fw-medium">
                                                                             <span class="text-muted me-2"><del
                                                                                     class="font-size-16 fw-normal">&#8377;
@@ -140,9 +143,14 @@
                                                                                 100)).toLocaleString() %>
                                                                         </span></p>
                                                                     <%}else{%>
+                                                                        <span class="badge bg-dark">
+                                                                            offer unavailable
+                                                                        </span>
                                                                         <p class="mb-0 mt-1">Price: <span
                                                                                 class="fw-medium">
-                                                                                &#8377; <%= product.price.toLocaleString() %> </span>
+                                                                                &#8377; <%=
+                                                                                    product.price.toLocaleString() %>
+                                                                            </span>
                                                                         </p>
                                                                         <%}%>
                                                     </div>

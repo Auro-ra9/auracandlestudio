@@ -37,8 +37,8 @@
         </div>
         <div class="mb-3" id="category-offer-div" style="display: none;">
           <label for="select-category" class="form-label">Category</label>
-          <select name="referenceId" id="select-category" class="form-select">
-            <option value="category"> Select Category</option>
+          <select name="referenceIdCategory" id="select-category" class="form-select">
+            <option value=""> Select Category</option>
             <!-- Add category options here -->
             <% category.forEach((category)=> { %>
               <option value="<%= category._id %>">
@@ -52,8 +52,8 @@
 
         <div class="mb-3" id="product-offer-div" style="display: none;">
           <label for="select-product" class="form-label">Product</label>
-          <select name="referenceId" id="select-product" class="form-select">
-            <option value="product"> Select product</option>
+          <select name="referenceIdProduct" id="select-product" class="form-select">
+            <option value=""> Select product</option>
             <!-- Add product options here -->
             <% product.forEach((product)=> { %>
               <option value="<%= product._id %>">

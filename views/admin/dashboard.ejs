@@ -177,7 +177,8 @@
             <div class="col-xl-4 col-lg-4">
                 <div class="card l-bg-orange-dark">
                     <div class="card-statistic-3 p-4">
-                        <div class="card-icon card-icon-large"><i class="fas fa-solid fa-scale-unbalanced-flip"></i></div>
+                        <div class="card-icon card-icon-large"><i class="fas fa-solid fa-scale-unbalanced-flip"></i>
+                        </div>
                         <div class="mb-4">
                             <h5 class="card-title mb-0">Overall Sales Amount</h5>
                         </div>
@@ -226,17 +227,51 @@
                 </div>
             </div>
 
-            <div class="col-xl-6 col-lg-6">
+            <div class="col-xl-4 col-lg-4">
                 <div class="card l-bg-teal-dark">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fas fa-solid fa-indian-rupee-sign"></i></div>
                         <div class="mb-4">
-                            <h5 class="card-title mb-0">Overall Sales Amount</h5>
+                            <h5 class="card-title mb-0">Cash on delivery</h5>
                         </div>
                         <div class="row align-items-center mb-2 d-flex">
                             <div class="col-8">
                                 <h2 class="d-flex align-items-center mb-0">
-                                    &#8377; <%= overallSalesAmount.toLocaleString() %>
+                                    <%= paymentMethodChart[0].toLocaleString() %>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-lg-4">
+                <div class="card l-bg-pink-dark">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-solid fa-money-bill"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Razor Pay :</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-8">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    <%= paymentMethodChart[1].toLocaleString() %>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-4 col-lg-4">
+                <div class="card l-bg-indigo-dark">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fas fa-solid fa-wallet"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Wallet :</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-8">
+                                <h2 class="d-flex align-items-center mb-0">
+                                    <%= paymentMethodChart[2].toLocaleString() %>
                                 </h2>
                             </div>
                         </div>
@@ -244,7 +279,7 @@
                 </div>
             </div>
 
-            <div class="col-xl-6 col-lg-6">
+            <div class="col-xl-12 col-lg-6">
                 <div class="card l-bg-yellow-dark">
                     <div class="card-statistic-3 p-4">
                         <div class="card-icon card-icon-large"><i class="fab fa-brands fa-intercom"></i></div>
@@ -300,23 +335,25 @@
 
                 const startDate = new Date(startDateInput.value)
                 const endDate = new Date(endDateInput.value)
-                const validate= document.getElementsByClassName('validate')
+                const validate = document.getElementsByClassName('validate')
                 let isValid = true
+                validate[0].innerHTML = ""
+                validate[1].innerHTML = ""
 
-                
+
 
                 if (!startDateInput.value) {
-                    validate[0].innerHTML='Please select a start date'
+                    validate[0].innerHTML = 'Please select a start date'
                     isValid = false
                 }
-                
+
                 if (!endDateInput.value) {
-                    validate[1].innerHTML='Please select an end date.'
+                    validate[1].innerHTML = 'Please select an end date.'
                     isValid = false
                 }
-                
+
                 if (startDate > endDate) {
-                    validate[1].innerHTML='End date must be greater than or equal to the start date.'
+                    validate[1].innerHTML = 'End date must be greater than or equal to the start date.'
                     isValid = false
                 }
 

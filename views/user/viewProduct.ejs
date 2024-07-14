@@ -69,10 +69,13 @@
                     (productDetail.productPrice*(1-(productDetail.discount/100))).toLocaleString() %></span>
               </div>
               <% }else{ %>
+                <span class="badge bg-dark">
+                  offer unavailable
+                </span>
                 <div class="mb-3">
                   <span class="h5">&#8377;
-                      <%= productDetail.productPrice.toLocaleString() %>
-                    </span>
+                    <%= productDetail.productPrice.toLocaleString() %>
+                  </span>
                 </div>
                 <% } %>
 
@@ -140,38 +143,38 @@
         //add to cart button
 
         function addToCart(productID) {
-                console.log(productID);
+          console.log(productID);
 
-                const URL = `/addToCart/${productID}`
-                fetch(URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                }).then((res) => {
-                    return res.json()
-                }).then((data) => {
-                    if (data.existInCart) {
-                        iziToast.warning({
-                            message: 'Product alreday in cart'
-                        });
-                    }
-                    if (data.message) {
-                        iziToast.error({
-                            message: 'Out of stock, we will notify when it is available'
-                        });
-                    }
-                    if (data.success) {
-                        iziToast.success({
-                            message: 'Added'
-                        })
-                    }
-                }).catch((err) => {
-                    window.location.href = '/login'
-                    console.log(`error while adding to cart${err}`)
-
-                })
+          const URL = `/addToCart/${productID}`
+          fetch(URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
             }
+          }).then((res) => {
+            return res.json()
+          }).then((data) => {
+            if (data.existInCart) {
+              iziToast.warning({
+                message: 'Product alreday in cart'
+              });
+            }
+            if (data.message) {
+              iziToast.error({
+                message: 'Out of stock, we will notify when it is available'
+              });
+            }
+            if (data.success) {
+              iziToast.success({
+                message: 'Added'
+              })
+            }
+          }).catch((err) => {
+            window.location.href = '/login'
+            console.log(`error while adding to cart${err}`)
+
+          })
+        }
         //add to wishlist button
 
         function addToWishlist(productID) {

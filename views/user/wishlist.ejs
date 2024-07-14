@@ -385,10 +385,16 @@
                                             title="<%= product.brand %>">
                                             <%= product.productID.brand %>
                                         </a></h5>
-                                        <h5 class="product-name-card"><a href="/product-view/<%= product._id %>"
-                                                title="<%= product.discount %>">
-                                                <%= product.productID.discount %>
-                                            </a></h5>
+
+                                        <%if(product.productID.discount>0){%>
+                                        <span class="badge bg-danger">
+                                            <%=product.productID.discount %> % OFF
+                                          </span>
+                                          <%}else{%>
+                                        <span class="badge bg-dark">
+                                            offer unavailable
+                                          </span>
+                                          <%}%>
                                             <% if(product.productID.productQuantity===0){%>
                                                 <b class=" text-danger product-name-card">Product out of stock</b>
                                                 <%} else{%>
