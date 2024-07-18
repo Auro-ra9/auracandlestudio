@@ -293,7 +293,7 @@
                                         <i class="bx bxs-wallet-alt text-white font-size-20"></i>
                                     </div>
                                 </div>
-                                <div class="feed-item-list">
+                                <div class="feed-item-list" id="COD-div">
                                     <div>
                                         <h5 class="font-size-16 mb-1">Payment Info</h5>
                                         <p class="text-muted text-truncate mb-4">Choose a payment method</p>
@@ -301,7 +301,7 @@
                                     <div>
                                         <h5 class="font-size-14 mb-3">Payment method :</h5>
                                         <div class="row">
-                                            <div class="col-lg-3 col-sm-6">
+                                            <div class="col-lg-4 col-sm-6">
                                                 <div data-bs-toggle="collapse">
                                                     <label class="card-radio-label">
                                                         <input type="radio" name="pay-method" id="pay-methodoption1"
@@ -314,7 +314,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-lg-3 col-sm-6">
+                                            <div class="col-lg-4 col-sm-6">
                                                 <div>
                                                     <label class="card-radio-label">
                                                         <input type="radio" name="pay-method" id="pay-methodoption2"
@@ -327,14 +327,14 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-lg-3 col-sm-6">
+                                            <div class="col-lg-4 col-sm-6">
                                                 <div>
                                                     <label class="card-radio-label">
                                                         <input type="radio" name="pay-method" id="pay-methodoption3"
                                                             value="0" class="card-radio-input">
 
                                                         <span class="card-radio py-3 text-center text-truncate">
-                                                            <i class="bx bx-money d-block h2 mb-3"></i>
+                                                            <i class="bx d-block h2 mb-3"></i>
                                                             <span>Cash on Delivery</span>
                                                         </span>
                                                     </label>
@@ -350,7 +350,7 @@
 
                 <div class="row my-4">
                     <div class="col">
-                        <a href="ecommerce-products.html" class="btn btn-link text-muted">
+                        <a href="/cart" class="btn btn-link text-muted">
                             <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping </a>
                     </div> <!-- end col -->
                     <div class="col">
@@ -409,8 +409,7 @@
                                             <td>Discount </td>
                                             <td>:</td>
                                             <td class="text-end " id="total-discount">&#8377;
-                                                <%= (productInCart.totalPrice-productInCart.payableAmount).toLocaleString()
-                                                    %>
+                                                <%= discountAmount.toLocaleString() %>
                                             </td>
                                         </tr>
                                         <tr>
@@ -421,15 +420,16 @@
                                         <tr>
                                             <td>Shipping Charge </td>
                                             <td>:</td>
-                                            <td class="text-end">&#8377;<%= productInCart.payableAmount<550?"50":"00" %>
+                                            <td class="text-end">&#8377;<%= productInCart.payableAmount<500?"50":"00" %>
                                             </td>
                                         </tr>
                                         <tr class="bg-light">
                                             <th>Total </th>
                                             <td>:</td>
-                                            <td class="text-end">
-                                                <span class="fw-bold" id="total-box">
-                                                    &#8377;<%= productInCart.payableAmount.toLocaleString() %>
+                                            <td class="text-end"> &#8377;
+                                                <span class="fw-bold" id="total-box"
+                                                    data-payableAmount=" <%= productInCart.payableAmount %>">
+                                                    <%= productInCart.payableAmount.toLocaleString() %>
                                                 </span>
                                             </td>
                                         </tr>
@@ -474,8 +474,8 @@
                                                     <i class="bx bxs-star-half text-warning"></i>
                                                 </p>
                                                 <p class="text-muted mb-0 mt-1">&#8377; <%=
-                                                        Math.round((product.productID.productPrice)*(1-(product.productID.discount/100))).toLocaleString() %> x <%=
-                                                            product.productCount%>
+                                                        Math.round((product.productID.productPrice)*(1-(product.productID.discount/100))).toLocaleString()
+                                                        %> x <%= product.productCount%>
                                                 </p>
                                             </td>
                                         </tr>
@@ -798,32 +798,37 @@
                     return
                 }
 
+                //if the option is COD
 
                 if (parseInt(selectedPaymentOption) === 0) {
-                    const URL = '/checkout-submit'
+
+                    const URL = `/checkout-submit`
                     fetch(URL, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            "Content-Type": "application/json"
                         },
                         body: JSON.stringify({ selectedAddressOption, selectedPaymentOption })
+
                     }).then((res) => {
-                        if (!res.ok) {
-                            swal.fire({
-                                icon: 'error',
-                                title: 'Order couldn\'t be placed',
-                                text: 'order cannot be placed at this moment,please try again later',
-                                showConfirmButton: false,
-                                timer: 9000
-                            })
-                        }
+
                         return res.json()
                     }).then((data) => {
-                        window.location.href = '/order-confirmed'
+                        if (data.success) {
+                            window.location.href = '/order-confirmed'
+                        }
+                        if (data.error) {
+                            swal.fire({
+                                icon: 'warning',
+                                title: 'error',
+                                text: data.error,
+                            })
+                        }
                     }).catch((err) => {
-                        console.log('error on placing order', err)
+                        console.log(`error on paying using wallet`)
                     })
                 }
+                //if the option is razorpay
                 if (parseInt(selectedPaymentOption) === 1) {
 
                     const URL = '/render-razorPay'
@@ -837,41 +842,43 @@
                     }).then((data) => {
                         if (data.orderID) {
                             var options = {
-                                "key": "rzp_test_fJQUYeRarb4G8S", 
-                                "amount": Math.round(data.totalAmount * 100), 
+                                "key": "rzp_test_fJQUYeRarb4G8S",
+                                "amount": Math.round(data.totalAmount * 100),
                                 "currency": "INR",
-                                "name": "Aura Candle Studio", 
+                                "name": "Aura Candle Studio",
                                 "description": "Thanks for shopping",
                                 "order_id": data.orderID,
                                 "handler": function (response) {
-                                    const URL = '/checkout-submit'
+                                    const URL = `/checkout-submit`
                                     fetch(URL, {
                                         method: 'POST',
                                         headers: {
-                                            'Content-Type': 'application/json'
+                                            "Content-Type": "application/json"
                                         },
                                         body: JSON.stringify({ selectedAddressOption, selectedPaymentOption })
+
                                     }).then((res) => {
-                                        if (!res.ok) {
-                                            swal.fire({
-                                                icon: 'error',
-                                                title: 'Order couldn\'t be placed',
-                                                text: 'order cannot be placed at this moment,please try again later',
-                                                showConfirmButton: false,
-                                                timer: 9000
-                                            })
-                                        }
+
                                         return res.json()
                                     }).then((data) => {
-                                        window.location.href = '/order-confirmed'
+                                        if (data.success) {
+                                            window.location.href = '/order-confirmed'
+                                        }
+                                        if (data.error) {
+                                            swal.fire({
+                                                icon: 'warning',
+                                                title: 'error',
+                                                text: data.error,
+                                            })
+                                        }
                                     }).catch((err) => {
-                                        console.log('error on placing order', err)
+                                        console.log(`error on paying using wallet`)
                                     })
                                 },
-                                "prefill": { 
+                                "prefill": {
                                     "name": data.userName,
                                     "email": data.email,
-                                    "contact": data.phone 
+                                    "contact": data.phone
                                 },
                                 "notes": {
                                     "address": "Razorpay Corporate Office"
@@ -883,28 +890,28 @@
                             const rzp1 = new Razorpay(options);
                             rzp1.on('payment.failed', function (response) {
                                 const URL = '/payment-pending'
-                                    fetch(URL, {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify({ selectedAddressOption, selectedPaymentOption })
-                                    }).then((res) => {
-                                        if (!res.ok) {
-                                            swal.fire({
-                                                icon: 'error',
-                                                title: 'Order couldn\'t be placed',
-                                                text: 'order cannot be placed at this moment,please try again later',
-                                                showConfirmButton: false,
-                                                timer: 9000
-                                            })
-                                        }
-                                        return res.json()
-                                    }).then((data) => {
-                                        window.location.href = '/order-pending'
-                                    }).catch((err) => {
-                                        console.log('error on cancel razorpay placing order', err)
-                                    })
+                                fetch(URL, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ selectedAddressOption, selectedPaymentOption })
+                                }).then((res) => {
+                                    if (!res.ok) {
+                                        swal.fire({
+                                            icon: 'error',
+                                            title: 'Order couldn\'t be placed',
+                                            text: 'order cannot be placed at this moment,please try again later',
+                                            showConfirmButton: false,
+                                            timer: 9000
+                                        })
+                                    }
+                                    return res.json()
+                                }).then((data) => {
+                                    window.location.href = '/order-pending'
+                                }).catch((err) => {
+                                    console.log('error on cancel razorpay placing order', err)
+                                })
                             });
                             rzp1.open();
                         }
@@ -915,7 +922,33 @@
 
 
                 }
+                if (parseInt(selectedPaymentOption) === 2) {
+                    const URL = `/checkout-submit`
+                    fetch(URL, {
+                        method: 'POST',
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ selectedAddressOption, selectedPaymentOption })
 
+                    }).then((res) => {
+
+                        return res.json()
+                    }).then((data) => {
+                        if (data.success) {
+                            window.location.href = '/order-confirmed'
+                        }
+                        if (data.error) {
+                            swal.fire({
+                                icon: 'warning',
+                                title: 'Wallet pay not possible',
+                                text: data.error,
+                            })
+                        }
+                    }).catch((err) => {
+                        console.log(`error on paying using wallet`)
+                    })
+                }
             }
 
             //coupon
@@ -966,6 +999,12 @@
                                 title: "min purchase not reached"
                             })
                         }
+                        if (data.usedCoupon) {
+                            Swal.fire({
+                                icon: "error",
+                                title: "Already Coupon been used"
+                            })
+                        }
 
                         if (data.success) {
                             Swal.fire({
@@ -974,8 +1013,17 @@
                                 showConfirmButton: false,
                                 timer: 700
                             }).then(() => {
-                                document.getElementById('total-box').innerHTML = "&#8377;" + data.payableAmount.toLocaleString()
+                                totalAmountBox.setAttribute('data-payableAmount', data.payableAmount)
+                                document.getElementById('total-box').innerHTML = data.payableAmount.toLocaleString()
                                 document.getElementById('coupon-discount-box').innerHTML = data.discount.toLocaleString()
+                                if (data.payableAmount > 1000) {
+                                    document.getElementById('pay-methodoption3').setAttribute('disabled', 'true')
+                                    document.getElementById('COD-div').appendChild(alertDiv)
+                                } else {
+                                    document.getElementById('pay-methodoption3').removeAttribute('disabled')
+                                    document.getElementById('COD-div').removeChild(alertDiv)
+                                }
+
                             })
 
                         }
@@ -1006,8 +1054,16 @@
                             showConfirmButton: false,
                             timer: 700
                         }).then(() => {
-                            document.getElementById('total-box').innerHTML = "&#8377;" + data.payableAmount.toLocaleString()
+                            totalAmountBox.setAttribute('data-payableAmount', data.payableAmount)
+                            document.getElementById('total-box').innerHTML = data.payableAmount.toLocaleString()
                             document.getElementById('coupon-discount-box').innerHTML = "00:00"
+                            if (data.payableAmount > 1000) {
+                                document.getElementById('pay-methodoption3').setAttribute('disabled', 'true')
+                                document.getElementById('COD-div').appendChild(alertDiv)
+                            } else {
+                                document.getElementById('pay-methodoption3').removeAttribute('disabled')
+                                document.getElementById('COD-div').removeChild(alertDiv)
+                            }
                         })
 
                     }
@@ -1015,6 +1071,29 @@
                     console.log(err)
                 })
             }
-            
+
+
+            // disable the COD for amount greater than 1000
+            const totalAmountBox = document.getElementById('total-box')
+            const totalAmountInNumber = totalAmountBox.getAttribute('data-payableAmount')
+            // create a alert inside  COD
+            const alertDiv = document.createElement('div');
+            alertDiv.classList.add('alert', 'alert-danger', 'mt-3');
+            alertDiv.innerHTML = 'Order above Rs 1000 don\'t have COD ';
+
+
+            //checking and showing to alert according to the condition
+
+            //show alert if the order is above 1000
+            if (Number(totalAmountInNumber) > 1000) {
+                document.getElementById('pay-methodoption3').setAttribute('disabled', 'true')
+                document.getElementById('COD-div').appendChild(alertDiv)
+                //hide the alert if the condition not there
+            } else {
+                document.getElementById('pay-methodoption3').removeAttribute('disabled')
+                document.getElementById('COD-div').removeChild(alertDiv)
+            }
+
+
 
         </script>

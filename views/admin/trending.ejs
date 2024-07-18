@@ -1,0 +1,169 @@
+    <style>
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        @media (min-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .product-card {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        .product-card:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 15px;
+        }
+        .product-info {
+            flex-grow: 1;
+        }
+        .product-name {
+            font-weight: bold;
+            margin: 0 0 5px 0;
+        }
+        .product-brand {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            margin: 0 0 5px 0;
+        }
+        .product-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .product-price {
+            font-weight: bold;
+            color: #27ae60;
+        }
+        .product-quantity {
+            background-color: #3498db;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+    <%- include('navbar') %>
+    
+    <div class="container">
+        <h4 style= "display: flex; justify-content: center;" >Top Selling </h4>
+        <div class="dashboard-grid">
+            <div class="top-selling">
+                <h4 style="font-family: 'Montserrat', sans-serif;">Trending Products</h4>
+                <div class="card">
+                    <% productsTopTrending.forEach((product, index) => { %>
+                        <div class="product-card">
+                            <img src="../../<%= product.image[0] %>" alt="<%= product.productName %>" class="product-image">
+                            <div class="product-info">
+                                <h6 class="product-name"><%= product.productName %></h6>
+                                <p class="product-brand">Brand: <%= product.brand %></p>
+                                <div class="product-details">
+                                    <span class="product-price">₹<%= product.price %></span>
+                                    <span class="product-quantity">Sold: <%= product.productsTotal %></span>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+            
+            <div class="trending-sidebar">
+                <div class="trending-categories">
+                    <h4 style="font-family: 'Montserrat', sans-serif;">Trending Categories</h4>
+                    <div class="card">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Category</th>
+                                    <th>Sold</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% categoryTopTrending.forEach((category, index) => { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td><%= category.categoryName %></td>
+                                        <td><span class="product-quantity"><%= category.categoryTotal %></span></td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="trending-brands">
+                    <h4 style="font-family: 'Montserrat', sans-serif;">Trending Brands</h4>
+                    <div class="card">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Brand</th>
+                                    <th>Sold</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% brandTopTrending.forEach((brand, index) => { %>
+                                    <tr>
+                                        <td><%= index + 1 %></td>
+                                        <td><%= brand.brandName %></td>
+                                        <td><span class="product-quantity"><%= brand.brandsTotal %></span></td>
+                                    </tr>
+                                <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <%- include('footer') %>

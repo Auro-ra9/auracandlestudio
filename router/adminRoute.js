@@ -19,7 +19,10 @@ admin.post('/login', loginController.loginPost)
 
 //dashboard
 admin.get('/dashboard', adminSession, dashboardController.dashboardRender)
+admin.get('/sales', adminSession, dashboardController.salesRender)
+admin.get('/custom-sales-report', adminSession, dashboardController.customSalesReportGet)
 admin.post('/custom-sales-report', adminSession, dashboardController.customSalesReport)
+admin.get('/trending', adminSession, dashboardController.trendingProducts)
 
 //customers 
 admin.get('/customers', adminSession, userController.userRender);
@@ -36,12 +39,11 @@ admin.post('/edit-category/:categoryID', adminSession, categoryController.editCa
 
 // products
 admin.get('/products', adminSession, productController.productRender)
-admin.get('/addProduct', adminSession, productController.addProductRender)
-admin.post('/addProduct', upload.array('product_image', 4), adminSession, productController.addProductPost)
+admin.get('/products/addProduct', adminSession, productController.addProductRender)
+admin.post('/products/addProduct', upload.array('product_image', 4), adminSession, productController.addProductPost)
 admin.delete('/delete-product/:productID', adminSession, productController.deleteProduct)
 admin.put('/block-product/:productID', adminSession, productController.blockProduct)
 admin.put('/unblock-product/:productID', adminSession, productController.unblockProduct)
-
 //edit product
 admin.get('/edit-product/:productId',adminSession, productController.getEditProduct);
 admin.post('/edit-product/:id',adminSession,upload.array("productImage", 4),productController.editProductPost)
@@ -51,13 +53,13 @@ admin.get('/orders', adminSession, orderController.orderList)
 admin.get('/edit-order/:orderID', adminSession, orderController.editOrder)
 admin.post('/edit-order/:orderID', adminSession, orderController.editOrderPost)
 admin.put('/approve-return/:orderID', adminSession, orderController.approveReturn)
-admin.put('/reject-return/:orderID', adminSession, orderController.rejectReturn)
+admin.post('/reject-return/:orderID', adminSession, orderController.rejectReturn)
 
 
 //coupons
 admin.get('/coupons',adminSession, couponController.coupons)
-admin.get('/add-coupons',adminSession, couponController.addCouponsGet)
-admin.post('/add-coupons',adminSession, couponController.addCouponsPost)
+admin.get('/coupons/add-coupons',adminSession, couponController.addCouponsGet)
+admin.post('/coupons/add-coupons',adminSession, couponController.addCouponsPost)
 admin.delete('/delete-coupon/:couponID',adminSession, couponController.deleteCoupon)
 admin.put('/block-coupon/:couponID',adminSession, couponController.blockCoupon)
 admin.put('/unblock-coupon/:couponID',adminSession, couponController.unblockCoupon)
@@ -66,8 +68,8 @@ admin.post('/edit-coupon/:couponID',adminSession, couponController.editCoupon)
 
 //offers
 admin.get('/offers',adminSession, offerController.offers)
-admin.get('/add-offers',adminSession, offerController.addOffersGet)
-admin.post('/add-offers',adminSession, offerController.addOffersPost)
+admin.get('/offers/add-offers',adminSession, offerController.addOffersGet)
+admin.post('/offers/add-offers',adminSession, offerController.addOffersPost)
 admin.delete('/delete-offer/:id',adminSession, offerController.deleteOffer)
 // admin.put('/block-offer/:offerID',adminSession, offerController.blockOffer)
 // admin.put('/unblock-offer/:offerID',adminSession, offerController.unblockOffer)

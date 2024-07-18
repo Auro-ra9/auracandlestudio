@@ -1,3 +1,36 @@
+fourth or 11th week
+Updations :
+-///// keep sales report as a seperate section
+-///// use wallet as a payment option
+-//// coupon discount is not reflecting in order details
+-//// admin layout should be consistent
+-//// showing incoreect total in checkout
+-//// wallet refund - don't include coupon discount in refund amount
+-//// restrict the multi usage of a coupon by same customer
+-//// prepopulate the active filters in filter menu
+
+- user should be able to cancel/ return individual items from an order
+
+- referal offer
+- sales report 
+
+-Admin Dashboard - Chart with filter(yearly,monthly etc.)
+Generate ledger book (optional)
+
+-Invoice download (Pdf)
+-Should be able to continue payment from my order page in case of failed payment
+
+Admin side :
+-/// Best selling product (top 10) 
+-/// Best selling category (top 10) 
+-/// Best selling brands (top 10)
+
+User side :
+////Order above Rs 1000 should not be allowed for COD
+////Delivery charge can be applied according to location / fixed charges (optional)
+////Handle error for failed payments (update status as payment pending), 
+
+
 third or 10th week
 user side
 /////Wallet (for canceled orders)

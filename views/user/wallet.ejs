@@ -118,6 +118,7 @@
                   <th scope="col">Order Date</th>
                   <th scope="col">Status</th>
                   <th scope="col">Payment method</th>
+                  <th scope="col">Transactions</th>
                   <th scope="col">Total</th>
                 </tr>
               </thead>
@@ -145,8 +146,9 @@
                      <b> <%= order.paymentMethod%></b>
 
                     </td>
+                    <td data-orderStatus="<%= order.orderStatus %>" data-paymentMethod="<%= order.paymentMethod %>" class="tansaction-icon"></td>
                     <td>
-                      &#8377;<%= order.totalPrice.toLocaleString() %>
+                      &#8377;<%= (order.totalPrice-order.couponDiscount).toLocaleString() %>
                     </td>
                   </tr>
                   <% }) %>
@@ -206,6 +208,43 @@
         }
         if (element.innerHTML.trim() === 'Cancelled') {
           element.classList.add('bg-danger', 'text-white')
+        }
+        if (element.innerHTML.trim() === 'Confirmed') {
+          element.classList.add('bg-success', 'text-white')
+        }
+       
+      })
+
+
+      const transactionIcon = document.querySelectorAll('.tansaction-icon')
+
+      transactionIcon.forEach(element => {
+
+        let orderState=element.getAttribute('data-orderStatus')
+        let paymentMethod=element.getAttribute('data-paymentMethod')
+
+        const iconLabel=document.createElement('span');
+        iconLabel.classList.add('pe-2')
+        const creditIcon=document.createElement('i');
+        creditIcon.classList.add('fa-solid','fa-circle-up','text-success')
+        creditIcon.setAttribute('title','credited')
+        const debitIcon=document.createElement('i');
+        debitIcon.classList.add('fa-solid','fa-circle-down','text-danger')
+        debitIcon.setAttribute('title','debited')
+
+        if (paymentMethod.trim() === 'Wallet') {
+          iconLabel.innerHTML="Deb/ Cred"
+          element.appendChild(iconLabel)
+          element.appendChild(debitIcon)
+          element.appendChild(creditIcon)
+        }else if (orderState.trim() === 'Returned' || orderState.trim() === 'Cancelled') {
+          iconLabel.innerHTML="credited"
+          element.appendChild(iconLabel)
+          element.appendChild(creditIcon)
+        }else if (orderState.trim() === 'Confirmed') {
+          iconLabel.innerHTML="Debited"
+          element.appendChild(iconLabel)
+          element.appendChild(debitIcon)
         }
        
       })

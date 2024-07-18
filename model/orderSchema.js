@@ -22,6 +22,10 @@ const schema = new mongoose.Schema({
         price: {
             type: Number
         },
+        category:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:'category'
+        },
         discount: {
             type: Number
         },
@@ -72,6 +76,9 @@ const schema = new mongoose.Schema({
     },
     reasonForRejection: {
         type: String
+    },
+    couponID:{
+        type:String
     }
 }, { timestamps: true })
 

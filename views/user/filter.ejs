@@ -17,34 +17,35 @@
                 <form id="filterForm" action="/home" method="GET">
                     <div class="mb-3">
                         <label for="minPrice" class="form-label">Min Price</label>
-                        <input type="number" class="form-control" id="minPrice" name="minPrice" min="0">
+                        <input type="number" class="form-control" id="minPrice" name="minPrice" min="0" value="<%= query.minPrice || '' %>">
                     </div>
                     <div class="mb-3">
                         <label for="maxPrice" class="form-label">Max Price</label>
-                        <input type="number" class="form-control" id="maxPrice" name="maxPrice" min="0">
+                        <input type="number" class="form-control" id="maxPrice" name="maxPrice" min="0" value="<%= query.maxPrice || '' %>">
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Categories</label>
-                        <% categories.forEach((cat)=> { %>
+                        <% categories.forEach((cat) => { %>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" value="<%= cat._id %>"
-                                    id="category-<%= cat._id %>" name="productCategory">
+                                    id="category-<%= cat._id %>" name="productCategory"
+                                    <%= (query.productCategory && (Array.isArray(query.productCategory) ? query.productCategory : [query.productCategory]).includes(cat._id.toString())) ? 'checked' : '' %>>
                                 <label class="form-check-label" for="category-<%= cat._id %>">
                                     <%= cat.categoryName %>
                                 </label>
                             </div>
-                            <% }) %>
+                        <% }) %>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Sort By</label>
                         <select class="form-select" name="sortBy">
-                            <option value="newArrivals">New Arrivals</option>
-                            <option value="priceLowToHigh">Price: Low to High</option>
-                            <option value="priceHighToLow">Price: High to Low</option>
-                            <option value="nameAsc">Name: A to Z</option>
-                            <option value="nameDesc">Name: Z to A</option>
+                            <option value="newArrivals" <%= query.sortBy === 'newArrivals' ? 'selected' : '' %>>New Arrivals</option>
+                            <option value="priceLowToHigh" <%= query.sortBy === 'priceLowToHigh' ? 'selected' : '' %>>Price: Low to High</option>
+                            <option value="priceHighToLow" <%= query.sortBy === 'priceHighToLow' ? 'selected' : '' %>>Price: High to Low</option>
+                            <option value="nameAsc" <%= query.sortBy === 'nameAsc' ? 'selected' : '' %>>Name: A to Z</option>
+                            <option value="nameDesc" <%= query.sortBy === 'nameDesc' ? 'selected' : '' %>>Name: Z to A</option>
                         </select>
                     </div>
 
@@ -54,12 +55,12 @@
             </div>
         </div>
 
-        <% categories.forEach((cat)=> { %>
+        <% categories.forEach((cat) => { %>
             <a href="/home?productCategory=<%= cat._id %>" class="col-md-2 py-2"
                 style="text-decoration: none; color: black;">
                 <%= cat.categoryName %>
             </a>
-            <% }) %>
+        <% }) %>
     </div>
 </div>
 

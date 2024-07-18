@@ -88,6 +88,9 @@ user.get('/orders',checkUserSession,orderController.getOrders)
 user.post('/cancel-order/:orderid', checkUserSession,orderController.cancelOrder)
 user.get('/cancelled-orders',checkUserSession,orderController.getCancelledOrders)
 user.post('/return-request-order/:orderid', checkUserSession,orderController.returnOrder)
+user.post('/proceed-payment/:orderid', checkUserSession,orderController.proceedPayment)
+user.delete('/discard-order/:orderid', checkUserSession,orderController.discardOrder)
+user.post('/get-razorPay', checkUserSession,orderController.getRazorPayForPendingOrder)
 
 //wallet
 user.get('/wallet',checkUserSession,walletController.walletGet)

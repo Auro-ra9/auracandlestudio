@@ -95,15 +95,17 @@ const approveReturn = async (req, res) => {
             // Update order status
             await orderSchema.findByIdAndUpdate(orderID, { orderStatus: newStatus })
 
+
             const wallet = await walletSchema.findOne({ userID: currentOrder.userID })
 
+            const finalAmount=  currentOrder.totalPrice-currentOrder.couponDiscount
             if (wallet) {
-                wallet.balance += currentOrder.totalPrice
+                wallet.balance +=finalAmount
                 await wallet.save()
             } else {
                 const newWallet = new walletSchema({
                     userID: currentOrder.userID,
-                    balance: currentOrder.totalPrice,
+                    balance: finalAmount,
                 })
                 await newWallet.save()
             }
@@ -126,11 +128,13 @@ const rejectReturn = async (req, res) => {
         const currentOrder = await orderSchema.findById(orderID)
 
         if (!currentOrder) {
-            return res.status(404).json({ message: 'Order not found' })
+            req.flash('errorMessage', 'Order id could/t find')
+            return res.redirect('/admin/orders')
         }
 
         if (currentOrder.orderStatus !== 'Pending-Returned') {
-            return res.status(400).json({ message: 'Cannot reject order that is not Pending-Returned' })
+            req.flash('errorMessage', 'Cannot reject order that is not Pending-Returned')
+            return res.redirect('/admin/edit-order')
         }
 
         const newStatus = 'Delivered'
@@ -138,10 +142,11 @@ const rejectReturn = async (req, res) => {
 
         // Update order status and reason for rejection
         await orderSchema.findByIdAndUpdate(orderID, { orderStatus: newStatus, reasonForRejection: reason })
-        return res.status(200).json({ message: 'Successfully updated the status' })
+        req.flash('errorMessage', 'Successfully Send the note and updated the status')
+        return res.redirect('/admin/orders')
+
     } catch (err) {
         console.log(`Error on admin reject return order: ${err}`)
-
     }
 }
 

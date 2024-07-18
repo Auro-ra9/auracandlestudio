@@ -1,9 +1,20 @@
-const orderSchema=require('../../model/orderSchema')
+const orderSchema = require('../../model/orderSchema')
 
 
-const dashboardRender =async (req, res) => {
+const dashboardRender = async (req, res) => {
     try {
-      
+
+        res.render('admin/dashboard', {
+            title: "Admin Dashboard",
+            alertMessage: req.flash('errorMessage'),
+
+        });
+    } catch (err) {
+        console.log(`Error on dashboard render: ${err}`);
+    }
+}
+const salesRender = async (req, res) => {
+    try {
 
         // Fetching order details for calculations
         const orderDetailsProfit = await orderSchema.find({ isCancelled: false, orderStatus: { $nin: 'Pending' } })
@@ -72,27 +83,27 @@ const dashboardRender =async (req, res) => {
         }, 0);
 
         // find the number of payment methods
-        let payByCash=0
-        let payByRazorPay=0
-        let payByWallet=0
+        let payByCash = 0
+        let payByRazorPay = 0
+        let payByWallet = 0
 
-        orderDetailsProfit.forEach((order)=>{
-            if(order.paymentMethod==='Cash on delivery'){
+        orderDetailsProfit.forEach((order) => {
+            if (order.paymentMethod === 'Cash on delivery') {
                 payByCash++;
             }
-            if(order.paymentMethod==='Razor pay'){
+            if (order.paymentMethod === 'Razor pay') {
                 payByRazorPay++;
             }
-            if(order.paymentMethod==='Wallet'){
+            if (order.paymentMethod === 'Wallet') {
                 payByWallet++;
             }
         })
 
-        const paymentMethodChart=[payByCash,payByRazorPay,payByWallet]
+        const paymentMethodChart = [payByCash, payByRazorPay, payByWallet]
 
 
-        res.render('admin/dashboard', {
-            title: "Admin Dashboard",
+        res.render('admin/sales', {
+            title: "Admin Sales",
             alertMessage: req.flash('errorMessage'),
             dailyReport,
             weeklyReport,
@@ -107,7 +118,7 @@ const dashboardRender =async (req, res) => {
             totalCollections
         });
     } catch (err) {
-        console.log(`Error on dashboard render: ${err}`);
+        console.log(`Error on Sales render: ${err}`);
     }
 }
 
@@ -136,19 +147,116 @@ const customSalesReport = async (req, res) => {
         end.setHours(23, 59, 59, 999); // Set end time to the end of the day
 
         // Fetch orders within the specified date range
-        const orders = await orderSchema.find({ createdAt: { $gte: start, $lte: end },isCancelled:false });
+        const orders = await orderSchema.find({ createdAt: { $gte: start, $lte: end }, isCancelled: false });
 
         // Calculate total sales
         const sale = orders.reduce((acc, order) => acc + order.totalPrice, 0);
-        return res.status(200).json({ success: "Report Generated", salesReport:sale });
+        return res.status(200).json({ success: "Report Generated", salesReport: sale });
     } catch (err) {
         console.error(`Error on generating custom sales report: ${err}`);
         return res.status(500).json({ error: "Internal server error" });
     }
 };
 
+const customSalesReportGet = (req, res) => {
+    try {
+        res.render('admin/customSales', { title: 'Custom sales report', alertMessage: req.flash('errorMessage') })
+    } catch (err) {
+        console.log('error on rendering custom sales report', err)
+    }
+}
+
+const trendingProducts = async (req, res) => {
+    try {
+
+        //finding top selling products and getting their details from the db
+        const productsTopTrending = await orderSchema.aggregate([
+            { $unwind: '$products' },
+            { $group: { _id: '$products.productID', count: { $sum: '$products.quantity' } } },
+            { $sort: { 'count': -1 } },
+            { $limit: 10 },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'productDetails'
+                }
+            },
+            { $unwind: '$productDetails' },
+            {
+                $project: {
+                    _id: 0,
+                    productName: '$productDetails.productName',
+                    brand: '$productDetails.brand',
+                    price: '$productDetails.productPrice',
+                    image: `$productDetails.image`,
+                    productsTotal: '$count'
+
+                }
+            }
+        ])
+        console.log(productsTopTrending);
+
+        //finding top selling brands
+
+        const brandTopTrending = await orderSchema.aggregate([
+            { $unwind: '$products' },
+            { $group: { '_id': '$products.brand', count: { $sum: '$products.quantity' } } },
+            { $sort: { 'count': -1 } },
+            { $limit: 10 },
+            {
+                $project: {
+                    _id: 0,
+                    brandName: '$_id',
+                    brandsTotal: '$count'
+                }
+            }
+
+        ])
+
+        //finding top selling categories  
+        const categoryTopTrending = await orderSchema.aggregate([
+            { $unwind: '$products' },
+            { $group: { '_id': '$products.category', count: { $sum: '$products.quantity' } } },
+            { $sort: { 'count': -1 } },
+            { $limit: 10 },
+            {
+                $lookup: {
+                    from: 'categories',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'categoryDetails'
+                }
+            },
+            { $unwind: '$categoryDetails' },
+            {
+                $project: {
+                    _id: 0,
+                    categoryName: '$categoryDetails.categoryName',
+                    categoryTotal: '$count'
+                }
+            }
+        ])
+
+        res.render('admin/trending', {
+            title: 'trending',
+            alertMessage: req.flash('errorMessage'),
+            productsTopTrending,
+            brandTopTrending,
+            categoryTopTrending,
+        })
+
+    } catch (err) {
+
+    }
+}
 
 module.exports = {
     dashboardRender,
-    customSalesReport
+    salesRender,
+    customSalesReportGet,
+    customSalesReport,
+    trendingProducts,
+
 }

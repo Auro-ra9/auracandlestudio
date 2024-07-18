@@ -4,9 +4,9 @@ const schema = new mongoose.Schema({
     couponName: {
         type: String,
     },
-    couponCode: {
-        type: String,
-    },
+    // couponCode: {
+    //     type: String,
+    // },
     discount: {
         type: Number,
     },

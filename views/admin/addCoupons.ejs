@@ -21,42 +21,43 @@
   }
 </style>
 
-
+<%- include ('navbar')%>
 <div class="card-container">
   <div class="card">
     <b class="text-success" style="font-family: 'Montserrat', sans-serif;">Add New Coupon</b>
     <div class="card-body">
-      <form action="/admin/add-coupons" method="POST" id="add-coupon-form">
+      <form action="/admin/coupons/add-coupons" method="POST" id="add-coupon-form">
         <div class="mb-3">
           <label for="couponName" class="form-label">Coupon Name</label>
           <input type="text" class="form-control" id="couponName" name="couponName" required>
           <div class="validateCoupon"></div>
         </div>
-
+        
         <div class="mb-3">
           <label for="discountAmount" class="form-label">Discount Amount</label>
           <input type="number" class="form-control" id="discountAmount" name="discount">
           <div class="validateCoupon"></div>
         </div>
-
+        
         <div class="mb-3">
           <label for="minAmount" class="form-label">Minimum Amount</label>
           <input type="number" class="form-control" id="minAmount" name="minAmount">
           <div class="validateCoupon"></div>
         </div>
-
+        
         <div class="mb-3">
           <label for="expiryDate" class="form-label">Expiry Date</label>
           <input type="date" class="form-control" id="expiryDate" name="expiryDate">
           <div class="validateCoupon"></div>
         </div>
-
+        
         <button type="submit" class="btn btn-warning">Add Coupon</button>
       </form>
     </div>
   </div>
 </div>
 
+<%-include('footer')%>
 <script>
   const addCouponForm = document.getElementById('add-coupon-form');
 

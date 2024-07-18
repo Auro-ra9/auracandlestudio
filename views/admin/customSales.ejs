@@ -1,0 +1,231 @@
+<%- include('navbar') %>
+    <style>
+        .card {
+            overflow: hidden;
+            background-color: #fff;
+            border-radius: 10px;
+            border: none;
+            position: relative;
+            margin: 30px;
+            box-shadow: 0 0.46875rem 2.1875rem rgba(90, 97, 105, 0.1), 0 0.9375rem 1.40625rem rgba(90, 97, 105, 0.1), 0 0.25rem 0.53125rem rgba(90, 97, 105, 0.12), 0 0.125rem 0.1875rem rgba(90, 97, 105, 0.1);
+        }
+
+        .l-bg-cherry {
+            background: linear-gradient(to right, #493240, #f09) !important;
+            color: #fff;
+        }
+
+        .l-bg-blue-dark {
+            background: linear-gradient(to right, #373b44, #4286f4) !important;
+            color: #fff;
+        }
+
+        .l-bg-green-dark {
+            background: linear-gradient(to right, #0a504a, #38ef7d) !important;
+            color: #fff;
+        }
+
+        .l-bg-orange-dark {
+            background: linear-gradient(to right, #a86008, #ffba56) !important;
+            color: #fff;
+        }
+
+        .l-bg-purple-dark {
+            background: linear-gradient(to right, #6a0572, #c850c0) !important;
+            color: #fff;
+        }
+
+        .l-bg-red-dark {
+            background: linear-gradient(to right, #8a0303, #ff4e50) !important;
+            color: #fff;
+        }
+
+        .l-bg-teal-dark {
+            background: linear-gradient(to right, #00595c, #00c6ff) !important;
+            color: #fff;
+        }
+
+        .l-bg-pink-dark {
+            background: linear-gradient(to right, #7b2a3b, #ff6a88) !important;
+            color: #fff;
+        }
+
+        .l-bg-yellow-dark {
+            background: linear-gradient(to right, #996c00, #fdd835) !important;
+            color: #fff;
+        }
+
+        .l-bg-indigo-dark {
+            background: linear-gradient(to right, #2c3e50, #4ca1af) !important;
+            color: #fff;
+        }
+
+        .l-bg-cyan-dark {
+            background: linear-gradient(to right, #08415c, #00d2ff) !important;
+            color: #fff;
+        }
+
+        .l-bg-lime-dark {
+            background: linear-gradient(to right, #4b6b11, #a8e063) !important;
+            color: #fff;
+        }
+
+        .l-bg-maroon-dark {
+            background: linear-gradient(to right, #450a21, #b93b55) !important;
+            color: #fff;
+        }
+
+        .l-bg-grey-dark {
+            background: linear-gradient(to right, #3a3a3a, #a0a0a0) !important;
+            color: #fff;
+        }
+
+
+        .card .card-statistic-3 .card-icon-large .fas,
+        .card .card-statistic-3 .card-icon-large .fa,
+        .card .card-statistic-3 .card-icon-large .far,
+        .card .card-statistic-3 .card-icon-large .fab,
+        .card .card-statistic-3 .card-icon-large .fal {
+            font-size: 110px;
+        }
+
+        .card .card-statistic-3 .card-icon {
+            text-align: center;
+            line-height: 50px;
+            margin-left: 15px;
+            color: #000;
+            position: absolute;
+            right: -5px;
+            top: 20px;
+            opacity: 0.1;
+        }
+
+        .l-bg-cyan {
+            background: linear-gradient(135deg, #289cf5, #84c0ec) !important;
+            color: #fff;
+        }
+
+        .l-bg-green {
+            background: linear-gradient(135deg, #23bdb8 0%, #43e794 100%) !important;
+            color: #fff;
+        }
+
+        .l-bg-orange {
+            background: linear-gradient(to right, #f9900e, #ffba56) !important;
+            color: #fff;
+        }
+    </style>
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+        integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+
+    <div class="container my-5" style="min-height: 100vh;">
+        <h5 style="font-family: 'Montserrat', sans-serif; display: flex; justify-content: center;">Custom Sales Report</h5>
+        <div class="row">
+            
+            <div class="col-xl-12 col-lg-6">
+                <div class="card l-bg-yellow-dark">
+                    <div class="card-statistic-3 p-4">
+                        <div class="card-icon card-icon-large"><i class="fab fa-brands fa-intercom"></i></div>
+                        <div class="mb-4">
+                            <h5 class="card-title mb-0">Select start-Date and end-Date</h5>
+                        </div>
+                        <div class="row align-items-center mb-2 d-flex">
+                            <div class="col-8">
+                                <h2 class="d-flex align-items-center mb-0" id="custom-sales-value">
+                                    &#8377; 00:00
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="pt-4">
+                            <form id="custom-sales-report">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="startDate" class="form-label">Start Date</label>
+                                        <input type="date" class="form-control" id="startDate" name="startDate">
+                                        <label for="startDate" class="validate"></label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="endDate" class="form-label">End Date</label>
+                                        <input type="date" class="form-control" id="endDate" name="endDate">
+                                        <label for="endDate" class="validate"></label>
+                                    </div>
+                                </div>
+                                <div class="row text-center">
+                                    <button type="submit" class="btn l-bg-grey-dark">Generate Report</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <%- include('footer') %>
+
+
+        <script>
+
+            const customsSalesForm = document.getElementById('custom-sales-report')
+            const startDateInput = document.getElementById('startDate')
+            const endDateInput = document.getElementById('endDate')
+            const customSalesValue = document.getElementById('custom-sales-value')
+
+            customsSalesForm.addEventListener('submit', (e) => {
+                e.preventDefault()
+
+                const startDate = new Date(startDateInput.value)
+                const endDate = new Date(endDateInput.value)
+                const validate = document.getElementsByClassName('validate')
+                let isValid = true
+                validate[0].innerHTML = ""
+                validate[1].innerHTML = ""
+
+
+
+                if (!startDateInput.value) {
+                    validate[0].innerHTML = 'Please select a start date'
+                    isValid = false
+                }
+
+                if (!endDateInput.value) {
+                    validate[1].innerHTML = 'Please select an end date.'
+                    isValid = false
+                }
+
+                if (startDate > endDate) {
+                    validate[1].innerHTML = 'End date must be greater than or equal to the start date.'
+                    isValid = false
+                }
+
+
+                // validating if isValid is true
+                if (isValid) {
+                    const formData = new FormData(e.target)
+                    const formObject = Object.fromEntries(formData.entries())
+
+                    const URL = '/admin/custom-sales-report'
+                    fetch(URL, {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(formObject)
+                    }).then((res) => {
+                        return res.json()
+                    }).then((data) => {
+                        if (data.success) {
+                            customSalesValue.innerHTML = "&#8377;" + data.salesReport.toLocaleString()
+                        }
+                    }).catch((err) => {
+                        console.log(err)
+                    })
+                }
+            })
+        </script>
+
+        

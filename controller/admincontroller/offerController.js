@@ -139,65 +139,53 @@ const editOfferGet = async (req, res) => {
     } catch (err) {
         console.log(`Error on getting offer for editing: ${err}`)
     }
-};
+}
 
 // edit offer post
 const editOffer = async (req, res) => {
     try {
-        const { offerType, referenceIdCategory, referenceIdProduct, discountPercent } = req.body
+        const { discountPercent } = req.body
         const offerId = req.params.id
 
-        let referenceId
-        if (offerType === 'category') {
-            referenceId = referenceIdCategory
-        }
-        if (offerType === 'product') {
-            referenceId = referenceIdProduct
-        }
-
-        if (!offerType || !discountPercent) {
+        if (!discountPercent) {
             req.flash('errorMessage', 'Data not exist')
-            return res.redirect(`/admin/edit-offers/${offerId}`)
+            return res.redirect(`/admin/edit-offer/${offerId}`)
         }
 
-        if (offerType === 'category') {
-            const category = await categorySchema.findById(referenceId)
+        const offerDetails=await offerSchema.findById(offerId)
+
+        if (offerDetails.offerType === 'category') {
+            const category = await categorySchema.findById(offerDetails.referenceId)
 
             if (!category) {
                 req.flash('errorMessage', 'Category not found')
-                return res.redirect(`/admin/edit-offers/${offerId}`)
+                return res.redirect(`/admin/edit-offer/${offerId}`)
             }
 
-            await offerSchema.deleteOne({ offerType, referenceId })
             await productSchema.updateMany(
-                { category: referenceId },
+                { category: offerDetails.referenceId },
                 { $set: { discount: discountPercent } }
             )
         }
 
-        if (offerType === 'product') {
-            const product = await productSchema.findById(referenceId)
+        if (offerDetails.offerType === 'product') {
+            const product = await productSchema.findById(offerDetails.referenceId)
 
             if (!product) {
                 req.flash('errorMessage', 'Product not found')
-                return res.redirect(`/admin/edit-offers/${offerId}`)
+                return res.redirect(`/admin/edit-offer/${offerId}`)
             }
 
-            await offerSchema.deleteOne({ offerType, referenceId })
             await productSchema.findByIdAndUpdate(
-                referenceId,
+                offerDetails.referenceId,
                 { $set: { discount: discountPercent } }
             )
         }
 
-        const updatedOffer = {
-            offerType,
-            discountPercent,
-            referenceId
-        };
 
-        await offerSchema.findByIdAndUpdate(offerId, updatedOffer)
+        await offerSchema.findByIdAndUpdate(offerId, {discountPercent:discountPercent})
         req.flash('errorMessage', 'Offer updated successfully')
+
         return res.redirect('/admin/offers')
     } catch (err) {
         console.log(`Error on updating offer: ${err}`)

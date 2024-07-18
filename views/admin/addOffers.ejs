@@ -20,12 +20,12 @@
   }
 </style>
 
-
+<%- include('navbar')%>
 <div class="card-container">
   <div class="card">
     <b class="text-success" style="font-family: 'Montserrat', sans-serif;">Add New Offer</b>
     <div class="card-body">
-      <form action="/admin/add-offers" method="POST" id="add-offer-form">
+      <form action="/admin/offers/add-offers" method="POST" id="add-offer-form">
         <div class="mb-3">
           <label for="select-offer-type" class="form-label"> Offer Type</label>
           <select name="offerType" id="select-offer-type" class="form-select">
@@ -45,35 +45,36 @@
                 <%= category.categoryName %>
               </option>
               <% }) %>
-
-          </select>
-          <label for="category-offer" class="validateOffer text-danger"></label>
-        </div>
-
-        <div class="mb-3" id="product-offer-div" style="display: none;">
-          <label for="select-product" class="form-label">Product</label>
-          <select name="referenceIdProduct" id="select-product" class="form-select">
-            <option value=""> Select product</option>
-            <!-- Add product options here -->
-            <% product.forEach((product)=> { %>
+              
+            </select>
+            <label for="category-offer" class="validateOffer text-danger"></label>
+          </div>
+          
+          <div class="mb-3" id="product-offer-div" style="display: none;">
+            <label for="select-product" class="form-label">Product</label>
+            <select name="referenceIdProduct" id="select-product" class="form-select">
+              <option value=""> Select product</option>
+              <!-- Add product options here -->
+              <% product.forEach((product)=> { %>
               <option value="<%= product._id %>">
                 <%= product.productName %>
               </option>
               <% }) %>
-          </select>
-          <label for="product-offer" class="validateOffer text-danger"></label>
-        </div>
-        <div class="mb-3">
-          <label for="discount" class="form-label">Discount</label>
-          <input type="text" class="form-control" id="discount" name="discountPercent">
-          <label for="discountAmount" class="validateOffer text-danger"></label>
-        </div>
+            </select>
+            <label for="product-offer" class="validateOffer text-danger"></label>
+          </div>
+          <div class="mb-3">
+            <label for="discount" class="form-label">Discount</label>
+            <input type="text" class="form-control" id="discount" name="discountPercent">
+            <label for="discountAmount" class="validateOffer text-danger"></label>
+          </div>
         <button type="submit" class="btn btn-warning">Add Offer</button>
       </form>
     </div>
   </div>
 </div>
 
+<%- include('footer')%>
 <script>
   const offerTarget = document.getElementById('select-offer-type')
   const productDiv = document.getElementById('product-offer-div')

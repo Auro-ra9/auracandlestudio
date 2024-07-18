@@ -15,6 +15,7 @@ const walletGet = async (req, res) => {
         // Counting the total number of refund
         const refundCount = await orderSchema.countDocuments()
         const orders = await orderSchema.find({ userID: req.session.user, orderStatus: {$in:['Returned', 'Cancelled']} }).populate('products.productID').sort({ createdAt: -1 }).skip(skip).limit(refundPerPage)
+        const walletOrders = await orderSchema.find({ userID: req.session.user,paymentMethod:'Wallet', orderStatus: {$nin:['Returned', 'Cancelled']} }).populate('products.productID').sort({ createdAt: -1 }).skip(skip).limit(refundPerPage)
         const refundedItems= orders.filter((order)=>{
             if(order.orderStatus==='Cancelled'&& order.paymentMethod==='Cash on delivery'){
                 console.log(order)
@@ -32,7 +33,7 @@ const walletGet = async (req, res) => {
             {
                 title: 'orders',
                 alertMessage: req.flash('errorMessage'),
-                orders:refundedItems,
+                orders:[...refundedItems,...walletOrders],
                 balance,
                 currentPage,
                 totalPages: Math.ceil(refundCount / refundPerPage)

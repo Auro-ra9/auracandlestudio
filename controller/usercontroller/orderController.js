@@ -13,7 +13,7 @@ const getOrders = async (req, res) => {
 
         // Counting the total number of orders
         const ordersCount = await orderSchema.countDocuments()
-        const orders = await orderSchema.find({ userID: req.session.user, orderStatus: { $in: ['Pending', 'Confirmed', 'Shipping', 'Delivered','Pending-Returned'] } }).populate('products.productID').sort({ createdAt: -1 }).skip(skip).limit(ordersPerPage)
+        const orders = await orderSchema.find({ userID: req.session.user, orderStatus: { $in: ['Pending', 'Confirmed', 'Shipping', 'Delivered', 'Pending-Returned'] } }).populate('products.productID').sort({ createdAt: -1 }).skip(skip).limit(ordersPerPage)
 
 
         res.render('user/orders',
@@ -46,7 +46,7 @@ const cancelOrder = async (req, res) => {
             await product.productID.save()
         }
 
-    
+
         //saving the new startus in the db
         orderDetails.orderStatus = 'Cancelled'
         orderDetails.isCancelled = true
@@ -54,17 +54,18 @@ const cancelOrder = async (req, res) => {
         await orderDetails.save()
 
         //wallet finding
-        const wallet= await walletSchema.findOne({userID:req.session.user}) 
+        const wallet = await walletSchema.findOne({ userID: req.session.user })
 
-
-        if(orderDetails.paymentMethod==='Razor pay' || orderDetails.paymentMethod==='Wallet'){
-            if(wallet){
-                wallet.balance+= orderDetails.totalPrice
+        
+        if (orderDetails.paymentMethod === 'Razor pay' || orderDetails.paymentMethod === 'Wallet') {
+            const finalAmount= orderDetails.totalPrice-orderDetails.couponDiscount
+            if (wallet) {
+                wallet.balance += finalAmount
                 await wallet.save()
-            }else{
-                const newWallet= new walletSchema({
-                    userID:req.session.user,
-                    balance:orderDetails.totalPrice,
+            } else {
+                const newWallet = new walletSchema({
+                    userID: req.session.user,
+                    balance: finalAmount,
                 })
                 await newWallet.save()
             }
@@ -86,7 +87,7 @@ const getCancelledOrders = async (req, res) => {
         const ordersPerPage = 8;
         const currentPage = parseInt(req.query.page) || 1
         const skip = (currentPage - 1) * ordersPerPage;
-        
+
         // Counting the total number of orders
         const ordersCount = await orderSchema.countDocuments()
         const orders = await orderSchema.find({ userID: req.session.user, orderStatus: { $in: ['Pending-Returned', 'Returned', 'Cancelled'] } }).populate('products.productID').sort({ updatedAt: -1 }).skip(skip).limit(ordersPerPage)
@@ -127,6 +128,58 @@ const returnOrder = async (req, res) => {
     }
 }
 
+//deleting or discarding the order which was pending to pay 
+const discardOrder = async (req, res) => {
+    try {
+        const orderid = req.params.orderid
+        const orderDetails = await orderSchema.findById(orderid).populate('products.productID')
+        if (!orderDetails) {
+            return res.status(404).json({ message: 'OrderID could not find' })
+        }
+        if (orderDetails.orderStatus = 'Pending') {
+
+            await orderSchema.findByIdAndDelete(orderid)
+            return res.status(200).json({ data: 'Successfully discarded the Order' })
+        }
+
+    } catch (err) {
+        console.log(`Error on requesting return order post${err}`)
+    }
+}
+
+//proceeding to pay using razorpay for the order which was pending to pay earlier
+const proceedPayment = async (req, res) => {
+    try {
+        const orderid = req.params.orderid
+        const orderDetails = await orderSchema.findById(orderid).populate('products.productID')
+        if (!orderDetails) {
+            return res.status(404).json({ message: 'OrderID could not find' })
+        }
+        if (orderDetails.orderStatus = 'Pending') {
+
+            await orderSchema.findByIdAndDelete(orderid)
+            return res.status(200).json({ data: 'Successfully discarded the Order' })
+        }
+
+    } catch (err) {
+        console.log(`Error on requesting return order post${err}`)
+    }
+}
+
+
+const getRazorPayForPendingOrder = async (req, res) => {
+    try {
+       
+            return res.status(200).json({ success: 'Successfully discarded the Order' })
+        
+
+    } catch (err) {
+        console.log(`Error on requesting return order post${err}`)
+    }
+}
+
+
+
 
 
 module.exports = {
@@ -134,4 +187,8 @@ module.exports = {
     cancelOrder,
     getCancelledOrders,
     returnOrder,
+    discardOrder,
+    proceedPayment,
+    getRazorPayForPendingOrder
+
 }
