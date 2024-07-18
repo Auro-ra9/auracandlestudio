@@ -71,7 +71,8 @@
 
     <div class="container mt-5">
         <!-- Form Name -->
-        <legend class="text-center mb-4 font-weight-bold" style="font-family: 'Montserrat', sans-serif;">Add products</legend>
+        <legend class="text-center mb-4 font-weight-bold" style="font-family: 'Montserrat', sans-serif;">Add products
+        </legend>
         <form id="form-add-product" class="form-horizontal mb-5 p-4 border rounded" action="/admin/products/addProduct"
             method="post" enctype="multipart/form-data">
             <fieldset>
@@ -240,7 +241,7 @@
                     validationMessages[5].innerHTML = 'Description cannot be empty and must be at least 6 characters';
                     validate = false;
                 }
-              
+
                 if (!productImage.files || productImage.files.length === 0) {
                     validationMessages[7].innerHTML = 'Please select an image';
                     validate = false;
