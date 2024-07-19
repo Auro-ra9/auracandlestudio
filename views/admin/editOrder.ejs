@@ -152,56 +152,62 @@
                         </div>
                         <div class="card border shadow-none">
                             <div class="card-body">
-                                <strong class="card-title">Current status: <div class="badge">
-                                        <%= order.orderStatus %>
-                                    </div></strong>
+                                <strong class="card-title">Current status: 
+                                    <div class="badge"><%= order.orderStatus %></div>
+                                </strong>
                             </div>
-                            <% if (order.orderStatus==='Pending-Returned' || order.orderStatus==='Returned' ) { %>
+                            
+                            <% if (order.orderStatus === 'Pending-Returned') { %>
                                 <div class="card-body">
-                                    <strong class="card-title">Request for return: <div class="text-danger">
-                                            <%= order.reasonForRejection %>
-                                        </div></strong>
+                                    <strong class="card-title">Request for return: 
+                                        <div class="text-danger"><%= order.returnRequest %></div>
+                                    </strong>
                                 </div>
-                                <% } %>
+                            <% } else if (order.orderStatus === 'Cancelled') { %>
+                                <div class="card-body">
+                                    <strong class="card-title">Reason for cancellation: 
+                                        <div class="text-danger"><%= order.reasonForCancel %></div>
+                                    </strong>
+                                </div>
+                            <% } else if ( order.orderStatus === 'Returned') { %>
+                                <div class="card-body">
+                                    <strong class="card-title">Reason for Return: 
+                                        <div class="text-danger"><%= order.returnRequest %></div>
+                                    </strong>
+                                </div>
+                            <% } %>
                         </div>
-
-                        <% if (order.orderStatus==='Pending-Returned' ) { %>
+                        
+                        <% if (order.orderStatus === 'Pending-Returned') { %>
                             <div class="card border shadow-none">
                                 <div class="card-body">
                                     <strong class="card-title">Edit Status:</strong>
                                 </div>
                                 <div class="card-body">
-                                    <button class="btn btn-primary" onclick="approveReturn('<%= order._id %>')">Approve
-                                        return</button>
-                                    <button class="btn btn-warning" onclick="rejectReturn('<%= order._id %>')">Reject
-                                        return</button>
+                                    <button class="btn btn-primary" onclick="approveReturn('<%= order._id %>')">Approve return</button>
+                                    <button class="btn btn-warning" onclick="rejectReturn('<%= order._id %>')">Reject return</button>
                                 </div>
                             </div>
-
-                            <% } else if (order.orderStatus !=='Returned' ) { %>
-                                <div class="card border shadow-none">
-                                    <div class="card-body">
-                                        <strong class="card-title">Edit Order Status</strong>
-                                        <form action="/admin/edit-order/<%= order._id %>" method="post"
-                                            id="order-status-form">
-                                            <div class="mb-3">
-                                                <label for="orderStatus" class="form-label">Order Status:</label>
-                                                <select name="orderStatus" id="orderStatus" class="form-select">
-                                                    <option value="" selected disabled>
-                                                        <%= order.orderStatus %>
-                                                    </option>
-                                                    <option value="Confirmed">Confirmed</option>
-                                                    <option value="Shipping">Shipping</option>
-                                                    <option value="Delivered">Delivered</option>
-                                                </select>
-                                            </div>
-                                            <input type="hidden" id="currentStatus" name="currentStatus"
-                                                value="<%= order.orderStatus %>">
-                                            <button type="submit" class="btn btn-success">Change Status</button>
-                                        </form>
-                                    </div>
+                        <% } else if (!['Returned', 'Cancelled', 'Pending-Returned'].includes(order.orderStatus)) { %>
+                            <div class="card border shadow-none">
+                                <div class="card-body">
+                                    <strong class="card-title">Edit Order Status</strong>
+                                    <form action="/admin/edit-order/<%= order._id %>" method="post" id="order-status-form">
+                                        <div class="mb-3">
+                                            <label for="orderStatus" class="form-label">Order Status:</label>
+                                            <select name="orderStatus" id="orderStatus" class="form-select">
+                                                <option value="" selected disabled><%= order.orderStatus %></option>
+                                                <option value="Confirmed">Confirmed</option>
+                                                <option value="Shipping">Shipping</option>
+                                                <option value="Delivered">Delivered</option>
+                                            </select>
+                                        </div>
+                                        <input type="hidden" id="currentStatus" name="currentStatus" value="<%= order.orderStatus %>">
+                                        <button type="submit" class="btn btn-success">Change Status</button>
+                                    </form>
                                 </div>
-                                <% } %>
+                            </div>
+                        <% } %>
                     </div>
                 </div>
             </div>
@@ -386,20 +392,20 @@
 
             // Function to handle form submission for rejecting return
             const rejectReturnForm = document.getElementById('returnRequestForm');
-            rejectReturnForm.addEventListener('submit',(e)=>{
+            rejectReturnForm.addEventListener('submit', (e) => {
                 e.preventDefault()
-                const rejectReason= document.getElementById('rejectReason').value.trim('')
+                const rejectReason = document.getElementById('rejectReason').value.trim('')
 
-                if(rejectReason===''|| rejectReason.length>300){
-                    Swal:fire({
-                        icon:'warning',
-                        text:'Reason must not be empty and should be less than 300 letters',
-                        showConfirmButton:true
+                if (rejectReason === '' || rejectReason.length > 300) {
+                    Swal: fire({
+                        icon: 'warning',
+                        text: 'Reason must not be empty and should be less than 300 letters',
+                        showConfirmButton: true
                     })
                     return false
                 }
                 return true
 
             })
-           
+
         </script>
