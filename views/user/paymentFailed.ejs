@@ -7,8 +7,110 @@
     min-height: 100vh;
   }
 
+  .animation-ctn {
+    text-align: center;
+    margin-top: 5em;
+  }
+
+  @-webkit-keyframes checkmark {
+    0% {
+      stroke-dashoffset: 100px
+    }
+
+    100% {
+      stroke-dashoffset: 200px
+    }
+  }
+
+  @-ms-keyframes checkmark {
+    0% {
+      stroke-dashoffset: 100px
+    }
+
+    100% {
+      stroke-dashoffset: 200px
+    }
+  }
+
+  @keyframes checkmark {
+    0% {
+      stroke-dashoffset: 100px
+    }
+
+    100% {
+      stroke-dashoffset: 0px
+    }
+  }
+
+  @-webkit-keyframes checkmark-circle {
+    0% {
+      stroke-dashoffset: 480px
+    }
+
+    100% {
+      stroke-dashoffset: 960px;
+    }
+  }
+
+  @-ms-keyframes checkmark-circle {
+    0% {
+      stroke-dashoffset: 240px
+    }
+
+    100% {
+      stroke-dashoffset: 480px
+    }
+  }
+
+  @keyframes checkmark-circle {
+    0% {
+      stroke-dashoffset: 480px
+    }
+
+    100% {
+      stroke-dashoffset: 960px
+    }
+  }
+
+  @keyframes colored-circle {
+    0% {
+      opacity: 0
+    }
+
+    100% {
+      opacity: 100
+    }
+  }
+
+  /* .svg svg {
+      display: none
+  }
+   */
+  .inlinesvg .svg svg {
+    display: inline
+  }
+
+  /* .svg img {
+      display: none
+  } */
+  .icon--order-success svg polyline {
+    -webkit-animation: checkmark 0.25s ease-in-out 0.7s backwards;
+    animation: checkmark 0.25s ease-in-out 0.7s backwards
+  }
+
+  .icon--order-success svg circle {
+    -webkit-animation: checkmark-circle 0.6s ease-in-out backwards;
+    animation: checkmark-circle 0.6s ease-in-out backwards;
+  }
+
+  .icon--order-success svg circle#colored {
+    -webkit-animation: colored-circle 0.6s ease-in-out 0.7s backwards;
+    animation: colored-circle 0.6s ease-in-out 0.7s backwards;
+  }
+
   h1 {
     margin-top: 25px;
+    /* font-size: 18px; */
     font-family: sans-serif;
   }
 
@@ -18,19 +120,23 @@
     font-family: sans-serif;
   }
 </style>
-
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 <div class="order-confirm-container">
-  <lottie-player src="https://assets7.lottiefiles.com/packages/lf20_HErzhRh2y8.json" background="##FFFFFF" speed="1" style="width: 500px; height: 500px" autoplay direction="1" mode="normal"></lottie-player>
+  <lottie-player src="https://lottie.host/6bc03af6-3eed-41e6-8466-bf1f0c2fff4d/MP0qARxq5l.json" background="##FFFFFF" speed="1" style="width: 300px; height: 300px"  autoplay direction="1" mode="normal"></lottie-player>   
   <div class="text-center">
     <h1>Payment Failed</h1>
     <p>Please try to pay again for successfully placing the order.</p>
+
   </div>
 
+
   <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+
+
 
   <script>
     setTimeout(() => {
       window.location.href = '/orders'
-    }, 3000);
+    }, 5000)
   </script>
-</div>

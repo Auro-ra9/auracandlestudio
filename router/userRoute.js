@@ -92,6 +92,10 @@ user.post('/proceed-payment/:orderid', checkUserSession,orderController.proceedP
 user.delete('/discard-order/:orderid', checkUserSession,orderController.discardOrder)
 user.post('/get-razorPay', checkUserSession,orderController.getRazorPayForPendingOrder)
 
+user.post('/render-razorPay-pending',checkUserSession,orderController.renderRazorPay)
+user.post('/checkout-submit-pending-order',checkUserSession,orderController.postOrderPlaced)
+user.post('/invoice/:orderID',checkUserSession,orderController.downloadInvoice)
+
 //wallet
 user.get('/wallet',checkUserSession,walletController.walletGet)
 

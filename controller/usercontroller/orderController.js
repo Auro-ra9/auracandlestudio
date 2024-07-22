@@ -3,6 +3,11 @@ const productSchema = require('../../model/productSchema');
 const cartSchema = require('../../model/cartSchema');
 const orderSchema = require('../../model/orderSchema');
 const walletSchema = require('../../model/walletSchema');
+const dotenv = require("dotenv").config()
+const Razorpay = require('razorpay')
+const fs = require("fs");
+const PDFDocument = require("pdfkit-table");
+const path = require('path')
 
 const getOrders = async (req, res) => {
     try {
@@ -56,9 +61,9 @@ const cancelOrder = async (req, res) => {
         //wallet finding
         const wallet = await walletSchema.findOne({ userID: req.session.user })
 
-        
+
         if (orderDetails.paymentMethod === 'Razor pay' || orderDetails.paymentMethod === 'Wallet') {
-            const finalAmount= orderDetails.totalPrice-orderDetails.couponDiscount
+            const finalAmount = orderDetails.totalPrice - orderDetails.couponDiscount
             if (wallet) {
                 wallet.balance += finalAmount
                 await wallet.save()
@@ -169,17 +174,181 @@ const proceedPayment = async (req, res) => {
 
 const getRazorPayForPendingOrder = async (req, res) => {
     try {
-       
-            return res.status(200).json({ success: 'Successfully discarded the Order' })
-        
+
+        return res.status(200).json({ success: 'Successfully discarded the Order' })
+
 
     } catch (err) {
         console.log(`Error on requesting return order post${err}`)
     }
 }
 
+const renderRazorPay = async (req, res) => {
+    try {
+
+        const orderID = req.body.orderid;
+        const orderDetails = await orderSchema.findById(orderID).populate('userID')
+
+        var instance = new Razorpay({ key_id: process.env.RAZORPAY_SECRET_ID, key_secret: process.env.RAZORPAY_SECRET_KEY })
+
+        instance.orders.create({
+            amount: Math.round(orderDetails.totalPrice * 100),
+            currency: "INR",
+            receipt: "receipt#1",
+        }, (err, order) => {
+            if (err) {
+                console.log("Failed to create an order ID", err)
+                return res.status(500).json({ error: `Failed to create a order ID ${err}` })
+            }
+
+            return res.status(200).json({ success: "render razor pay", orderID: order.id, totalAmount: orderDetails.totalPrice, userName: orderDetails.userID.userName, phone: orderDetails.userID.phone, email: orderDetails.userID.email })
+        })
+
+    } catch (err) {
+        console.log("error on applying coupon fetch in order", err)
+    }
+}
+
+const postOrderPlaced = async (req, res) => {
+    try {
+        const orderID = req.body.orderid
+
+        const pendingOrderDetail = await orderSchema.findById(orderID).populate("products.productID")
+        pendingOrderDetail.orderStatus = "Confirmed";
+        await pendingOrderDetail.save()
+
+        //decrease the quantity as needed
+        for (const product of pendingOrderDetail.products) {
+            product.productID.productQuantity -= product.quantity;
+            await product.productID.save();
+        }
+
+        // empty the cart 
+        return res.status(200).json({ success: 'Order Placed successfully' })
+
+    } catch (err) {
+        console.log('error on order placing post', err)
+    }
+}
 
 
+const downloadInvoice = async (req, res) => {
+    try {
+        const orderID = req.params.orderID;
+
+        // Get the order details from order collection
+        const orderDetails = await orderSchema
+            .findById(orderID)
+            .populate("products.productID");
+
+        const doc = new PDFDocument();
+        const filename = `Aura Candle Studio Invoice ${Date.now()}.pdf`;
+
+        res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
+        res.setHeader("Content-Type", "application/pdf");
+
+        doc.pipe(res);
+
+        // Add header aligned to center
+        doc
+            .font("Helvetica-Bold")
+            .fontSize(36)
+            .text("Aura Candle Studio", { align: "center", margin: 10 });
+        doc
+            .font("Helvetica-Bold")
+            .fillColor("grey")
+            .fontSize(8)
+            .text("Brighten Every Moment with Aura ", {
+                align: "center",
+                margin: 10,
+            });
+        doc.moveDown();
+
+        doc.fontSize(10).fillColor("blue").text(`Invoice #${orderID}`);
+        doc.moveDown();
+        doc.moveDown();
+
+        // Add total sales report
+        doc
+            .fillColor("black")
+            .text(`Total products: ${orderDetails.products.length}`);
+        doc
+            .fillColor("black")
+            .text(
+                `Shipping Charge: ${orderDetails.totalPrice < 500 ? "RS 50" : "Free"}`
+            );
+        doc
+            .fillColor("black")
+            .text(
+                `Coupon Discount: ${orderDetails.couponDiscount}`
+            );
+        doc
+            .fontSize(10)
+            .fillColor("red")
+            .text(`Total Amount: Rs ${orderDetails.totalPrice.toLocaleString()}`);
+        doc.moveDown();
+
+        doc
+            .fontSize(10)
+            .fillColor("black")
+            .text(`Payment method: ${orderDetails.paymentMethod}`);
+        doc.text(`Order Date: ${orderDetails.createdAt.toDateString()}`);
+        doc.moveDown();
+        doc.moveDown();
+
+        // Add address details of the company
+        doc
+            .fontSize(10)
+            .fillColor("black")
+            .text(`Address: Trivandrum, Thiruvallom`);
+        doc.text(`Pincode: 10012`);
+        doc.text(`Phone: 234 567 8890`);
+        doc.moveDown();
+        doc.moveDown();
+
+        doc.fontSize(12).text(`Invoice.`, { align: "center", margin: 10 });
+        doc.moveDown();
+
+        const tableData = {
+            headers: ["Product Name", "Quantity", "Price", "Discount", "Total"],
+            rows: orderDetails.products.map((product) => {
+                return [
+                    product?.productName,
+                    product?.quantity,
+                    `Rs ${product?.price}`,
+                    `${product?.discount} %`,
+                    `Rs ${(
+                        product.price *
+                        (1 - product.discount / 100) *
+                        product.quantity
+                    ).toFixed(2)}`,
+                ];
+            }),
+        };
+
+        // Customize the appearance of the table
+        await doc.table(tableData, {
+            prepareHeader: () => doc.font("Helvetica-Bold").fontSize(10),
+            prepareRow: (row, i) => doc.font("Helvetica").fontSize(8),
+            hLineColor: "#b2b2b2", // Horizontal line color
+            vLineColor: "#b2b2b2", // Vertical line color
+            textMargin: 2, // Margin between text and cell border
+        });
+
+        doc.moveDown();
+        doc.moveDown();
+        doc.moveDown();
+        doc.moveDown();
+        doc.fontSize(12).text(`Thank You.`, { align: "center", margin: 10 });
+        doc.moveDown();
+
+        // Finalize the PDF document
+        doc.end();
+    } catch (err) {
+        console.log(`Error on downloading the invoice pdf ${err}`);
+        res.status(500).send("Error generating invoice");
+    }
+};
 
 
 module.exports = {
@@ -189,6 +358,8 @@ module.exports = {
     returnOrder,
     discardOrder,
     proceedPayment,
-    getRazorPayForPendingOrder
-
+    getRazorPayForPendingOrder,
+    renderRazorPay,
+    postOrderPlaced,
+    downloadInvoice
 }

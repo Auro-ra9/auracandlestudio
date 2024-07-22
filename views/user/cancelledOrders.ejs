@@ -220,6 +220,8 @@
                                                     <%= order.reasonForRejection %>
                                                 </p>
                                                 <%}%>
+                                                <button class="btn btn-dark" onclick="downloadInvoice('<%= order._id %>')" >Invoice</button>
+
                                     </div>
                                 </div>
                             </div>
@@ -295,6 +297,34 @@
                     element.classList.add('bg-danger', 'text-white')
                 }
             })
+
+            function downloadInvoice(orderID) {
+                const URL = `/invoice/${orderID}`
+                fetch(URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }).then((res) => {
+                    if (res.ok) {
+                        return res.blob();
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                    .then((blob) => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = `report-${Date.now()}.pdf`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+
+            }
 
 
         </script>

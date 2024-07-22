@@ -1,5 +1,7 @@
 const orderSchema = require('../../model/orderSchema')
-
+const fs = require("fs");
+const PDFDocument = require("pdfkit-table");
+const path = require('path')
 
 const dashboardRender = async (req, res) => {
     try {
@@ -182,11 +184,105 @@ const customSalesReport = async (req, res) => {
 
 const customSalesReportGet = (req, res) => {
     try {
-        res.render('admin/customSales', { title: 'Custom sales report', alertMessage: req.flash('errorMessage') })
+        res.render('admin/salesReports', { title: 'sales report', alertMessage: req.flash('errorMessage') })
     } catch (err) {
         console.log('error on rendering custom sales report', err)
     }
 }
+
+
+const downloadPdfReport = async (req, res) => {
+    try {
+        const { startDate, endDate } = req.body;
+
+        // Validate start and end dates
+        if (!startDate || !endDate) {
+            return res.status(400).json({ error: "Start date and end date are required" });
+        }
+        
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999); // Set end time to the end of the day
+
+        // Get the order details from order collection
+        const orderDetails = await orderSchema.find({ createdAt: { $gte: start, $lte: end } }).populate('products.productID').sort({ createdAt: -1 });
+        const orderDetailsWithoutCancelled = await orderSchema.find({ createdAt: { $gte: start, $lte: end },isCancelled: false, orderStatus: { $nin: 'Pending' } }).populate('products.productID').sort({ createdAt: -1 });
+        
+        const doc = new PDFDocument();
+        const filename = `Aura Candle Studio Sales Report ${Date.now()}.pdf`;
+        
+        res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
+        res.setHeader("Content-Type", "application/pdf");
+        
+        doc.pipe(res);
+        
+        // Add header aligned to center 
+        doc.font("Helvetica-Bold").fontSize(36).text("Aura Candle Studio", { align: "center", margin: 10 });
+        doc.font("Helvetica-Bold").fillColor("grey").fontSize(8).text("Brighten Every Moment with Aura", { align: "center", margin: 10 });
+        doc.moveDown();
+
+        // Add address details of the company
+        doc.fontSize(10).fillColor("black").text(`Address: Trivandrum, Thiruvallom`);
+        doc.text(`Pincode: 10012`);
+        doc.text(`Phone:234 567 8890`);
+        
+        doc.moveDown();
+        
+        const totalSale = orderDetailsWithoutCancelled.reduce((acc, sum) => acc + sum.totalPrice, 0)
+        const totalOrders = orderDetailsWithoutCancelled.length
+        
+        // Add total sales report
+        doc.text(`Total Orders : ${totalOrders}`);
+        doc.fontSize(10).fillColor("red").text(`Total Sales : Rs ${totalSale}`);
+        
+        // Move to the next line after the details
+        doc.moveDown();
+        
+        doc.moveDown(); // Move down after the title
+        doc.font("Helvetica-Bold").fillColor("black").fontSize(14).text(`Sales Report`, { align: "center", margin: 10 });
+        doc.fontSize(12).text(`From ${startDate} To ${endDate}`, { align: "center", margin: 10 });
+        
+        doc.moveDown(); // Move down after the title
+        
+        const tableData = {
+            headers: [
+                "Order ID",
+                "Address",
+                "Quantity",
+                "order Status",
+                "Total"
+            ],
+            rows: orderDetails.map((order) => {
+                return [
+                    order?._id,
+                    order.address?.homeAddress + "\n " + order.address?.areaAddress + "\n " + "Pincode :" + order.address?.pincode,
+                    order.products.reduce((accu,product)=>{
+                        return accu+product.quantity
+                    },0),
+                    order?.orderStatus,
+                    'Rs ' + order?.totalPrice.toLocaleString(),
+                ]
+            }),
+        };
+
+        // Customize the appearance of the table
+        await doc.table(tableData, {
+            prepareHeader: () => doc.font("Helvetica-Bold").fontSize(10),
+            prepareRow: (row, i) => doc.font("Helvetica").fontSize(8),
+            hLineColor: '#b2b2b2', // Horizontal line color
+            vLineColor: '#b2b2b2', // Vertical line color
+            textMargin: 2, // Margin between text and cell border
+        });
+        
+        // Finalize the PDF document
+        doc.end();
+        
+    } catch (err) {
+        console.error(`Error on downloading PDF sales report: ${err}`);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
 
 const trendingProducts = async (req, res) => {
     try {
@@ -274,113 +370,12 @@ const trendingProducts = async (req, res) => {
     }
 }
 
-
-const downloadPdfReport = async (req, res) => {
-    try {
-        const { startDate, endDate } = req.body;
-
-        // Validate start and end dates
-        if (!startDate || !endDate) {
-            return res.status(400).json({ error: "Start date and end date are required" });
-        }
-
-        const start = new Date(startDate);
-        const end = new Date(endDate);
-        end.setHours(23, 59, 59, 999); // Set end time to the end of the day
-
-        // Get the order details from order collection
-        const orderDetails = await orderSchema.find({ createdAt: { $gte: start, $lte: end } }).populate('products.productID').sort({ createdAt: -1 });
-        const orderDetailsWithoutCancelled = await orderSchema.find({ createdAt: { $gte: start, $lte: end },isCancelled: false, orderStatus: { $nin: 'Pending' } }).populate('products.productID').sort({ createdAt: -1 });
-
-        const doc = new PDFDocument();
-        const filename = `Cleat Craft Sales Report ${Date.now()}.pdf`;
-
-        res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
-        res.setHeader("Content-Type", "application/pdf");
-
-        doc.pipe(res);
-
-        // Add header aligned to center 
-        doc.font("Helvetica-Bold").fontSize(36).text("Cleat Craft", { align: "center", margin: 10 });
-        doc.font("Helvetica-Bold").fillColor("grey").fontSize(8).text("Empowering your game with elite football footwear", { align: "center", margin: 10 });
-        doc.moveDown();
-
-        // Add logo to the left side
-        // doc.image('public/img/somePlant.jpeg', {
-        //     width: 100,
-        //     x: 410, // Adjust for desired left margin
-        //     y: 80 // Adjust for vertical position
-        // });
-
-        doc.moveDown();
-
-        // Add address details of the company
-        doc.fontSize(10).fillColor("black").text(`Address: Trivandrum, Shangumugham`);
-        doc.text(`Pincode: 789589`);
-        doc.text(`Phone: 987 121 120`);
-
-        doc.moveDown();
-
-        const totalSale = orderDetailsWithoutCancelled.reduce((acc, sum) => acc + sum.totalPrice, 0)
-        const totalOrders = orderDetailsWithoutCancelled.length
-
-        // Add total sales report
-        doc.text(`Total Orders : ${totalOrders}`);
-        doc.fontSize(10).fillColor("red").text(`Total Sales : Rs ${totalSale}`);
-
-        // Move to the next line after the details
-        doc.moveDown();
-
-        doc.moveDown(); // Move down after the title
-        doc.font("Helvetica-Bold").fillColor("black").fontSize(14).text(`Sales Report`, { align: "center", margin: 10 });
-        doc.fontSize(12).text(`From ${startDate} To ${endDate}`, { align: "center", margin: 10 });
-
-        doc.moveDown(); // Move down after the title
-
-        const tableData = {
-            headers: [
-                "Order ID",
-                "Address",
-                "Quantity",
-                "order Status",
-                "Total"
-            ],
-            rows: orderDetails.map((order) => {
-                return [
-                    order?._id,
-                    order.address?.homeAddress + "\n " + order.address?.areaAddress + "\n " + "Pincode :" + order.address?.pincode,
-                    order?.totalQuantity,
-                    order?.orderStatus,
-                    'Rs ' + order?.totalPrice,
-                ]
-            }),
-        };
-
-        // Customize the appearance of the table
-        await doc.table(tableData, {
-            prepareHeader: () => doc.font("Helvetica-Bold").fontSize(10),
-            prepareRow: (row, i) => doc.font("Helvetica").fontSize(8),
-            hLineColor: '#b2b2b2', // Horizontal line color
-            vLineColor: '#b2b2b2', // Vertical line color
-            textMargin: 2, // Margin between text and cell border
-        });
-
-        // Finalize the PDF document
-        doc.end();
-
-    } catch (err) {
-        console.error(`Error on downloading PDF sales report: ${err}`);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-};
-
-
 module.exports = {
     dashboardRender,
     salesRender,
     customSalesReportGet,
     customSalesReport,
-    trendingProducts,
     downloadPdfReport,
+    trendingProducts,
 
 }

@@ -12,9 +12,9 @@ Updations :
 - user should be able to cancel/ return individual items from an order
 
 - referal offer
-- sales report 
+-//// sales report 
 
--Admin Dashboard - Chart with filter(yearly,monthly etc.)
+-////Admin Dashboard - Chart with filter(yearly,monthly etc.)
 Generate ledger book (optional)
 
 -Invoice download (Pdf)

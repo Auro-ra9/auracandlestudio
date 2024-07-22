@@ -1,0 +1,197 @@
+<%- include('navbar') %>
+<style>
+    .card {
+        overflow: hidden;
+        background-color: #fff;
+        border-radius: 10px;
+        border: none;
+        position: relative;
+        margin: 30px;
+        box-shadow: 0 0.46875rem 2.1875rem rgba(90, 97, 105, 0.1), 0 0.9375rem 1.40625rem rgba(90, 97, 105, 0.1), 0 0.25rem 0.53125rem rgba(90, 97, 105, 0.12), 0 0.125rem 0.1875rem rgba(90, 97, 105, 0.1);
+    }
+
+    .l-bg-yellow-dark {
+        background: linear-gradient(to right, #996c00, #fdd835) !important;
+        color: #fff;
+    }
+
+    .card .card-statistic-3 .card-icon-large .fas,
+    .card .card-statistic-3 .card-icon-large .far,
+    .card .card-statistic-3 .card-icon-large .fab,
+    .card .card-statistic-3 .card-icon-large .fal {
+        font-size: 110px;
+    }
+
+    .card .card-statistic-3 .card-icon {
+        text-align: center;
+        line-height: 50px;
+        margin-left: 15px;
+        color: #000;
+        position: absolute;
+        right: -5px;
+        top: 20px;
+        opacity: 0.1;
+    }
+
+    .l-bg-cyan {
+        background: linear-gradient(135deg, #289cf5, #84c0ec) !important;
+        color: #fff;
+    }
+
+    .l-bg-green {
+        background: linear-gradient(135deg, #23bdb8 0%, #43e794 100%) !important;
+        color: #fff;
+    }
+
+    .l-bg-orange {
+        background: linear-gradient(to right, #f9900e, #ffba56) !important;
+        color: #fff;
+    }
+
+    .l-bg-grey-dark {
+        background: linear-gradient(to right, #3a3a3a, #a0a0a0) !important;
+        color: #fff;
+    }
+</style>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+    integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+
+<div class="container my-5" style="min-height: 100vh;">
+    <h5 style="font-family: 'Montserrat', sans-serif; display: flex; justify-content: center;">Sales Report</h5>
+    <div class="row">
+        <div class="col-xl-12 col-lg-12">
+            <div class="card l-bg-yellow-dark">
+                <div class="card-statistic-3 p-4">
+                    <div class="card-icon card-icon-large"><i class="fas fa-dollar-sign"></i></div>
+                    <div class="mb-4">
+                        <h5 class="card-title mb-0">Generate Sales Report</h5>
+                    </div>
+                    <div class="row align-items-center mb-2 d-flex">
+                        <div class="col-8">
+                            <h2 class="d-flex align-items-center mb-0" id="sales-value">
+                                ₹ 00.00
+                            </h2>
+                        </div>
+                    </div>
+                    <div class="pt-4">
+                        <form id="sales-report-form">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="startDate" class="form-label">Start Date</label>
+                                    <input type="date" class="form-control" id="startDate" name="startDate">
+                                    <label for="startDate" class="validate"></label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="endDate" class="form-label">End Date</label>
+                                    <input type="date" class="form-control" id="endDate" name="endDate">
+                                    <label for="endDate" class="validate"></label>
+                                </div>
+                            </div>
+                            <div class="row text-center">
+                                <div class="col-md-6">
+                                    <button type="button" class="btn l-bg-grey-dark" onclick="generateCustomReport()">Generate Custom Report</button>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class="btn l-bg-grey-dark" onclick="generatePdfReport()">Generate PDF Report</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('footer') %>
+
+<script>
+    const salesReportForm = document.getElementById('sales-report-form');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
+    const salesValue = document.getElementById('sales-value');
+
+    function validateDates() {
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+        const validate = document.getElementsByClassName('validate');
+        let isValid = true;
+
+        validate[0].innerHTML = "";
+        validate[1].innerHTML = "";
+
+        if (!startDateInput.value) {
+            validate[0].innerHTML = 'Please select a start date';
+            isValid = false;
+        }
+
+        if (!endDateInput.value) {
+            validate[1].innerHTML = 'Please select an end date.';
+            isValid = false;
+        }
+
+        if (startDate > endDate) {
+            validate[1].innerHTML = 'End date must be greater than or equal to the start date.';
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    function generateCustomReport() {
+        if (!validateDates()) return;
+
+        const formData = new FormData(salesReportForm);
+        const formObject = Object.fromEntries(formData.entries());
+
+        const URL = '/admin/custom-sales-report';
+        fetch(URL, {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formObject)
+        }).then((res) => {
+            return res.json();
+        }).then((data) => {
+            if (data.success) {
+                salesValue.innerHTML = "₹" + data.salesReport.toLocaleString();
+            }
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+
+    function generatePdfReport() {
+        if (!validateDates()) return;
+
+        const formData = new FormData(salesReportForm);
+        const formObject = Object.fromEntries(formData.entries());
+
+        const URL = "/admin/pdf-report";
+        fetch(URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formObject)
+        }).then((res) => {
+            if (res.ok) {
+                return res.blob();
+            }
+            throw new Error('Network response was not ok.');
+        }).then((blob) => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `report-${Date.now()}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+</script>

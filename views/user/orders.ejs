@@ -79,11 +79,11 @@
     <div class="container-xl px-4 mt-4">
         <!-- Account page navigation-->
         <nav class="nav nav-borders">
-            <a class="nav-link  ms-0" href="/profile" >Profile</a>
-            <a class="nav-link  " href="/security" >Security</a>
-            <a class="nav-link active " href="/orders" >Orders</a>
-            <a class="nav-link  " href="/cancelled-orders" >Cancelled Orders</a>
-            <a class="nav-link   " href="/wallet" >Wallet</a>
+            <a class="nav-link  ms-0" href="/profile">Profile</a>
+            <a class="nav-link  " href="/security">Security</a>
+            <a class="nav-link active " href="/orders">Orders</a>
+            <a class="nav-link  " href="/cancelled-orders">Cancelled Orders</a>
+            <a class="nav-link   " href="/wallet">Wallet</a>
 
 
         </nav>
@@ -245,6 +245,8 @@
                                             <button class="btn btn-warning"
                                                 onclick="returnOrder('<%= order.id%>')">Return order</button>
                                             <%}%>
+
+                                            <button class="btn btn-dark" onclick="downloadInvoice('<%= order._id %>')" >Invoice</button>
 
                                     </div>
                                 </div>
@@ -418,7 +420,8 @@
                     showCancelButton: true
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        const URL = '/get-razorPay'
+
+                        const URL = '/render-razorPay-pending'
                         fetch(URL, {
                             method: 'POST',
                             headers: {
@@ -428,7 +431,59 @@
                         }).then((res) => {
                             return res.json()
                         }).then((data) => {
-                           
+                            if (data.orderID) {
+                                var options = {
+                                    "key": "rzp_test_fJQUYeRarb4G8S",
+                                    "amount": Math.round(data.totalAmount * 100),
+                                    "currency": "INR",
+                                    "name": "Aura Candle Studio",
+                                    "description": "Thanks for shopping",
+                                    "order_id": data.orderID,
+                                    "handler": function (response) {
+                                        const URL = `/checkout-submit-pending-order`
+                                        fetch(URL, {
+                                            method: 'POST',
+                                            headers: {
+                                                "Content-Type": "application/json"
+                                            },
+                                            body:JSON.stringify({orderid})
+                                        }).then((res) => {
+
+                                            return res.json()
+                                        }).then((data) => {
+                                            if (data.success) {
+                                                window.location.href = '/order-confirmed'
+                                            }
+                                            if (data.error) {
+                                                swal.fire({
+                                                    icon: 'warning',
+                                                    title: 'error',
+                                                    text: data.error,
+                                                })
+                                            }
+                                        }).catch((err) => {
+                                            console.log(`error on paying using wallet`)
+                                        })
+                                    },
+                                    "prefill": {
+                                        "name": data.userName,
+                                        "email": data.email,
+                                        "contact": data.phone
+                                    },
+                                    "notes": {
+                                        "address": "Razorpay Corporate Office"
+                                    },
+                                    "theme": {
+                                        "color": "#3399cc"
+                                    }
+                                };
+                                const rzp1 = new Razorpay(options);
+                                rzp1.on('payment.failed', function (response) {
+                                        window.location.href = '/order-pending'
+                                });
+                                rzp1.open();
+                            }
+
                         }).catch((err) => {
                             console.log('error on render razor pay instance', err)
                         })
@@ -469,5 +524,34 @@
                         })
                     }
                 })
+            }
+
+
+            function downloadInvoice(orderID) {
+                const URL = `/invoice/${orderID}`
+                fetch(URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }).then((res) => {
+                    if (res.ok) {
+                        return res.blob();
+                    }
+                    throw new Error('Network response was not ok.');
+                })
+                    .then((blob) => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = `report-${Date.now()}.pdf`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+
             }
         </script>
