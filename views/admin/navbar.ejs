@@ -1,6 +1,4 @@
 <style>
-    
-
     .navbar-light .navbar-nav .nav-link {
         color: #000;
     }
@@ -17,7 +15,6 @@
         padding: 0.5rem 1rem;
         color: #000;
         display: flex;
-        justify-content: space-between;
         align-items: center;
     }
 
@@ -59,11 +56,13 @@
 <nav class="navbar navbar-expand-lg navbar-light py-3">
     <div class="container">
         <a class="navbar-brand" href="/admin/dashboard">
-            <img id="MDB-logo" src="../../images/AURA-removebg-preview.png" alt="AURA Logo" draggable="false" height="50" class="rounded" />
+            <img id="MDB-logo" src="../../images/AURA-removebg-preview.png" alt="AURA Logo" draggable="false"
+                height="50" class="rounded" />
         </a>
-        
+
         <div class="ms-auto">
-            <button class="btn btn-outline-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminMenu" aria-controls="adminMenu">
+            <button class="btn btn-outline-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminMenu"
+                aria-controls="adminMenu">
                 <i class="fas fa-bars"></i> Menu
             </button>
         </div>
@@ -101,18 +100,18 @@
             <li class="nav-item">
                 <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#productsMenu">
                     <i class="fa-brands fa-product-hunt pe-2"></i>Products
-                    <i class="fas fa-chevron-down"></i>
+                    <i class="fas fa-chevron-down ps-2"></i>
                 </a>
                 <ul class="collapse nested-menu" id="productsMenu">
                     <li><a class="nav-link" href="/admin/products">Product List</a></li>
                     <li><a class="nav-link" href="/admin/products/addProduct">Add New Product</a></li>
                 </ul>
             </li>
-            
+
             <li class="nav-item">
                 <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#couponsMenu">
                     <i class="fas fa-tags pe-2"></i>Coupons
-                    <i class="fas fa-chevron-down"></i>
+                    <i class="fas fa-chevron-down ps-2"></i>
                 </a>
                 <ul class="collapse nested-menu" id="couponsMenu">
                     <li><a class="nav-link" href="/admin/coupons">Manage Coupons</a></li>
@@ -121,8 +120,8 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#offersMenu">
-                    <i class="fa-solid fa-percent"></i>Offer
-                    <i class="fas fa-chevron-down"></i>
+                    <i class="fa-solid fa-percent pe-2"></i>Offer
+                    <i class="fas fa-chevron-down ps-2"></i>
                 </a>
                 <ul class="collapse nested-menu" id="offersMenu">
                     <li><a class="nav-link" href="/admin/offers">Manage Offers</a></li>
@@ -131,8 +130,8 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#salesMenu">
-                    <i class="fa-solid fa-scale-balanced"></i>Sales
-                    <i class="fas fa-chevron-down"></i>
+                    <i class="fa-solid fa-scale-balanced pe-2"></i>Sales
+                    <i class="fas fa-chevron-down ps-2"></i>
                 </a>
                 <ul class="collapse nested-menu" id="salesMenu">
                     <li><a class="nav-link" href="/admin/sales">List sales details</a></li>
@@ -142,7 +141,7 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="/admin/logout">
-                    <i class="fas fa-sign-out-alt"></i>logout
+                    <i class="fas fa-sign-out-alt pe-2"></i>logout
                 </a>
             </li>
         </ul>
@@ -153,14 +152,22 @@
 <%- include('alert') %>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var dropdowns = document.querySelectorAll('.nav-link[data-bs-toggle="collapse"]');
-    dropdowns.forEach(function(dropdown) {
-        dropdown.addEventListener('click', function(e) {
-            e.preventDefault();
-            var chevron = this.querySelector('.fa-chevron-down');
-            chevron.classList.toggle('fa-chevron-up');
+    // Wait for the DOM content to be fully loaded
+    document.addEventListener('DOMContentLoaded', function () {
+        // Select all elements with class 'nav-link' and data attribute 'data-bs-toggle="collapse"'
+        var dropdowns = document.querySelectorAll('.nav-link[data-bs-toggle="collapse"]');
+        
+        // Loop through each dropdown element
+        dropdowns.forEach(function (dropdown) {
+            // Add a click event listener to each dropdown
+            dropdown.addEventListener('click', function (e) {
+                // Prevent the default action of the click event
+                e.preventDefault();
+                // Find the chevron icon within the clicked dropdown
+                var chevron = this.querySelector('.fa-chevron-down');
+                // Toggle the chevron icon between down and up states
+                chevron.classList.toggle('fa-chevron-up');
+            });
         });
     });
-});
 </script>

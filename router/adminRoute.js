@@ -23,6 +23,7 @@ admin.get('/sales', adminSession, dashboardController.salesRender)
 admin.get('/sales-reports', adminSession, dashboardController.customSalesReportGet)
 admin.post('/custom-sales-report', adminSession, dashboardController.customSalesReport)
 admin.post('/pdf-report', adminSession, dashboardController.downloadPdfReport)
+admin.post('/excel-report', adminSession, dashboardController.downloadExcelReport)
 admin.get('/trending', adminSession, dashboardController.trendingProducts)
 
 //customers 

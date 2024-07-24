@@ -58,12 +58,12 @@ const editOrderPost = async (req, res) => {
         //current order if is confirmed then allowing only shipping otherwise no
         if (currentOrder.orderStatus === 'Confirmed' && newStatus !== 'Shipping') {
             req.flash('errorMessage', 'Cannot change order status from Confirmed except to Shipping')
-            return res.redirect('/admin/edit-order')
+            return res.redirect(`/admin/edit-order/${orderID}`)
 
             //current order if is shipping  then allowing only deleviring otherwise no
         } else if (currentOrder.orderStatus === 'Shipping' && newStatus !== 'Delivered') {
             req.flash('errorMessage', 'Order must be Delivered to change from Shipping')
-            return res.redirect('/admin/edit-order')
+            return res.redirect(`/admin/edit-order/${orderID}`)
 
         }
         // Update order status

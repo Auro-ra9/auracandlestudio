@@ -1,6 +1,7 @@
 const orderSchema = require('../../model/orderSchema')
 const fs = require("fs");
 const PDFDocument = require("pdfkit-table");
+const ExcelJS = require('exceljs');
 const path = require('path')
 
 const dashboardRender = async (req, res) => {
@@ -108,7 +109,7 @@ const salesRender = async (req, res) => {
         startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
         const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
 
-       
+
 
         // Calculate daily, weekly, and monthly reports
         const dailyReport = calculateReport(orderDetailsProfit, startOfToday);
@@ -127,7 +128,7 @@ const salesRender = async (req, res) => {
             }, 0);
         }, 0);
 
-       
+
 
 
         res.render('admin/sales', {
@@ -199,23 +200,23 @@ const downloadPdfReport = async (req, res) => {
         if (!startDate || !endDate) {
             return res.status(400).json({ error: "Start date and end date are required" });
         }
-        
+
         const start = new Date(startDate);
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999); // Set end time to the end of the day
 
         // Get the order details from order collection
         const orderDetails = await orderSchema.find({ createdAt: { $gte: start, $lte: end } }).populate('products.productID').sort({ createdAt: -1 });
-        const orderDetailsWithoutCancelled = await orderSchema.find({ createdAt: { $gte: start, $lte: end },isCancelled: false, orderStatus: { $nin: 'Pending' } }).populate('products.productID').sort({ createdAt: -1 });
-        
+        const orderDetailsWithoutCancelled = await orderSchema.find({ createdAt: { $gte: start, $lte: end }, isCancelled: false, orderStatus: { $nin: 'Pending' } }).populate('products.productID').sort({ createdAt: -1 });
+
         const doc = new PDFDocument();
         const filename = `Aura Candle Studio Sales Report ${Date.now()}.pdf`;
-        
+
         res.setHeader("Content-Disposition", `attachment; filename=${filename}`);
         res.setHeader("Content-Type", "application/pdf");
-        
+
         doc.pipe(res);
-        
+
         // Add header aligned to center 
         doc.font("Helvetica-Bold").fontSize(36).text("Aura Candle Studio", { align: "center", margin: 10 });
         doc.font("Helvetica-Bold").fillColor("grey").fontSize(8).text("Brighten Every Moment with Aura", { align: "center", margin: 10 });
@@ -225,25 +226,25 @@ const downloadPdfReport = async (req, res) => {
         doc.fontSize(10).fillColor("black").text(`Address: Trivandrum, Thiruvallom`);
         doc.text(`Pincode: 10012`);
         doc.text(`Phone:234 567 8890`);
-        
+
         doc.moveDown();
-        
+
         const totalSale = orderDetailsWithoutCancelled.reduce((acc, sum) => acc + sum.totalPrice, 0)
         const totalOrders = orderDetailsWithoutCancelled.length
-        
+
         // Add total sales report
         doc.text(`Total Orders : ${totalOrders}`);
         doc.fontSize(10).fillColor("red").text(`Total Sales : Rs ${totalSale}`);
-        
+
         // Move to the next line after the details
         doc.moveDown();
-        
+
         doc.moveDown(); // Move down after the title
         doc.font("Helvetica-Bold").fillColor("black").fontSize(14).text(`Sales Report`, { align: "center", margin: 10 });
         doc.fontSize(12).text(`From ${startDate} To ${endDate}`, { align: "center", margin: 10 });
-        
+
         doc.moveDown(); // Move down after the title
-        
+
         const tableData = {
             headers: [
                 "Order ID",
@@ -256,9 +257,9 @@ const downloadPdfReport = async (req, res) => {
                 return [
                     order?._id,
                     order.address?.homeAddress + "\n " + order.address?.areaAddress + "\n " + "Pincode :" + order.address?.pincode,
-                    order.products.reduce((accu,product)=>{
-                        return accu+product.quantity
-                    },0),
+                    order.products.reduce((accu, product) => {
+                        return accu + product.quantity
+                    }, 0),
                     order?.orderStatus,
                     'Rs ' + order?.totalPrice.toLocaleString(),
                 ]
@@ -273,15 +274,72 @@ const downloadPdfReport = async (req, res) => {
             vLineColor: '#b2b2b2', // Vertical line color
             textMargin: 2, // Margin between text and cell border
         });
-        
+
         // Finalize the PDF document
         doc.end();
-        
+
     } catch (err) {
         console.error(`Error on downloading PDF sales report: ${err}`);
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
+//excel report generating
+const downloadExcelReport = async (req, res) => {
+    try {
+        const { startDate, endDate } = req.body;
+
+        // Validate start and end dates
+        if (!startDate || !endDate) {
+            return res.status(400).json({ error: "Start date and end date are required" });
+        }
+
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999); // Set end time to the end of the day
+
+        // Get the order details from the order collection
+        const orderDetails = await orderSchema.find({
+            createdAt: { $gte: start, $lte: end }
+        }).populate('products.productID').sort({ createdAt: -1 });
+
+        // Create a new workbook and add a worksheet
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Sales Report');
+
+        // Define column headers
+        worksheet.columns = [
+            { header: 'Order ID', key: 'orderID', width: 30 },
+            { header: 'Address', key: 'address', width: 50 },
+            { header: 'Quantity', key: 'quantity', width: 15 },
+            { header: 'Order Status', key: 'orderStatus', width: 20 },
+            { header: 'Total', key: 'total', width: 15 }
+        ];
+
+        // Add rows to the worksheet
+        orderDetails.forEach(order => {
+            worksheet.addRow({
+                orderID: order._id,
+                address: `${order.address.homeAddress}, ${order.address.areaAddress}, Pincode: ${order.address.pincode}`,
+                quantity: order.products.reduce((accu, product) => accu + product.quantity, 0),
+                orderStatus: order.orderStatus,
+                total: 'Rs ' + order.totalPrice.toLocaleString()
+            });
+        });
+
+        // Set headers to prompt file download
+        res.setHeader('Content-Disposition', `attachment; filename="Aura_Candle_Studio_Sales_Report_${Date.now()}.xlsx"`);
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+
+        // Write the workbook to the response
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (err) {
+        console.error(`Error on downloading Excel sales report: ${err}`);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
 
 
 const trendingProducts = async (req, res) => {
@@ -376,6 +434,7 @@ module.exports = {
     customSalesReportGet,
     customSalesReport,
     downloadPdfReport,
+    downloadExcelReport,
     trendingProducts,
 
 }

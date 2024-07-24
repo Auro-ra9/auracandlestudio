@@ -129,7 +129,7 @@
                                                                 <%= product.quantity %>
                                                             </span></p>
                                                         <p class="mb-0 mt-1">Coupon Discount : <span class="fw-medium">
-                                                                <%= order.couponDiscount %>
+                                                               &#8377; <%= order.couponDiscount %>
                                                             </span></p>
                                                         <%if(product.discount>0){%>
                                                             <span class="badge bg-danger">
@@ -246,7 +246,8 @@
                                                 onclick="returnOrder('<%= order.id%>')">Return order</button>
                                             <%}%>
 
-                                            <button class="btn btn-dark" onclick="downloadInvoice('<%= order._id %>')" >Invoice</button>
+                                                <button class="btn btn-dark"
+                                                    onclick="downloadInvoice('<%= order._id %>')">Invoice</button>
 
                                     </div>
                                 </div>
@@ -305,6 +306,7 @@
                         <form id="reasonForm" method="post" action="/cancel-order">
                             <div class="form-group">
                                 <textarea class="form-control" rows="8" id="message" name="cancelledReason"></textarea>
+                                <label for="cancelReason" id="validateLabel" class="text-danger"></label>
                             </div>
                             <div class="form-group mt-4 text-center">
                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
@@ -331,6 +333,7 @@
                         <form id="returnRequestForm" method="post" action="/return-request-order">
                             <div class="form-group">
                                 <textarea class="form-control" rows="8" id="message" name="returningReason"></textarea>
+                                <label for="returningReason" id="validateReturnLabel" class="text-danger"></label>
                             </div>
                             <div class="form-group mt-4 text-center">
                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
@@ -394,6 +397,20 @@
                 })
             }
 
+            const reasonForm = document.getElementById('reasonForm')
+
+            reasonForm.addEventListener('submit', (e) => {
+                e.preventDefault()
+
+                document.getElementById('validateLabel').innerHTML = ''
+                const cancelledReason = document.getElementsByName('cancelledReason')[0]
+                if (cancelledReason.value.trim() === '' || cancelledReason.value.length <= 10 || cancelledReason.value.length > 150) {
+
+                    document.getElementById('validateLabel').innerHTML = 'Reason must be added in words in between 10-100, without reason cannot cancel the order'
+                } else {
+                    reasonForm.submit()
+                }
+            })
 
             //return order
             function returnOrder(orderid) {
@@ -411,6 +428,24 @@
                 })
             }
 
+            //validate return order
+            const returnRequestForm = document.getElementById('returnRequestForm')
+
+            returnRequestForm.addEventListener('submit', (e) => {
+                e.preventDefault()
+
+                document.getElementById('validateReturnLabel').innerHTML = ''
+                const returningReason = document.getElementsByName('returningReason')[0]
+
+                if (returningReason.value.trim() === '' || returningReason.value.length <=10 || returningReason.value.length > 150) {
+                    document.getElementById('validateReturnLabel').innerHTML = 'Request must be in 10-200 characters without reason cannot request for returning the order'
+
+                } else {
+                    returnRequestForm.submit()
+                }
+            })
+
+
             //proceed to pay using razorpay
             function ProceedPay(orderid) {
                 swal.fire({
@@ -427,11 +462,12 @@
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body:JSON.stringify({orderid})
+                            body: JSON.stringify({ orderid })//passing the date to backend for getting the order details 
+                            //complete pending amount to pay
                         }).then((res) => {
                             return res.json()
                         }).then((data) => {
-                            if (data.orderID) {
+                            if (data.orderID) {//get the details with total payable amount
                                 var options = {
                                     "key": "rzp_test_fJQUYeRarb4G8S",
                                     "amount": Math.round(data.totalAmount * 100),
@@ -446,7 +482,7 @@
                                             headers: {
                                                 "Content-Type": "application/json"
                                             },
-                                            body:JSON.stringify({orderid})
+                                            body: JSON.stringify({ orderid })
                                         }).then((res) => {
 
                                             return res.json()
@@ -479,7 +515,7 @@
                                 };
                                 const rzp1 = new Razorpay(options);
                                 rzp1.on('payment.failed', function (response) {
-                                        window.location.href = '/order-pending'
+                                    window.location.href = '/order-pending'
                                 });
                                 rzp1.open();
                             }
@@ -527,6 +563,7 @@
             }
 
 
+            //download invoice or order details
             function downloadInvoice(orderID) {
                 const URL = `/invoice/${orderID}`
                 fetch(URL, {

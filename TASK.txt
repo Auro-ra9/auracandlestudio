@@ -1,3 +1,14 @@
+fifth or 12th week(pendings only)
+
+//// Invoice for only delivered product
+//// price indicator for coupon discount
+//// Typography
+//// sales report -  add excel download also
+Add proper comments for all functions
+referral offer
+
+
+
 fourth or 11th week
 Updations :
 -///// keep sales report as a seperate section
@@ -17,8 +28,8 @@ Updations :
 -////Admin Dashboard - Chart with filter(yearly,monthly etc.)
 Generate ledger book (optional)
 
--Invoice download (Pdf)
--Should be able to continue payment from my order page in case of failed payment
+-//// Invoice download (Pdf)
+-/// Should be able to continue payment from my order page in case of failed payment
 
 Admin side :
 -/// Best selling product (top 10) 
