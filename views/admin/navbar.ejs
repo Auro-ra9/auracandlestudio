@@ -1,56 +1,173 @@
 <style>
-    .navbar-light {
-        background: #C3BAA9;
-    }
-
     .navbar-light .navbar-nav .nav-link {
         color: #000;
+    }
+
+    .offcanvas {
+        background-color: #f8f9fa;
+    }
+
+    .offcanvas-header {
+        background-color: #C3BAA9;
+    }
+
+    .offcanvas-body .nav-link {
+        padding: 0.5rem 1rem;
+        color: #000;
+        display: flex;
+        align-items: center;
+    }
+
+    .offcanvas-body .nav-link:hover {
+        background-color: #a4a4a5;
+    }
+
+    .nested-menu {
+        list-style-type: none;
+        padding-left: 1.5rem;
+        display: none;
+    }
+
+    .nested-menu.show {
+        display: block;
+    }
+
+    .nested-menu .nav-link {
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 991.98px) {
+        .navbar-expand-lg .container {
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+        .navbar-brand img {
+            height: auto;
+        }
+
+        .btn-logout {
+            margin-left: 10px;
+        }
     }
 </style>
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light py-3">
     <div class="container">
-        <a class="navbar-brand" href="/admin/dashboard"><img id="MDB-logo" src="../../images/LOGO scented serenade.jpeg"
-                draggable="false" height="40" class="rounded" /></a>
-        <button class="navbar-toggler" type="button" data-mdb-toggle="collapse"
-            data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-            aria-label="Toggle navigation">
-            <i class="fas fa-bars"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="/admin/dashboard"><i class="fas fa-tachometer-alt pe-2"></i>Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="/admin/products"><i class="fas fa-boxes pe-2"></i>Products</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="/admin/category"><i class="fas fa-boxes pe-2"></i>Category</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="/admin/customers"><i class="fas fa-users pe-2"></i>Customers</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="/admin/orders"><i class="fas fa-shopping-cart pe-2"></i>Orders</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="/admin/coupons"><i class="fas fa-tags pe-2"></i>Coupons</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link mx-2" href="/admin/banner"><i class="fas fa-images pe-2"></i>Banner</a>
-                </li>
-                    <li class="nav-item ms-3">
-                        <a class="btn btn-black btn-rounded" href="/admin/logout"><i class="fas fa-sign-out-alt"></i> Log out</a>
-                    </li>
-                
-                
-                
-            </ul>
+        <a class="navbar-brand" href="/admin/dashboard">
+            <img id="MDB-logo" src="../../images/AURA-removebg-preview.png" alt="AURA Logo" draggable="false"
+                height="50" class="rounded" />
+        </a>
+
+        <div class="ms-auto">
+            <button class="btn btn-outline-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#adminMenu"
+                aria-controls="adminMenu">
+                <i class="fas fa-bars"></i> Menu
+            </button>
         </div>
     </div>
 </nav>
-<!-- Navbar -->
 
-<%- include('alert')%>
+<!-- Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="adminMenu" aria-labelledby="adminMenuLabel">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="adminMenuLabel">Admin Menu</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/dashboard">
+                    <i class="fas fa-tachometer-alt pe-2"></i>Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/customers">
+                    <i class="fas fa-users pe-2"></i>Customers
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/category">
+                    <i class="fas fa-boxes pe-2"></i>Category
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/orders">
+                    <i class="fas fa-shopping-cart pe-2"></i>Orders
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#productsMenu">
+                    <i class="fa-brands fa-product-hunt pe-2"></i>Products
+                    <i class="fas fa-chevron-down ps-2"></i>
+                </a>
+                <ul class="collapse nested-menu" id="productsMenu">
+                    <li><a class="nav-link" href="/admin/products">Product List</a></li>
+                    <li><a class="nav-link" href="/admin/products/addProduct">Add New Product</a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#couponsMenu">
+                    <i class="fas fa-tags pe-2"></i>Coupons
+                    <i class="fas fa-chevron-down ps-2"></i>
+                </a>
+                <ul class="collapse nested-menu" id="couponsMenu">
+                    <li><a class="nav-link" href="/admin/coupons">Manage Coupons</a></li>
+                    <li><a class="nav-link" href="/admin/coupons/add-coupons">Add New Coupon</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#offersMenu">
+                    <i class="fa-solid fa-percent pe-2"></i>Offer
+                    <i class="fas fa-chevron-down ps-2"></i>
+                </a>
+                <ul class="collapse nested-menu" id="offersMenu">
+                    <li><a class="nav-link" href="/admin/offers">Manage Offers</a></li>
+                    <li><a class="nav-link" href="/admin/offers/add-offers">Add New Offer</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#salesMenu">
+                    <i class="fa-solid fa-scale-balanced pe-2"></i>Sales
+                    <i class="fas fa-chevron-down ps-2"></i>
+                </a>
+                <ul class="collapse nested-menu" id="salesMenu">
+                    <li><a class="nav-link" href="/admin/sales">List sales details</a></li>
+                    <li><a class="nav-link" href="/admin/sales-reports"> sales Reports</a></li>
+                    <li><a class="nav-link" href="/admin/trending">Trending</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/logout">
+                    <i class="fas fa-sign-out-alt pe-2"></i>logout
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<hr class="mt-0 mb-4">
+
+<%- include('alert') %>
+
+<script>
+    // Wait for the DOM content to be fully loaded
+    document.addEventListener('DOMContentLoaded', function () {
+        // Select all elements with class 'nav-link' and data attribute 'data-bs-toggle="collapse"'
+        var dropdowns = document.querySelectorAll('.nav-link[data-bs-toggle="collapse"]');
+        
+        // Loop through each dropdown element
+        dropdowns.forEach(function (dropdown) {
+            // Add a click event listener to each dropdown
+            dropdown.addEventListener('click', function (e) {
+                // Prevent the default action of the click event
+                e.preventDefault();
+                // Find the chevron icon within the clicked dropdown
+                var chevron = this.querySelector('.fa-chevron-down');
+                // Toggle the chevron icon between down and up states
+                chevron.classList.toggle('fa-chevron-up');
+            });
+        });
+    });
+</script>

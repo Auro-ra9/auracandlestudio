@@ -1,5 +1,5 @@
 <style>
-  .alert{
+  .alert {
     width: 100%;
     margin: 0;
   }
@@ -10,18 +10,18 @@
 
 <% if( alertMessage.length>0) {%>
 
-<div class="alert alert-info" role="alert">
-  <h6>
-    <%= alertMessage%>
-  </h6>
-</div>
+  <div class="alert alert-info" role="alert" id="alert">
+    <h6>
+      <%= alertMessage%>
+    </h6>
+  </div>
 
-<% } %>
+  <% } %>
 
-<script>
-  const alertDuration= 5000
-setTimeout(() => {
-  document.getElementsByClassName('alert')[0].style.display='none'
-}, alertDuration);
+    <script>
+      const alertDuration = 5000
+      setTimeout(() => {
+        document.getElementById('alert').style.display = 'none'
+      }, alertDuration);
 
-</script>
+    </script>

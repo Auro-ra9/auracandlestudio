@@ -1,0 +1,46 @@
+<style>
+        .coupon-card {
+            width: 350px;
+            padding: 10px;
+            border-radius: 20px;
+            background-image: url('../../images/Brown\ and\ Orange\ Modern\ Beauty\ Spa\ Gift\ Voucher\ Coupon.png');
+            background-size: cover;
+            background-position: center;
+            border: none;
+            color: #fff;
+            height: 350px;
+            display: flex;
+            position: relative;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            height: 100vh;
+        }
+
+        .coupon-code {
+            margin-top: 50px;
+        }
+    </style>
+
+    <div class="container mt-5">
+        <h1>Available Coupons</h1>
+        <div class="row">
+            <% coupons.forEach(coupon => { %>
+                <div class="col-md-4 mb-4">
+                    <div class="d-flex justify-content-center align-items-center">
+                        <div class="coupon-card text-center">
+                            <div class="image"><img src="https://i.imgur.com/DC94rZe.png" width="150"></div>
+                            <div class="image2"><img src="https://i.imgur.com/DC94rZe.png" width="150"></div>
+                            <h1><%= coupon.discount %>% OFF</h1>
+                            <span class="d-block"><%= coupon.couponName %></span>
+                            <div class="mt-4"><small>With Code: <%= coupon.couponCode %></small></div>
+                            <div class="coupon-code"><small>Expires on: <%= new Date(coupon.expiryDate).toLocaleDateString() %></small></div>
+                            <button class="btn btn-dark btn-sm text-white mx-auto mt-5">Apply Coupon</button>
+                        </div>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>

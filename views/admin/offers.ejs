@@ -1,0 +1,205 @@
+<style>
+    .product-name {
+        max-width: 200px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .product-name:hover {
+        max-width: 200px;
+        overflow: visible;
+        white-space: wrap;
+        /* text-overflow: ellipsis; */
+    }
+</style>
+
+
+<%- include('navbar') %>
+
+    <div class="container my-5" style="min-height: 100vh;">
+        <h5 style="font-family: 'Montserrat', sans-serif; display: flex; justify-content: center;">Available offers</h5>
+        <!-- <a href="/admin/add-offers" class="btn btn-secondary" style="font-family: 'Montserrat', sans-serif;">Add offer</a> -->
+
+        <table class="table table-hover mt-3">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Sl.no:</th>
+                    <th scope="col">offer added on</th>
+                    <th scope="col">Discount</th>
+                    <th scope="col">Type</th>
+                    <th scope="col" class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% offers.forEach((offer,index)=> { %>
+                    <tr>
+                        <th scope="row">
+                            <%= (currentPage - 1) * 8 + index + 1 %>
+                        </th>
+                        <td>
+                             <%= offer.createdAt.toLocaleDateString() %> 
+                        </td>
+                        <td>
+                             <%= offer.discountPercent %> 
+                        </td>
+                        <td>
+                            <%= offer.offerType %>
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center align-items-center">
+                                <a href="/admin/edit-offer/<%= offer._id %>" class="text-dark me-2">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                               
+                                        <button class="btn text-primary" onclick="deleteOffer('<%= offer._id %>')">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <% }) %>
+            </tbody>
+        </table>
+        <!-- Pagination controls -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <% if (currentPage> 1) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <% } %>
+                        <% for (let i=1; i <=totalPages; i++) { %>
+                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                <a class="page-link" href="?page=<%= i %>">
+                                    <%= i %>
+                                </a>
+                            </li>
+                            <% } %>
+                                <% if (currentPage < totalPages) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    <% } %>
+            </ul>
+        </nav>
+    </div>
+
+
+    <%- include('footer') %>
+
+        <script>
+            //Delete offer
+            function deleteOffer(id) {
+        Swal.fire({
+            icon: "question",
+            title: "Delete offer",
+            text: "Are you sure you want to remove the offer?",
+            showCancelButton: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const URL = `/admin/delete-offer/${id}`
+                fetch(URL, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': "application/json"
+                    }
+                }).then((res) => {
+                    if (res.ok) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: "offer deleted",
+                            showConfirmButton: false,
+                            timer: 900
+                        }).then(() => {
+                            window.location.reload()
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: "Error",
+                            text: "Failed to delete the offer"
+                        })
+                    }
+                }).catch((err) => {
+                    console.log("Error on offer deleting", err)
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Error",
+                        text: "Failed to delete the offer"
+                    })
+                })
+            }
+        })
+    }
+            // //block offer
+            // function blockOffer(offerID) {
+            //     Swal.fire({
+            //         icon: 'question',
+            //         title: "block offer",
+            //         text: "Are you sure, you want to block the offer?",
+            //         showCancelButton: true,
+            //     }).then((result) => {
+            //         if (result.isConfirmed) {
+            //             const URL = `/admin/block-offer/${offerID}`
+            //             fetch(URL, {
+            //                 method: 'PUT',
+            //                 headers: {
+            //                     'Content-Type': "application/json"
+            //                 }
+            //             }).then((res) => {
+            //                 if (res.ok) {
+            //                     Swal.fire({
+            //                         icon: 'success',
+            //                         title: 'offer Blocked ',
+            //                         showConfirmButton: false,
+            //                         timer: 900
+            //                     }).then(() => {
+            //                         window.location.reload()
+            //                     })
+            //                 }
+            //             }).catch((err) => {
+            //                 console.log(`error on offer blocking ${err}`);
+            //             })
+            //         }
+            //     })
+            // }
+
+
+            // //unblock offer
+            // function unblockOffer(offerID) {
+            //     Swal.fire({
+            //         icon: "question",
+            //         title: "Unblock offer",
+            //         text: "Are you sure want to unblock the offer?",
+            //         showCancelButton: true
+            //     }).then((result) => {
+            //         if (result.isConfirmed) {
+            //             const URL = `/admin/unblock-offer/${offerID}`
+            //             fetch(URL, {
+            //                 method: 'PUT',
+            //                 headers: {
+            //                     'Content-Type': "application/json"
+            //                 }
+            //             }).then((res) => {
+            //                 if (res.ok) {
+            //                     Swal.fire({
+            //                         icon: 'success',
+            //                         title: "offer unblocked",
+            //                         showConfirmButton: false,
+            //                         timer: 900
+            //                     }).then(() => {
+            //                         window.location.reload()
+            //                     })
+            //                 }
+            //             }).catch((err) => {
+            //                 console.log("error on offer unblocking", err);
+            //             })
+            //         }
+            //     })
+            // }
+        </script>

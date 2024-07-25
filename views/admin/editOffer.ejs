@@ -1,0 +1,86 @@
+<style>
+    .card-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .card {
+        width: 40rem;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .card-body {
+        padding: 20px;
+    }
+</style>
+    <%- include('navbar')%>
+
+<div class="card-container">
+    <div class="card">
+        <b class="text-success" style="font-family: 'Montserrat', sans-serif;">Edit Offer</b>
+        <div class="card-body">
+            <form action="/admin/edit-offer/<%= offer._id %>" method="POST" id="edit-offer-form">
+                <div class="mb-3">
+                    <label for="select-offer-type" class="form-label">Offer Type</label>
+                    <p id="select-offer-type" class="form-control-plaintext"><%= offer.offerType %></p>
+                </div>
+
+                <% if (offer.offerType === 'category') { %>
+                <div class="mb-3" id="category-offer-div">
+                    <label for="select-category" class="form-label">Category</label>
+                    <% category.forEach((category) => { %>
+                        <% if (offer.referenceId === category._id.toString()) { %>
+                            <p id="select-category" class="form-control-plaintext"><%= category.categoryName %></p>
+                        <% } %>
+                    <% }) %>
+                </div>
+                <% } else if (offer.offerType === 'product') { %>
+                <div class="mb-3" id="product-offer-div">
+                    <label for="select-product" class="form-label">Product</label>
+                    <% product.forEach((product) => { %>
+                        <% if (offer.referenceId === product._id.toString()) { %>
+                            <p id="select-product" class="form-control-plaintext"><%= product.productName %></p>
+                        <% } %>
+                    <% }) %>
+                </div>
+                <% } %>
+
+                <div class="mb-3">
+                    <label for="discount" class="form-label">Discount</label>
+                    <input type="text" class="form-control" id="discount" name="discountPercent" value="<%= offer.discountPercent %>">
+                    <label for="discountAmount" class="validateOffer text-danger"></label>
+                </div>
+                <button type="submit" class="btn btn-warning">Edit Offer</button>
+            </form>
+        </div>
+    </div>
+</div>
+<%- include('footer')%>
+
+
+<script>
+    const discountAmount = document.getElementById("discount")
+
+    const offerEditForm = document.getElementById("edit-offer-form")
+    offerEditForm.addEventListener("submit", (e) => {
+        e.preventDefault()
+
+        let validateOffer = true
+        document.getElementsByClassName("validateOffer")[0].innerHTML = ""
+
+        if (discountAmount.value.trim() === "" || isNaN(discountAmount.value) || discountAmount.value >= 100 || discountAmount.value < 1) {
+            document.getElementsByClassName("validateOffer")[0].innerHTML = "Enter a valid discount between (1-99)"
+            validateOffer = false
+        }
+
+        if (validateOffer) {
+            offerEditForm.submit()
+        }
+    })
+</script>

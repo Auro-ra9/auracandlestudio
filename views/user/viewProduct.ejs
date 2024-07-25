@@ -1,0 +1,208 @@
+<style>
+  #product-full-img-view {
+    overflow: hidden;
+  }
+</style>
+
+
+<%- include('navbar') %>
+
+  <!-- content -->
+  <section class="py-5">
+    <div class="container">
+      <div class="row gx-5">
+        <aside class="col-lg-6">
+          <div class="border rounded-4 mb-3 d-flex justify-content-center" id="product-full-img-view">
+            <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit"
+              src="../../<%= productDetail.image[0] %>" id="product-image-img" />
+          </div>
+          <div class="d-flex justify-content-center mb-3">
+            <% productDetail.image.forEach((img)=>{ %>
+              <img width="60" height="60" class="rounded-2" src="../../<%=img %>"
+                onclick="changeImage(`<%= img.replace(/\\/g,'\\\\') %>`)" />
+              <% }) %>
+          </div>
+          <!-- thumbs-wrap.// -->
+          <!-- gallery-wrap .end// -->
+        </aside>
+        <main class="col-lg-6">
+          <div class="ps-lg-3">
+            <h4 class="title text-dark">
+              <%= productDetail.productName %>
+            </h4>
+
+            <!-- rating -->
+            <div class="d-flex flex-row my-3">
+              <div class="text-warning mb-1 me-2">
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fa fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+                <span class="ms-1">
+                  4.5
+                </span>
+              </div>
+              <!-- <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i>154 orders</span> -->
+              <% if (productDetail.productQuantity> 0) { %>
+                <% if (productDetail.productQuantity <=10) { %>
+                  <b class="text-danger ms-2">Only <%= productDetail.productQuantity %> left </b>
+                  <br>
+                  <b>Purchase your favourite product fast</b>
+                  <% } else { %>
+                    <b class="text-success ms-2">In stock</b>
+                    <% } %>
+                      <% } else { %>
+                        <b class="text-danger ms-2">Out of stock</b>
+                        <% } %>
+
+            </div>
+            <% if(productDetail.discount>0){ %>
+              <div class="mb-3">
+                <span class="badge bg-danger">
+                  <%=productDetail.discount %> % OFF
+                </span><br><br>
+                <span class="h5">&#8377;<s>
+                    <%= productDetail.productPrice.toLocaleString() %>
+                  </s></span>&nbsp;&nbsp;&nbsp;
+                <span class="h5">&#8377;<%=
+                    (productDetail.productPrice*(1-(productDetail.discount/100))).toLocaleString() %></span>
+              </div>
+              <% }else{ %>
+                <span class="badge bg-dark">
+                  offer unavailable
+                </span>
+                <div class="mb-3">
+                  <span class="h5">&#8377;
+                    <%= productDetail.productPrice.toLocaleString() %>
+                  </span>
+                </div>
+                <% } %>
+
+                  <p>
+                    <%= productDetail.productDescription %>
+                  </p>
+
+                  <div class="row">
+                    <dt class="col-3">Type:</dt>
+                    <dd class="col-9">
+                      <%= productDetail.category.categoryName %>
+                    </dd>
+
+                    <dt class="col-3">Brand</dt>
+                    <dd class="col-9">
+                      <%= productDetail.brand %>
+                    </dd>
+                  </div>
+                  <hr />
+                  <!-- <a href="#" class="btn btn-warning shadow-0"> Buy now </a> -->
+                  <button class="btn btn-secondary shadow-0" onclick="addToCart('<%=productDetail.id%>')"> <i
+                      class="me-1 fa fa-shopping-basket"></i> Add to cart
+                  </button>
+                  <button class="btn   py-2 icon-hover px-3" onclick="addToWishlist('<%=productDetail.id%>')"> <i
+                      class="me-1 fa fa-heart fa-lg"></i>
+                  </button>
+          </div>
+        </main>
+      </div>
+    </div>
+  </section>
+  <!-- content -->
+  <%- include('similarProducts') %>
+
+
+    <!-- Footer -->
+    <%- include('footer') %>
+
+      <script>
+        // image zoom effect
+        const imageContainer = document.getElementById('product-full-img-view')
+        const productImg = document.getElementById('product-image-img')
+
+        imageContainer.addEventListener("mousemove", (e) => {
+          const rect = e.target.getBoundingClientRect();
+          const x = (e.clientX - rect.left) / rect.width;
+          const y = (e.clientY - rect.top) / rect.height;
+
+          productImg.style.transformOrigin = ` ${x * 100}% ${y * 100}%`;
+          productImg.style.transform = "scale(2)";
+        });
+
+        imageContainer.addEventListener("mouseleave", () => {
+          productImg.style.transformOrigin = "center"
+          productImg.style.transform = "scale(1)"
+        })
+
+
+        // function to change the image 
+        function changeImage(src) {
+          productImg.src = `../../${src}`
+        }
+
+
+        //add to cart button
+
+        function addToCart(productID) {
+          console.log(productID);
+
+          const URL = `/addToCart/${productID}`
+          fetch(URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }).then((res) => {
+            return res.json()
+          }).then((data) => {
+            if (data.existInCart) {
+              iziToast.warning({
+                message: 'Product alreday in cart'
+              });
+            }
+            if (data.message) {
+              iziToast.error({
+                message: 'Out of stock, we will notify when it is available'
+              });
+            }
+            if (data.success) {
+              iziToast.success({
+                message: 'Added'
+              })
+            }
+          }).catch((err) => {
+            window.location.href = '/login'
+            console.log(`error while adding to cart${err}`)
+
+          })
+        }
+        //add to wishlist button
+
+        function addToWishlist(productID) {
+          console.log(productID);
+
+          const URL = `/addToWishlist/${productID}`
+          fetch(URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }).then((res) => {
+            return res.json()
+          }).then((data) => {
+            if (data.existInWishlist) {
+              iziToast.warning({
+                message: 'Product alreday in wishlist'
+              });
+            }
+            if (data.success) {
+              iziToast.success({
+                message: 'Added'
+              })
+            }
+          }).catch((err) => {
+            window.location.href = '/login'
+            console.log(`error while adding to wishlist${err}`)
+
+          })
+        }
+      </script>

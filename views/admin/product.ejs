@@ -1,50 +1,109 @@
+<style>
+    .product-name {
+        max-width: 200px;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .product-name:hover {
+        max-width: 200px;
+        overflow: visible;
+        white-space: wrap;
+        /* text-overflow: ellipsis; */
+    }
+</style>
+
+
 <%- include('navbar') %>
 
-<div class="container my-5" style="min-height: 100vh;">
-    <h1>Products</h1>
-    <a href="/admin/addProduct" class="btn btn-primary">Add Product</a>
+    <div class="container my-5" style="min-height: 100vh;">
+        <h4 style="font-family: 'Montserrat', sans-serif; display: flex; justify-content: center;">PRODUCTS</h4>
+        <!-- <a href="/admin/addProduct" class="btn btn-primary">Add Product</a> -->
 
-    <table class="table table-hover mt-3">
-        <thead class="thead-dark">
-            <tr>
-                <th scope="col">Sl.no:</th>
-                <th scope="col">Product</th>
-                <th scope="col">Price</th>
-                <th scope="col">Stock</th>
-                <th scope="col">Category</th>
-                <th scope="col" class="text-center">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% products.forEach((product, index) => { %>
+        <table class="table table-hover mt-3">
+            <thead class="thead-dark">
                 <tr>
-                    <th scope="row"><%= index + 1 %></th>
-                    <td><%= product.productName %></td>
-                    <td><%= product.productPrice %></td>
-                    <td><%= product.productQuantity %></td>
-                    <td><%= product.category.categoryName %></td>
-                    <td class="text-center">
-                            <a href="/admin/edit-product/<%= product._id %>" class="text-warning me-2">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <% if(product.isAvailable){ %>
-                                <button class="btn text-danger" onclick="blockProduct('<%= product._id %>')"><i class="fa-solid fa-lock"></i></button>
-                                <% }else{ %>
-                                    <button class="btn text-success" onclick="unblockProduct('<%= product._id %>')"><i class="fa-solid fa-lock-open"></i></button>
-                              <% } %>
-                              <button class="btn text-primary" onclick="deleteProduct('<%= product._id %>')"><i class="fa-solid fa-trash"></i></button>
-                    </td>
+                    <th scope="col">Sl.no:</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Stock</th>
+                    <th scope="col">Category</th>
+                    <th scope="col" class="text-center">Actions</th>
                 </tr>
-            <% }) %>
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                <% products.forEach((product, index)=> { %>
+                    <tr>
+                        <th scope="row">
+                            <%= (currentPage - 1) * 8 + index + 1 %>
+                        </th>
+                        <td class="product-name">
+                            <%= product.productName %>
+                        </td>
+                        <td>
+                            <%= product.productPrice %>
+                        </td>
+                        <td>
+                            <%= product.productQuantity %>
+                        </td>
+                        <td>
+                            <%= product.category.categoryName %>
+                        </td>
+                        <td class="text-center">
+                            <div class="d-flex justify-content-center align-items-center">
+                                <a href="/admin/edit-product/<%= product._id %>" class="text-dark me-2">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <% if(product.isAvailable){ %>
+                                    <button class="btn text-danger me-2" onclick="blockProduct('<%= product._id %>')"><i
+                                            class="fa-solid fa-lock"></i></button>
+                                    <% } else { %>
+                                        <button class="btn text-success me-2"
+                                            onclick="unblockProduct('<%= product._id %>')"><i
+                                                class="fa-solid fa-lock-open"></i></button>
+                                        <% } %>
+                                            <button class="btn text-primary"
+                                                onclick="deleteProduct('<%= product._id %>')"><i
+                                                    class="fa-solid fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <% }) %>
+            </tbody>
+        </table>
+        <!-- Pagination controls -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <% if (currentPage > 1) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            <% } %>
+            <% for (let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                </li>
+            <% } %>
+            <% if (currentPage < totalPages) { %>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            <% } %>
+        </ul>
+    </nav>
+    </div>
 
-<%- include('footer') %>
 
-<script>
-     //Delete product
-     function deleteProduct(productID) {
+    <%- include('footer') %>
+
+        <script>
+            //Delete product
+            function deleteProduct(productID) {
                 Swal.fire({
                     icon: "question",
                     title: "Delete Product",
@@ -103,7 +162,7 @@
                                     window.location.reload()
                                 })
                             }
-                        }).catch((err)=>{
+                        }).catch((err) => {
                             console.log(`error on product blocking ${err}`);
                         })
                     }
@@ -143,4 +202,4 @@
                     }
                 })
             }
-</script>
+        </script>

@@ -2,10 +2,17 @@ const userSchema = require("../model/userSchema");
 
 
 // function to check the user sesesion for other routes except home and product view page
-function checkUserSession(req, res, next) {
+async function checkUserSession(req, res, next) {
     try {
         if (req.session.user) {
-            next()
+            const user = await userSchema.findById(req.session.user)
+
+            if (user.isBlocked) {
+                req.session.user = ''
+                res.redirect('/login')
+            } else {
+                next()
+            }
         }
         else {
             res.redirect('/login')
@@ -22,8 +29,9 @@ async function checkUserSessionBlocked(req, res, next) {
 
             // get the data of the user
             const user = await userSchema.findById(req.session.user)
-            
+
             if (user.isBlocked) {
+                req.session.user = ''
                 res.redirect('/login')
             } else {
                 next()

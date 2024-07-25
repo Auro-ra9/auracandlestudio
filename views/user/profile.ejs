@@ -1,0 +1,580 @@
+<style>
+    .img-account-profile {
+        height: 10rem;
+    }
+
+    .rounded-circle {
+        border-radius: 50% !important;
+    }
+
+    .card {
+        box-shadow: 0 0.15rem 1.75rem 0 rgb(33 40 50 / 15%);
+    }
+
+    .card .card-header {
+        font-weight: 500;
+    }
+
+    .card-header:first-child {
+        border-radius: 0.35rem 0.35rem 0 0;
+    }
+
+    .card-header {
+        padding: 1rem 1.35rem;
+        margin-bottom: 0;
+        background-color: rgba(33, 40, 50, 0.03);
+        border-bottom: 1px solid rgba(33, 40, 50, 0.125);
+    }
+
+    .form-control,
+    .dataTable-input {
+        display: block;
+        width: 100%;
+        padding: 0.875rem 1.125rem;
+        font-size: 0.875rem;
+        font-weight: 400;
+        line-height: 1;
+        color: #69707a;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #c5ccd6;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: 0.35rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .nav-borders .nav-link.active {
+        color: #0061f2;
+        border-bottom-color: #0061f2;
+    }
+
+    .nav-borders .nav-link {
+        color: #69707a;
+        border-bottom-width: 0.125rem;
+        border-bottom-style: solid;
+        border-bottom-color: transparent;
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        padding-left: 0;
+        padding-right: 0;
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+
+    .p-input {
+        padding: 0.375rem 0.75rem;
+        margin-bottom: 0;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: #495057;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+    }
+
+
+    .modal-dialog {
+        max-width: 800px;
+    }
+</style>
+
+<%- include('navbar') %>
+
+    <div class="container-xl px-4 mt-4">
+        <!-- Account page navigation-->
+        <nav class="nav nav-borders">
+            <a class="nav-link active ms-0" href="/profile" >Profile</a>
+            <a class="nav-link" href="/security" >Security</a>
+            <a class="nav-link" href="/orders" >Orders</a>
+            <a class="nav-link  " href="/cancelled-orders" >Cancelled Orders</a>
+            <a class="nav-link   " href="/wallet" >Wallet</a>
+
+
+        </nav>
+        <hr class="mt-0 mb-4">
+        <div class="row">
+            <div class="col-xl-4">
+                <!-- Profile picture card-->
+                <div class="card mb-4 mb-xl-0">
+                    <div class="card-header">Profile</div>
+                    <div class="card-body text-center">
+                        <!-- Profile picture image-->
+                        <img class="img-account-profile rounded-circle mb-2" src="/images/Profile Avatar.jpg" alt="">
+                        <!-- Profile help block-->
+                        <div class=" font-italic text-muted mb-3">
+                            <i class="fa-solid fa-circle-user"></i>
+                            <%= profileDetails.name %>
+                        </div>
+                        <p><i class="fa-solid fa-paper-plane"></i>
+                            <%= profileDetails.email %>
+                        </p>
+                        <p><i class="fa-solid fa-phone"></i>
+                            <%= profileDetails.phone %>
+                        </p>
+
+                        <!-- Profile picture upload button-->
+
+                        <!-- <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                            data-bs-target="#exampleModalCenter">
+                            Upload Profile Picture
+                        </button> -->
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-warning edit-details-button" data-bs-toggle="modal"
+                            data-bs-target="#edit-category-modal">
+                            Update details
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-8">
+                <!-- Address details card-->
+                <div class="card mb-4">
+                    <div class="row gx-3 mb-3">
+                        <div class="card-header" style="display: flex; justify-content: space-between;">
+                            Address Details
+                            <% if (profileDetails.address.length<4){%>
+                                <span class="ml-2">
+                                    <!-- Add address button-->
+                                    <i class="fas fa-plus  text-success add-address-button" data-bs-toggle="modal"
+                                        data-bs-target="#add-address-modal"></i>
+                                </span>
+                                <% }else{ %>
+                                    <h6>Address limit reached</h6>
+                                    <% }%>
+                        </div>
+                    </div>
+
+                    <% profileDetails.address.forEach((address,index)=>{ %>
+                        <div class="card-body">
+                            <h5>Address <%= index+1 %>
+                            </h5>
+                            <!-- Form Row        -->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (organization name)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="inputHomeAddress">Home Address</label>
+                                    <p class="p-input">
+                                        <%= address.homeAddress %>
+                                    </p>
+                                </div>
+                                <!-- Form Group (location)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="inputAreaAddress">Area Address</label>
+                                    <p class="p-input">
+                                        <%= address.areaAddress %>
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- Form Row-->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (pin code)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="inputCity">City</label>
+                                    <p class="p-input">
+                                        <%= address.city %>
+                                    </p>
+                                </div>
+                                <!-- Form Group (birthday)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="inputState">State</label>
+                                    <p class="p-input">
+                                        <%= address.state %>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (pin code)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="inputLandmark">Landmark</label>
+                                    <p class="p-input">
+                                        <%= address.landmark %>
+                                    </p>
+                                </div>
+                                <!-- Form Group (pincode)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" for="inputPincode">Pincode</label>
+                                    <p class="p-input">
+                                        <%= address.pincode %>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="icons" style="display: flex; justify-content: flex-end;">
+                                <!-- Add address button-->
+
+
+                                <button type="button" class="btn edit-address-button text-primary"
+                                    data-bs-toggle="modal" data-bs-target="#edit-address-modal"
+                                    data-homeAddress="<%= address.homeAddress%>"
+                                    data-areaAddress="<%= address.areaAddress%>" data-pincode="<%= address.pincode%>"
+                                    data-city="<%= address.city%>" data-landmark="<%= address.landmark%>"
+                                    data-state="<%= address.state%>" data-index="<%= index%>">
+                                    <i class="fa-solid fa-eye-dropper"></i>
+                                </button>
+                                <button class="btn text-danger" onclick="deleteAddress('<%= index %>')"><i
+                                        class="fa-regular fa-trash-can"></i></button>
+
+                            </div>
+                        </div>
+                        <% }) %>
+
+                </div>
+                <!-- Account details -->
+            </div>
+        </div>
+    </div>
+
+    <!-- update details Modal -->
+    <div class="modal fade" id="edit-category-modal" tabindex="-1" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered custom-modal-width" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Account Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="/address" method="post" id="edit-profile-form">
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <!-- Form Group (username)-->
+                                <div class="mb-3">
+                                    <label class="small mb-1" for="inputUsername">User Name</label>
+                                    <input type="text" class="form-control" id="inputUsername" name="username"
+                                        value="<%= profileDetails.name %>">
+                                    <label for="" class="text-danger validate"></label>
+                                </div>
+                                <!-- Form Row-->
+                                <div class="row gx-3 mb-3">
+                                    <!-- Form Group (phone number)-->
+                                    <div class="col-md-6">
+                                        <label class="small mb-1" for="inputPhone">Phone
+                                            number</label>
+                                        <input type="text" class="form-control" id="inputPhone" name="phone"
+                                            value="<%= profileDetails.phone %>">
+                                        <label for="" class="text-danger validate"></label>
+                                    </div>
+                                    <!-- Form Group (email address)-->
+                                    <div class="mb-3">
+                                        <label class="small mb-1" for="inputEmail">Email address</label>
+                                        <input type="email" class="form-control" id="inputEmail" name="email"
+                                            value="<%= profileDetails.email %>" disabled>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                                    <button type="reset" class="btn btn-dark">Clear</button>
+                                    <button type="submit" class="btn btn-success">Save
+                                        changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal -->
+
+
+
+    <!-- ADD Address Modal -->
+    <div class="modal fade" id="add-address-modal" tabindex="-1" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered custom-modal-width" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Address Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-5">
+                    <form action="/add-address" method="post" id="add-address-form">
+                        <!-- Form Group (city)-->
+                        <div>
+                            <label class="small mb-1" for="inputCity">City</label>
+                            <input type="text" class="form-control" id="inputCity" name="city">
+                            <label for="" class="text-danger AddValidate"></label>
+                        </div>
+                        <!-- Form Group (home address)-->
+                        <div>
+                            <label class="small mb-1" for="inputHomeAddress">Home
+                                Address</label>
+                            <input type="text" class="form-control" id="inputHomeAddress" name="homeAddress">
+                            <label for="" class="text-danger AddValidate"></label>
+                        </div>
+                        <!-- Form Group (area address)-->
+                        <div>
+                            <label class="small mb-1" for="inputAreaAddress">area Address</label>
+                            <input type="text" class="form-control" id="inputAreaAddress" name="areaAddress">
+                            <label for="" class="text-danger AddValidate"></label>
+                        </div>
+
+                        <!-- Form Group (pincode)-->
+                        <div>
+                            <label class="small mb-1" for="inputPincode">Pincode</label>
+                            <input type="text" class="form-control" id="inputPincode" name="pincode">
+                            <label for="" class="text-danger AddValidate"></label>
+                        </div>
+                        <!-- Form Group (state)-->
+                        <div>
+                            <label class="small mb-1" for="inputState">State</label>
+                            <input type="text" class="form-control" id="inputState" name="state">
+                            <label for="" class="text-danger AddValidate"></label>
+                        </div>
+                        <div>
+                            <label class="small mb-1" for="inputLandmark">Landmark</label>
+                            <input type="text" class="form-control" id="inputLandmark" name="landmark">
+                            <label for="" class="text-danger AddValidate"></label>
+                        </div>
+                        <div class="mt-3">
+                            <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                            <button type="reset" class="btn btn-dark">Clear</button>
+                            <button type="submit" class="btn btn-success">Save
+                                changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end of the add address modal -->
+
+
+    <!-- EDit Address Modal -->
+    <div class="modal fade" id="edit-address-modal" tabindex="-1" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered custom-modal-width" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Address Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body px-5">
+                    <form action="/edit-address" method="post" id="edit-address-form">
+                        <!-- Form Group (city)-->
+                        <div>
+                            <label class="small mb-1" for="editCity">City</label>
+                            <input type="text" class="form-control" id="editCity" name="city">
+                            <label for="" class="text-danger validate"></label>
+                        </div>
+                        <!-- Form Group (home address)-->
+                        <div>
+                            <label class="small mb-1" for="editHome">Home
+                                Address</label>
+                            <input type="text" class="form-control" id="editHome" name="homeAddress">
+                            <label for="" class="text-danger validate"></label>
+                        </div>
+                        <!-- Form Group (area address)-->
+                        <div>
+                            <label class="small mb-1" for="editArea">area Address</label>
+                            <input type="text" class="form-control" id="editArea" name="areaAddress">
+                            <label for="" class="text-danger validate"></label>
+                        </div>
+
+                        <!-- Form Group (pincode)-->
+                        <div>
+                            <label class="small mb-1" for="editPincode">Pincode</label>
+                            <input type="text" class="form-control" id="editPincode" name="pincode">
+                            <label for="" class="text-danger validate"></label>
+                        </div>
+                        <!-- Form Group (state)-->
+                        <div>
+                            <label class="small mb-1" for="editState">State</label>
+                            <input type="text" class="form-control" id="editState" name="state">
+                            <label for="" class="text-danger validate"></label>
+                        </div>
+                        <div>
+                            <label class="small mb-1" for="editLandmark">Landmark</label>
+                            <input type="text" class="form-control" id="editLandmark" name="landmark">
+                            <label for="" class="text-danger validate"></label>
+                        </div>
+                        <div class="mt-3">
+                            <!-- <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> -->
+                            <button type="reset" class="btn btn-dark">Clear</button>
+                            <button type="submit" class="btn btn-success">Save
+                                changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- modal -->
+
+    <%- include('footer') %>
+
+        <script>
+
+            function checkTextField(text) {
+                const check = text.trim().split('')
+                for (const letter of check) {
+                    if (!isNaN(letter)) {
+                        return true
+                    }
+                }
+                return false
+            }
+
+            const form = document.getElementById('edit-profile-form')
+            const name = document.getElementsByName('username')[0]
+            const phone = document.getElementsByName('phone')[0]
+            // const signUpBtn = document.getElementById('submit-button')
+
+            form.addEventListener('submit', (e) => {
+
+                e.preventDefault()
+                let validate = true
+
+                document.getElementsByClassName('validate')[0].innerHTML = ""
+                document.getElementsByClassName('validate')[1].innerHTML = ""
+
+
+                if (name.value.trim() === "" || name.value.length < 7 || name.value.length > 30 || /\s/.test(name.value) || /[^a-zA-Z]/.test(name.value)) {
+                    validate = false;
+                    document.getElementsByClassName('validate')[0].innerHTML = "Name must be between 7 and 30 characters, contain only letters, and no spaces or special characters.";
+                }
+
+                if (phone.value.length != 10 || isNaN(phone.value) || /^0+$/.test(phone.value)) {
+                    validate = false
+                    document.getElementsByClassName('validate')[1].innerHTML = "Invalid phone-number, must be a 10-digit number"
+                }
+                if (validate) {
+                    form.submit()
+                }
+            })
+
+            function checkTextField(text) {
+                const check = text.trim().split('')
+                for (const letter of check) {
+                    if (!isNaN(letter)) {
+                        return true
+                    }
+                }
+                return false
+            }
+
+            const addAddressForm = document.getElementById('add-address-form')
+            const city = document.getElementsByName('city')[0]
+            const home = document.getElementsByName('homeAddress')[0]
+            const area = document.getElementsByName('areaAddress')[0]
+            const pin = document.getElementsByName('pincode')[0]
+            const state = document.getElementsByName('state')[0]
+            const landmark = document.getElementsByName('landmark')[0]
+
+
+            addAddressForm.addEventListener('submit', (e) => {
+
+                e.preventDefault()
+                let validate = true
+
+                document.getElementsByClassName('AddValidate')[0].innerHTML = ""
+                document.getElementsByClassName('AddValidate')[1].innerHTML = ""
+                document.getElementsByClassName('AddValidate')[2].innerHTML = ""
+                document.getElementsByClassName('AddValidate')[3].innerHTML = ""
+                document.getElementsByClassName('AddValidate')[4].innerHTML = ""
+                document.getElementsByClassName('AddValidate')[5].innerHTML = ""
+
+
+
+
+                if (city.value.trim() === "" || city.value.length > 30 || checkTextField(city.value) || /\s/.test(city.value) || /[^a-zA-Z]/.test(city.value)) {
+                    validate = false
+                    document.getElementsByClassName('AddValidate')[0].innerHTML = "It is not a city name";
+
+                }
+
+                if (home.value.trim() === '' || home.value.length === 0) {
+                    validate = false
+                    document.getElementsByClassName('AddValidate')[1].innerHTML = "Enter your house name and address";
+
+                }
+                if (area.value.trim() === '' || area.value.length === 0) {
+                    validate = false
+                    document.getElementsByClassName('AddValidate')[2].innerHTML = "Enter correct road number and area";
+
+                }
+
+                if (pin.value.length != 6 || isNaN(pin.value)) {
+                    validate = false
+                    document.getElementsByClassName('AddValidate')[3].innerHTML = "Pincode is not correct number must not be less than 6"
+                }
+
+
+                if (state.value.trim() === "" || state.value.length > 30 || checkTextField(state.value)|| /\s/.test(state.value) || /[^a-zA-Z]/.test(state.value)) {
+                    validate = false
+                    document.getElementsByClassName('AddValidate')[4].innerHTML = "enter a correct state name";
+
+                }
+                if (landmark.value.trim() === "" || landmark.value.length > 300) {
+                    validate = false
+                    document.getElementsByClassName('AddValidate')[5].innerHTML = "enter a correct landmark name";
+
+                }
+                if (validate) {
+                    addAddressForm.submit()
+                }
+            })
+
+
+
+            //edit address modal functions
+
+            const editAddressButton = document.querySelectorAll('.edit-address-button')
+            editAddressButton.forEach((button) => {
+                button.addEventListener('click', () => {
+                    const homeAddress = button.getAttribute('data-homeAddress')
+                    console.log(homeAddress);
+                    const areaAddress = button.getAttribute('data-areaAddress')
+                    const pincode = button.getAttribute('data-pincode')
+                    const state = button.getAttribute('data-state')
+                    const landmark = button.getAttribute('data-landmark')
+                    const city = button.getAttribute('data-city')
+                    const index = button.getAttribute('data-index')
+
+                    document.getElementById('editHome').value = homeAddress.trim()
+                    document.getElementById('editArea').value = areaAddress.trim()
+                    document.getElementById('editPincode').value = pincode
+                    document.getElementById('editState').value = state.trim()
+                    document.getElementById('editCity').value = city.trim()
+                    document.getElementById('editLandmark').value = landmark.trim()
+
+                    document.getElementById('edit-address-form').action = `/edit-address/${index}`
+                })
+
+            })
+
+            //delete address
+            function deleteAddress(index) {
+                swal.fire({
+                    icon: 'question',
+                    title: 'Remove address',
+                    text: 'Are you sure? do you wanna delete the selected Address?',
+                    showCancelButton: true
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const URL = `/delete-address/${index}`
+                        fetch(URL, {
+                            method: 'delete',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        }).then((res) => {
+                            if (res.ok) {
+                                swal.fire({
+                                    icon: 'success',
+                                    title: 'Address removed',
+                                    showCancelButton: false,
+                                    timer: 900
+                                }).then(() => {
+                                    window.location.reload()
+                                })
+                            }
+                        }).catch((err) => {
+                            console.log(`error on address removing${err}`)
+                        })
+                    }
+                })
+            }
+
+        </script>

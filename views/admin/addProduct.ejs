@@ -1,63 +1,126 @@
-<%- include('navbar') %>
+<style>
+    .form-horizontal {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
 
-    <style>
-        .form-horizontal {
-            background-color: rgb(220, 220, 220);
+    .form-group label {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+    }
+
+    .image-preview {
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+    .image-preview:hover {
+        transform: scale(1.05);
+    }
+
+    .btn-warning {
+        background-color: #ff9800;
+        border-color: #ff9800;
+        color: #fff;
+    }
+
+    .btn-warning:hover {
+        background-color: #e68900;
+        border-color: #d77d00;
+    }
+
+    @media (max-width: 768px) {
+        .form-group.row {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
         }
-    </style>
+
+        .form-group.row label {
+            text-align: left;
+            padding-left: 15px;
+        }
+
+        .form-group.row .col-md-6 {
+            width: 100%;
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+    }
+
+    @media (min-width: 769px) {
+        .container {
+            max-width: 900px;
+        }
+    }
+</style>
+
+<%- include('navbar') %>
 
     <div class="container mt-5">
         <!-- Form Name -->
-        <legend class="text-center mb-4 font-weight-bold">Add PRODUCTS</legend>
-        <form id="form-add-product" class="form-horizontal mb-5 p-5 border rounded" action="/admin/addProduct"
-            method="post" style="min-height: 100vh;">
+        <legend class="text-center mb-4 font-weight-bold" style="font-family: 'Montserrat', sans-serif;">Add products
+        </legend>
+        <form id="form-add-product" class="form-horizontal mb-5 p-4 border rounded" action="/admin/products/addProduct"
+            method="post" enctype="multipart/form-data">
             <fieldset>
-
-                <!-- Text input-->
-                <div class="form-group row">
+                <!-- Product Name -->
+                <div class="form-group row mb-3">
                     <label class="col-md-4 col-form-label text-md-right" for="product_name">PRODUCT NAME</label>
                     <div class="col-md-6">
                         <input id="product_name" name="product_name" class="form-control" type="text">
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
+                        <label class="col-md-12 text-danger validate-add-product" for="product_name"></label>
                     </div>
                 </div>
 
-                <!-- Text input-->
-                <div class="form-group row">
+                <!-- Product Price -->
+                <div class="form-group row mb-3">
                     <label class="col-md-4 col-form-label text-md-right" for="product_price">PRODUCT PRICE</label>
                     <div class="col-md-6">
                         <input id="product_price" name="product_price" class="form-control" type="text">
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
+                        <label class="col-md-12 text-danger validate-add-product" for="product_price"></label>
                     </div>
                 </div>
 
-                <!-- Select Basic -->
-                <div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="product_categorie"> CATEGORY</label>
+                <!-- Category -->
+                <div class="form-group row mb-3">
+                    <label class="col-md-4 col-form-label text-md-right" for="product_categorie">CATEGORY</label>
                     <div class="col-md-6">
                         <select id="product_categorie" name="product_categorie" class="form-control">
-                            <option value="" disabled selected>Seelct a category</option>
-                            <% category.forEach((category)=>{ %>
+                            <option value="" disabled selected>Select a category</option>
+                            <% category.forEach((category)=> { %>
                                 <option value="<%= category._id %>">
                                     <%= category.categoryName %>
                                 </option>
                                 <% }) %>
-
                         </select>
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
+                        <label class="col-md-12 text-danger validate-add-product" for="product_categorie"></label>
                     </div>
                 </div>
 
-                <!-- Text input-->
-                <div class="form-group row">
+                <!-- Quantity -->
+                <div class="form-group row mb-3">
                     <label class="col-md-4 col-form-label text-md-right" for="available_quantity">QUANTITY</label>
                     <div class="col-md-6">
                         <input id="available_quantity" name="available_quantity" class="form-control" type="text">
                         <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
                     </div>
                 </div>
-                <!-- Text input-->
-                <div class="form-group row">
+
+                <!-- Brand -->
+                <div class="form-group row mb-3">
                     <label class="col-md-4 col-form-label text-md-right" for="available_brand">BRAND</label>
                     <div class="col-md-6">
                         <input id="available_brand" name="available_brand" class="form-control" type="text">
@@ -65,116 +128,257 @@
                     </div>
                 </div>
 
-                <!-- Textarea -->
-                <div class="form-group row">
+                <!-- Description -->
+                <div class="form-group row mb-3">
                     <label class="col-md-4 col-form-label text-md-right" for="product_description">PRODUCT
                         DESCRIPTION</label>
                     <div class="col-md-6">
                         <textarea class="form-control" id="product_description" name="product_description"
-                            rows="10"></textarea>
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
+                            rows="5"></textarea>
+                        <label class="col-md-12 text-danger validate-add-product" for="product_description"></label>
                     </div>
                 </div>
 
-                <!-- Text input-->
-                <div class="form-group row">
+                <!-- Discount -->
+                <!-- <div class="form-group row mb-3">
                     <label class="col-md-4 col-form-label text-md-right" for="percentage_discount">DISCOUNT</label>
                     <div class="col-md-6">
                         <input id="percentage_discount" name="percentage_discount" class="form-control" type="text">
-                        <label class="col-md-12 text-danger validate-add-product" for="available_quantity"></label>
+                        <label class="col-md-12 text-danger validate-add-product" for="percentage_discount"></label>
+                    </div>
+                </div> -->
+
+                <!-- Image Upload -->
+                <div class="text-center mt-4">
+                    <input type="file" id="product-image-upload" name="product_image" accept="image/png, image/jpeg"
+                        multiple class="d-none">
+                    <label for="product-image-upload" class="btn btn-warning">
+                        <i class="fas fa-upload"></i> &nbsp; Choose Images
+                    </label>
+                    <div class="container mt-4">
+                        <div id="imageContainer" class="row">
+                            <!-- Image previews will be appended here -->
+                        </div>
                     </div>
                 </div>
 
-
-
-                <!-- File Button -->
-                <!--div class="form-group row">
-                    <label class="col-md-4 col-form-label text-md-right" for="filebutton">MAIN IMAGE</label>
-                    <div class="col-md-6">
-                        <input id="filebutton" name="filebutton" class="form-control-file" type="file">
+                <!-- Buttons -->
+                <div class="form-group row">
+                    <div class="col-md-12 text-center mt-4">
+                        <button class="btn btn-success" type="submit">Submit</button>
+                        <a href="/admin/products" class="btn btn-secondary">Cancel</a>
                     </div>
-                    </div-->
-
-                <!-- Button -->
-                <div class="form-group row ">
-                    <div class="col-md-12 text-center">
-                        <button class="btn btn-primary" type="submit">Submit</button>
-                        <a href="/admin/products" class="btn btn-danger">Cancel</a>
-                    </div>
-
                 </div>
-
             </fieldset>
         </form>
     </div>
 
+    <!-- Modal for cropping image -->
+    <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="imageModalLabel">Crop Image</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img id="modalImage" src="" class="img-fluid">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="cropButton" class="btn btn-primary">Crop</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <%- include('footer') %>
 
+
         <script>
+            const addProductForm = document.getElementById('form-add-product');
+            const productName = document.getElementById('product_name');
+            const price = document.getElementById('product_price');
+            const category = document.getElementById('product_categorie');
+            const quantity = document.getElementById('available_quantity');
+            const brand = document.getElementById('available_brand');
+            const description = document.getElementById('product_description');
+            const discount = document.getElementById('percentage_discount');
+            const productImage = document.getElementById('product-image-upload');
+            const validationMessages = document.getElementsByClassName('validate-add-product');
 
-            const addProductForm = document.getElementById('form-add-product')
-            const productName = document.getElementById('product_name')
-            const price = document.getElementById('product_price')
-            const category = document.getElementById('product_categorie')
-            const quantity = document.getElementById('available_quantity')
-            const brand = document.getElementById('available_brand')
-            const description = document.getElementById('product_description')
-            const discount = document.getElementById('percentage_discount')
+            addProductForm.addEventListener('submit', async (event) => {
+                event.preventDefault();
 
-
-            addProductForm.addEventListener('submit', (event) => {
-                event.preventDefault()
-                document.getElementsByClassName('validate-add-product')[0].innerHTML = ''
-                document.getElementsByClassName('validate-add-product')[1].innerHTML = ''
-                document.getElementsByClassName('validate-add-product')[2].innerHTML = ''
-                document.getElementsByClassName('validate-add-product')[3].innerHTML = ''
-                document.getElementsByClassName('validate-add-product')[4].innerHTML = ''
-                document.getElementsByClassName('validate-add-product')[5].innerHTML = ''
-                document.getElementsByClassName('validate-add-product')[6].innerHTML = ''
-
-                let validate = true
-
-                if (productName.value.trim() === 0 || productName.value.length > 150 || !isNaN(productName.value)) {
-                    document.getElementsByClassName('validate-add-product')[0].innerHTML = 'mention product name'
-                    validate = false
+                for (let i = 0; i < validationMessages.length; i++) {
+                    validationMessages[i].innerHTML = '';
                 }
 
-                if (price.value > 1000000 || isNaN(price.value) || price.value <= 0) {
-                    document.getElementsByClassName('validate-add-product')[1].innerHTML = 'add price'
-                    validate = false
+                let validate = true;
 
+                // Validation logic
+                if (productName.value.trim() === '' || productName.value.length > 150 || !isNaN(productName.value)) {
+                    validationMessages[0].innerHTML = 'Mention product name';
+                    validate = false;
+                }
+                if (price.value > 1000000 || isNaN(price.value) || price.value <= 0) {
+                    validationMessages[1].innerHTML = 'Add price';
+                    validate = false;
                 }
                 if (!category.value) {
-                    document.getElementsByClassName('validate-add-product')[2].innerHTML = 'select any category'
-                    validate = false
+                    validationMessages[2].innerHTML = 'Select any category';
+                    validate = false;
                 }
                 if (quantity.value > 100000 || isNaN(quantity.value) || quantity.value <= 0) {
-                    document.getElementsByClassName('validate-add-product')[3].innerHTML = 'must specify quantity'
-                    validate = false
+                    validationMessages[3].innerHTML = 'Must specify quantity';
+                    validate = false;
+                }
+                if (brand.value.trim() === '' || brand.value.length > 50 || !isNaN(brand.value)) {
+                    validationMessages[4].innerHTML = 'Specify the brand name';
+                    validate = false;
+                }
+                if (description.value.trim() === '' || description.value.length > 500 || !isNaN(description.value) || description.value.length < 5) {
+                    validationMessages[5].innerHTML = 'Description cannot be empty and must be at least 6 characters';
+                    validate = false;
+                }
 
+                if (!productImage.files || productImage.files.length === 0) {
+                    validationMessages[7].innerHTML = 'Please select an image';
+                    validate = false;
                 }
-                if (brand.value.trim() === 0 || brand.value.length > 50 || !isNaN(brand.value)) {
-                    document.getElementsByClassName('validate-add-product')[4].innerHTML = 'specify the brand name'
-                    validate = false
-                }
-                if (description.value.trim() === 0 || description.value.length > 500 || !isNaN(description.value) || description.value.length < 5) {
-                    document.getElementsByClassName('validate-add-product')[5].innerHTML = 'discription cannot be empty and at least in 6 characters'
-                    validate = false
-                }
-                if (discount.value > 1000000 || isNaN(discount.value) || discount.value <= 0) {
-                    document.getElementsByClassName('validate-add-product')[6].innerHTML = 'fill discount field'
-                    validate = false
-
-                }
+                // if (productImage.files.length > 4) {
+                //     validationMessages[7].innerHTML = 'Do not choose upto 4 images';
+                //     validate = false;
+                // }
 
                 if (validate) {
-                    addProductForm.submit()
+                    addProductForm.submit();
+                }
+            });
+
+            document.addEventListener('DOMContentLoaded', (event) => {
+                const inputImage = document.getElementById('product-image-upload');
+                const imageContainer = document.getElementById('imageContainer');
+                let cropper;
+                let currentImageElement;
+
+                inputImage.addEventListener('change', (event) => {
+                    const files = event.target.files;
+
+                    if (files.length > 4 || imageContainer.children.length + files.length > 4) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "File limit reached",
+                            text: "Maximum four files can be uploaded",
+                            timer: 12000,
+                        });
+                        return;
+                    }
+
+                    for (const file of files) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const colDiv = document.createElement('div');
+                            colDiv.classList.add('col-md-3', 'mb-3', 'image-container');
+
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.classList.add('img-fluid', 'img-thumbnail', 'image-preview');
+
+                            const openModalButton = document.createElement('button');
+                            openModalButton.classList.add('btn', 'btn-primary', 'mt-2', 'me-2');
+                            openModalButton.innerText = 'Crop';
+                            openModalButton.setAttribute('type', 'button');
+                            openModalButton.setAttribute('data-bs-toggle', 'modal');
+                            openModalButton.setAttribute('data-bs-target', '#imageModal');
+                            openModalButton.addEventListener('click', () => {
+                                document.getElementById('modalImage').src = e.target.result;
+                                currentImageElement = img;
+
+                                // Initialize Cropper.js with the image
+                                if (cropper) {
+                                    cropper.destroy();
+                                }
+
+                                cropper = new Cropper(document.getElementById('modalImage'), {
+                                    aspectRatio: 1,
+                                    viewMode: 0,
+                                    autoCropArea: 1,
+                                });
+                            });
+
+                            const deleteButton = document.createElement('button');
+                            deleteButton.classList.add('btn', 'btn-danger', 'mt-2', 'ms-2');
+                            deleteButton.innerText = 'Delete';
+                            deleteButton.addEventListener('click', () => {
+                                imageContainer.removeChild(colDiv);
+                                updateFileInput();
+                            });
+
+                            colDiv.appendChild(img);
+                            colDiv.appendChild(openModalButton);
+                            colDiv.appendChild(deleteButton);
+                            imageContainer.appendChild(colDiv);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+
+                    updateFileInput();
+                });
+
+                function cropImage() {
+                    if (!cropper) {
+                        console.error('Cropper instance is not defined.');
+                        return;
+                    }
+
+                    const canvas = cropper.getCroppedCanvas();
+                    const croppedImage = canvas.toDataURL('image/png');
+
+                    currentImageElement.src = croppedImage;
+
+                    // Close the modal and destroy the cropper instance
+                    closeCropModal();
+                    updateFileInput();
                 }
 
-            })
+                function closeCropModal() {
+                    const cropModal = document.getElementById('imageModal');
+                    const modalInstance = bootstrap.Modal.getInstance(cropModal);
+                    modalInstance.hide();  // Properly hide the modal
 
+                    if (cropper) {
+                        cropper.destroy();
+                        cropper = null;
+                    }
+                }
 
-           
+                function updateFileInput() {
+                    const images = imageContainer.getElementsByClassName('image-preview');
+                    const dataTransfer = new DataTransfer();
 
+                    for (let i = 0; i < images.length; i++) {
+                        const dataURL = images[i].src;
+                        const file = dataURLtoFile(dataURL, 'image' + i + '.png');
+                        dataTransfer.items.add(file);
+                    }
 
+                    document.getElementById('product-image-upload').files = dataTransfer.files;
+                }
+
+                function dataURLtoFile(dataurl, filename) {
+                    const arr = dataurl.split(',');
+                    const mime = arr[0].match(/:(.*?);/)[1];
+                    const bstr = atob(arr[1]);
+                    let n = bstr.length;
+                    const u8arr = new Uint8Array(n);
+                    while (n--) {
+                        u8arr[n] = bstr.charCodeAt(n);
+                    }
+                    return new File([u8arr], filename, { type: mime });
+                }
+
+                document.getElementById('cropButton').onclick = cropImage;
+                document.getElementById('imageModal').addEventListener('hidden.bs.modal', closeCropModal);
+            });
         </script>

@@ -1,0 +1,4 @@
+ find total discounted price for products (price*(1-discount/100))*count
+
+ await can't be ised inside the forEach loop, it will needed promise all, instead we can use 
+ for loop with of function. 
