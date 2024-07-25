@@ -236,52 +236,6 @@ const deleteOffer = async (req, res) => {
 
 
 
-
-// //block offer
-// const blockOffer = async (req, res) => {
-//     try {
-
-//         const offerID = req.params.offerID
-
-//         if (!offerID) {
-//             return res.status(404).json({ message: "offer id not found" })
-//         }
-
-//         const blockoffer = await offerSchema.findByIdAndUpdate(offerID, { isActive: false })
-
-//         if (blockoffer) {
-//             return res.status(200).json({ message: "offer blocked" })
-//         }
-
-//     } catch (err) {
-//         console.log("Error on blocking the offer", err)
-//     }
-// }
-
-// //unblock offers
-// const unblockOffer = async (req, res) => {
-//     try {
-
-//         const offerID = req.params.offerID
-
-//         if (!offerID) {
-//             return res.status(404).json({ message: "offer id not found" })
-//         }
-
-//         const unblockedOffer = await offerSchema.findByIdAndUpdate(offerID, { isActive: true })
-
-//         if (unblockedOffer) {
-//             return res.status(200).json({ message: "offer unblocked" })
-//         }
-
-//     } catch (err) {
-//         console.log("Error on unblocking the offer", err)
-//     }
-// }
-
-
-
-
 module.exports = {
     offers,
     addOffersGet,
@@ -289,7 +243,6 @@ module.exports = {
     deleteOffer,
     editOfferGet,
     editOffer,
-    // blockOffer,
-    // unblockOffer,
+ 
 
 }

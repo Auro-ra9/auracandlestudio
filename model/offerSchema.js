@@ -2,9 +2,9 @@ const mongoose = require('mongoose')
 
 const schema = new mongoose.Schema({
 
-    offerType:{
+    offerType: {
         type: String,
-        enum: ['product','category'],
+        enum: ['product', 'category', 'refferal'],
         required: true,
     },
     referenceId: {
@@ -12,15 +12,15 @@ const schema = new mongoose.Schema({
         refPath: 'offerType',
         required: true,
     },
-    discountPercent:{
+    discountPercent: {
         type: Number,
         required: true,
     },
-    isActive:{
+    isActive: {
         type: Boolean,
         default: true,
-    }
+    },
+    
+}, { timestamps: true })
 
-},{timestamps: true})
-
-module.exports = mongoose.model('offer',schema)
+module.exports = mongoose.model('offer', schema)

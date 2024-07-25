@@ -73,13 +73,8 @@ admin.get('/offers',adminSession, offerController.offers)
 admin.get('/offers/add-offers',adminSession, offerController.addOffersGet)
 admin.post('/offers/add-offers',adminSession, offerController.addOffersPost)
 admin.delete('/delete-offer/:id',adminSession, offerController.deleteOffer)
-// admin.put('/block-offer/:offerID',adminSession, offerController.blockOffer)
-// admin.put('/unblock-offer/:offerID',adminSession, offerController.unblockOffer)
 admin.get('/edit-offer/:id',adminSession, offerController.editOfferGet)
 admin.post('/edit-offer/:id',adminSession, offerController.editOffer)
-
-
-
 
 
 
