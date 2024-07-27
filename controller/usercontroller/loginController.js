@@ -4,6 +4,8 @@ const passport = require('passport')
 require('../../services/auth')
 const generateOTP = require('../../services/generateOTP')
 const emailSender = require('../../services/emailSender')
+const { v4: uuidv4 } = require('uuid')
+const walletSchema = require('../../model/walletSchema')
 
 //rendering lpgin page
 const loginRender = (req, res) => {
@@ -33,7 +35,7 @@ const loginPost = async (req, res) => {
 
         }
 
-        const comparePassword = await bcrypt.compare(req.body.password, checkUser.password);
+        const comparePassword = bcrypt.compare(req.body.password, checkUser.password);
 
         if (comparePassword) {
             req.session.user = checkUser.id;
@@ -58,53 +60,73 @@ const registerRender = (req, res) => {
 
 }
 
-//registering account
-
+// Register a new account
 const registerPost = async (req, res) => {
     try {
+        // Extract user details from the request body, including a potential referral code
+        const { name, email, password, phone, confirmPassword, referralCodeInput } = req.body;
 
-        const { name, email, password, phone, confirmPassword } = req.body
-        //Server-side validation
+        // Server-side validation to ensure all fields are filled
         if (!name || !email || !phone || !password || !confirmPassword) {
             req.flash('errorMessage', 'All fields are required');
             return res.redirect('/user/register');
         }
-        //storing userdata and encrypting the password
+
+        // Function to generate a referral code
+        function createReferralCode() {
+            return uuidv4().slice(0, 8); // Generate a short referral code
+        }
+        const referralCode = createReferralCode();
+
+        // Look up if the provided referral code belongs to any existing user
+        let referredBy = null;
+        if (referralCodeInput) {
+            const referringUser = await userSchema.findOne({ referralCode: referralCodeInput });
+            if (referringUser) {
+                referredBy = referringUser._id; // Use the referring user's ID
+            }
+        }
+
+        // Prepare user data and hash the password
         const userData = {
             name: name,
             email: email,
-            password: await bcrypt.hash(password, 10),
-            phone: phone
-        }
+            password: await bcrypt.hash(password, 10), // Encrypt the password
+            phone: phone,
+            referralCode: referralCode,
+            referredBy: referredBy
+        };
 
-        //to check whether the useremail already exists in the database or not
-        const checkUserExist = await userSchema.find({ email: email })
+        // Check if the user email already exists in the database
+        const checkUserExist = await userSchema.find({ email: email });
 
-
-        //if is a new user then storing it to the db
+        // If the user does not exist, store it in the database
         if (checkUserExist.length === 0) {
+            const otp = generateOTP(); // Generate OTP for verification
+            emailSender(email, otp); // Send OTP to user's email
+            req.session.otp = otp;
+            req.session.otpCreatedAt = Date.now();
+            req.session.name = name;
+            req.session.email = email;
+            req.session.password = userData.password; // Save the hashed password in the session
+            req.session.phone = phone;
+            req.session.referralCode = referralCode; 
+            req.session.referredBy = referredBy;
 
-            const otp = generateOTP()
-            emailSender(email, otp)
-            req.session.otp = otp
-            req.session.otpCreatedAt = Date.now()
-            req.session.name = name
-            req.session.email = email
-            req.session.password = await bcrypt.hash(password, 10),
-                req.session.phone = phone
-
-            res.redirect('/otp')
-
+            res.redirect('/otp'); // Redirect to OTP verification page
         } else {
-            req.flash('errorMessage', 'user already exist')
-            return res.redirect('/login')
+            // If user already exists, flash an error message
+            req.flash('errorMessage', 'User already exists');
+            return res.redirect('/login');
         }
 
     } catch (err) {
         console.log(`Error during signup post ${err}`);
-
+        req.flash('errorMessage', 'An error occurred during registration. Please try again.');
+        res.redirect('/user/register'); // Redirect to register page on error
     }
-}
+};
+
 
 //google auth instance
 const googleRender = (req, res) => {
@@ -152,14 +174,13 @@ const otpRender = (req, res) => {
     }
 }
 
+// OTP verification
 const otpPost = async (req, res) => {
     try {
-
         if (Date.now() - req.session.otpCreatedAt > 2 * 60 * 1000) { // 2 minutes in milliseconds
             req.flash('errorMessage', "OTP Expired please try to send again");
             res.redirect('/otp');
         }
-
 
         const otpArray = req.body.otp;
         const otp = Number(otpArray.join(""))
@@ -169,23 +190,41 @@ const otpPost = async (req, res) => {
                 name: req.session.name,
                 email: req.session.email,
                 password: req.session.password,
-                phone: req.session.phone
-            })
-            await newUser.save()
+                phone: req.session.phone,
+                referralCode: req.session.referralCode,
+                referredBy: req.session.referredBy
+            });
+            await newUser.save();
 
-            // save the user id in session
-            req.session.user = newUser.id
-            res.redirect('/register-confirmed')
+           
+
+            // Add a bonus to the referring user's wallet if referredBy is present
+            if (newUser.referredBy) {
+                const referringUserWallet = await walletSchema.findOne({ userId: newUser.referredBy });
+                if (referringUserWallet) {
+                    referringUserWallet.balance += 100;
+                    await referringUserWallet.save();
+                }else{
+                    const newWallet =new walletSchema({
+                        userID:newUser.referredBy,
+                        balance:100
+                    })
+                    await newWallet.save()
+                }
+            }
+
+            // Save the user id in session
+            req.session.user = newUser.id;
+            res.redirect('/register-confirmed');
         } else {
-            req.flash('errorMessage', "Invalid OTP please try to register again")
-            res.redirect('/register')
-
+            req.flash('errorMessage', "Invalid OTP please try to register again");
+            res.redirect('/register');
         }
 
     } catch (err) {
         console.log(`Error on otp post ${err}`);
     }
-}
+};
 
 const resendOTP = (req, res) => {
     try {
@@ -247,7 +286,7 @@ const forgotPasswordPost = async (req, res) => {
             req.session.otp = otp
             req.session.otpCreatedAt = Date.now()
             req.session.email = email
-            req.session.userId = checkUserExist._id 
+            req.session.userId = checkUserExist._id
             res.redirect('/forgot-otp')
 
         } else {
