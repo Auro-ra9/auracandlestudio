@@ -84,11 +84,11 @@
     <div class="container-xl px-4 mt-4">
         <!-- Account page navigation-->
         <nav class="nav nav-borders">
-            <a class="nav-link active ms-0" href="/profile" >Profile</a>
-            <a class="nav-link" href="/security" >Security</a>
-            <a class="nav-link" href="/orders" >Orders</a>
-            <a class="nav-link  " href="/cancelled-orders" >Cancelled Orders</a>
-            <a class="nav-link   " href="/wallet" >Wallet</a>
+            <a class="nav-link active ms-0" href="/profile">Profile</a>
+            <a class="nav-link" href="/security">Security</a>
+            <a class="nav-link" href="/orders">Orders</a>
+            <a class="nav-link  " href="/cancelled-orders">Cancelled Orders</a>
+            <a class="nav-link   " href="/wallet">Wallet</a>
 
 
         </nav>
@@ -111,6 +111,13 @@
                         </p>
                         <p><i class="fa-solid fa-phone"></i>
                             <%= profileDetails.phone %>
+                        </p>
+                        <p>
+                            Invite a friend and earn &#8377; <b class="text-danger">100</b>
+                            <span id="referralCode">
+                                <%= profileDetails.referralCode %>
+                            </span>
+                            <button id="copyButton" class="btn btn-primary btn-sm">Copy</button>
                         </p>
 
                         <!-- Profile picture upload button-->
@@ -443,6 +450,22 @@
                     form.submit()
                 }
             })
+            
+            //copying the referral code
+            document.getElementById("copyButton").addEventListener("click", async function () {
+                try {
+                    // Get the referral code text
+                    const referralCodeText = document.getElementById("referralCode").innerText;
+
+                    // Use the Clipboard API to copy the text
+                    await navigator.clipboard.writeText(referralCodeText);
+
+                    // Notify the user that the text has been copied
+                    alert("Referral code copied to clipboard!");
+                } catch (err) {
+                    console.error("Failed to copy: ", err);
+                }
+            });
 
             function checkTextField(text) {
                 const check = text.trim().split('')
@@ -501,7 +524,7 @@
                 }
 
 
-                if (state.value.trim() === "" || state.value.length > 30 || checkTextField(state.value)|| /\s/.test(state.value) || /[^a-zA-Z]/.test(state.value)) {
+                if (state.value.trim() === "" || state.value.length > 30 || checkTextField(state.value) || /\s/.test(state.value) || /[^a-zA-Z]/.test(state.value)) {
                     validate = false
                     document.getElementsByClassName('AddValidate')[4].innerHTML = "enter a correct state name";
 
