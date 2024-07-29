@@ -72,7 +72,7 @@ const addProductPost = async (req, res) => {
         }
 
         //already exsit or not
-        const productDetails = await productSchema.findOne({ productName: actualProduct, productPrice: actualPrice, band: actualBrand })
+        const productDetails = await productSchema.findOne({ productName: actualProduct, productPrice: actualPrice, brand: actualBrand })
         if (productDetails) {
             req.flash('errorMessage', 'Product already exists')
             return res.redirect('/admin/products')
