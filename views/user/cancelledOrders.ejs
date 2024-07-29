@@ -100,8 +100,8 @@
                                             <div class="d-flex align-items-start border-bottom pb-3">
                                                 <div class="me-4">
                                                     <a href="/product-view/<%= product.productID._id %>">
-                                                        <img src="../../<%= product.productImage %>" alt=""
-                                                            class="avatar-lg rounded"></a>
+                                                        <img src="../../<%= product.productImage %>" loading="lazy"
+                                                            alt="" class="avatar-lg rounded"></a>
                                                 </div>
                                                 <div class="flex-grow-1 align-self-center overflow-hidden">
                                                     <div>
@@ -122,38 +122,34 @@
                                                                 <%= product.brand %>
                                                             </span></p>
 
-                                                                <p class="mb-0 mt-1">Coupon Discount: <span
-                                                                        class="fw-medium">
-                                                                      &#8377;  <%= order.couponDiscount %>
-                                                                    </span></p>
+                                                        <p class="mb-0 mt-1">Coupon Discount: <span class="fw-medium">
+                                                                &#8377; <%= order.couponDiscount %>
+                                                            </span></p>
 
-                                                                <p class="mb-0 mt-1">Quantity: <span class="fw-medium">
-                                                                        <%= product.quantity %>
-                                                                    </span></p>
-                                                                <%if(product.discount>0){%>
-                                                                    <span class="badge bg-danger">
-                                                                        <%=product.productID.discount %> % OFF
+                                                        <p class="mb-0 mt-1">Quantity: <span class="fw-medium">
+                                                                <%= product.quantity %>
+                                                            </span></p>
+                                                        <%if(product.discount>0){%>
+                                                            <span class="badge bg-danger">
+                                                                <%=product.productID.discount %> % OFF
+                                                            </span>
+                                                            <p class="mb-0 mt-1">Price: <span class="fw-medium">
+                                                                    <span class="text-muted me-2"><del
+                                                                            class="font-size-16 fw-normal">&#8377;
+                                                                            <%= product.price %>
+                                                                        </del></span>
+                                                                    &#8377; <%= (product.price * (1 - product.discount /
+                                                                        100)).toLocaleString() %>
+                                                                </span></p>
+                                                            <%}else{%>
+                                                                <span class="badge bg-dark">
+                                                                    offer unavailable
+                                                                </span>
+                                                                <p class="mb-0 mt-1">Price: <span class="fw-medium">
+                                                                        &#8377; <%= product.price.toLocaleString() %>
                                                                     </span>
-                                                                    <p class="mb-0 mt-1">Price: <span class="fw-medium">
-                                                                            <span class="text-muted me-2"><del
-                                                                                    class="font-size-16 fw-normal">&#8377;
-                                                                                    <%= product.price %>
-                                                                                </del></span>
-                                                                            &#8377; <%= (product.price * (1 -
-                                                                                product.discount /
-                                                                                100)).toLocaleString() %>
-                                                                        </span></p>
-                                                                    <%}else{%>
-                                                                        <span class="badge bg-dark">
-                                                                            offer unavailable
-                                                                        </span>
-                                                                        <p class="mb-0 mt-1">Price: <span
-                                                                                class="fw-medium">
-                                                                                &#8377; <%=
-                                                                                    product.price.toLocaleString() %>
-                                                                            </span>
-                                                                        </p>
-                                                                        <%}%>
+                                                                </p>
+                                                                <%}%>
                                                     </div>
                                                 </div>
                                             </div>
@@ -212,9 +208,9 @@
                                             <p><b style="color: #00c3ff;">Reason for cancel:</b>
                                                 <%= order.reasonForCancel %>
                                             </p>
-                                            <%}else{%>
+                                            <%}else if(order.returnRequest) {%>
                                                 <p><b style="color: #0bcefa;">Reason for return:</b>
-                                                    <%= order.reasonForRejection %>
+                                                    <%= order.returnRequest %>
                                                 </p>
                                                 <%}%>
                                                     <% if(order.orderStatus!=='Cancelled' ){%>
@@ -236,32 +232,8 @@
 
             </div>
         </div>
-        <!-- Pagination controls -->
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                <% if (currentPage> 1) { %>
-                    <li class="page-item">
-                        <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    <% } %>
-                        <% for (let i=1; i <=totalPages; i++) { %>
-                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                <a class="page-link" href="?page=<%= i %>">
-                                    <%= i %>
-                                </a>
-                            </li>
-                            <% } %>
-                                <% if (currentPage < totalPages) { %>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                    <% } %>
-            </ul>
-        </nav>
+       
+        <%- include('pagination') %>
     </div>
 
 

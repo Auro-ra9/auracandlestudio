@@ -104,7 +104,7 @@
                                             <div class="d-flex align-items-start border-bottom pb-3">
                                                 <div class="me-4">
                                                     <a href="/product-view/<%= product.productID.id %>">
-                                                        <img src="../../<%=product.productImage%>" alt=""
+                                                        <img src="../../<%=product.productImage%>" loading="lazy" alt=""
                                                             class="avatar-lg rounded"></a>
                                                 </div>
                                                 <div class="flex-grow-1 align-self-center overflow-hidden">
@@ -129,7 +129,7 @@
                                                                 <%= product.quantity %>
                                                             </span></p>
                                                         <p class="mb-0 mt-1">Coupon Discount : <span class="fw-medium">
-                                                               &#8377; <%= order.couponDiscount %>
+                                                                &#8377; <%= order.couponDiscount %>
                                                             </span></p>
                                                         <%if(product.discount>0){%>
                                                             <span class="badge bg-danger">
@@ -241,13 +241,18 @@
                                         <p> <b style="color: #ff6200;">Order placed on :</b>
                                             <%=order.createdAt.toLocaleString() %>
                                         </p>
-                                        <% if(order.orderStatus==='Delivered' ){%>
+                                        <% if(order.orderStatus==='Delivered' && (!order.reasonForRejection) ){%>
                                             <button class="btn btn-warning"
                                                 onclick="returnOrder('<%= order.id%>')">Return order</button>
-                                            <%}%>
+                                            <%} else if(order.reasonForRejection){%>
+                                                <h6>Response from the owner for the return request :<b class="text-secondary">
+                                                        <%= order.reasonForRejection %>
+                                                    </b>
+                                                </h6>
+                                                <%}%>
 
-                                                <button class="btn btn-dark"
-                                                    onclick="downloadInvoice('<%= order._id %>')">Invoice</button>
+                                                    <button class="btn btn-dark"
+                                                        onclick="downloadInvoice('<%= order._id %>')">Invoice</button>
 
                                     </div>
                                 </div>
@@ -262,32 +267,8 @@
 
             </div>
         </div>
-        <!-- Pagination controls -->
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-                <% if (currentPage> 1) { %>
-                    <li class="page-item">
-                        <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    <% } %>
-                        <% for (let i=1; i <=totalPages; i++) { %>
-                            <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                <a class="page-link" href="?page=<%= i %>">
-                                    <%= i %>
-                                </a>
-                            </li>
-                            <% } %>
-                                <% if (currentPage < totalPages) { %>
-                                    <li class="page-item">
-                                        <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
-                                            <span aria-hidden="true">&raquo;</span>
-                                        </a>
-                                    </li>
-                                    <% } %>
-            </ul>
-        </nav>
+       <!-- pagination -->
+        <%- include('pagination') %>
     </div>
 
 
@@ -437,7 +418,7 @@
                 document.getElementById('validateReturnLabel').innerHTML = ''
                 const returningReason = document.getElementsByName('returningReason')[0]
 
-                if (returningReason.value.trim() === '' || returningReason.value.length <=10 || returningReason.value.length > 150) {
+                if (returningReason.value.trim() === '' || returningReason.value.length <= 10 || returningReason.value.length > 150) {
                     document.getElementById('validateReturnLabel').innerHTML = 'Request must be in 10-200 characters without reason cannot request for returning the order'
 
                 } else {

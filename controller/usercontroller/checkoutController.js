@@ -5,7 +5,7 @@ const orderSchema = require('../../model/orderSchema');
 const couponSchema = require('../../model/couponSchema')
 const dotenv = require("dotenv").config()
 const Razorpay = require('razorpay')
-const walletSchema=require('../../model/walletSchema')
+const walletSchema = require('../../model/walletSchema')
 
 //renter the checkout page
 const checkoutRender = async (req, res) => {
@@ -174,10 +174,10 @@ const postOrderPlaced = async (req, res) => {
         cart.items.forEach((item) => {
             totalPrice += item.productCount * (item.productID.productPrice * (1 - item.productID.discount / 100))
         })
-      
 
-        if (selectedPaymentOption===2) {
-            const walletBalance = await walletSchema.findOne({userID:req.session.user})
+
+        if (selectedPaymentOption === 2) {
+            const walletBalance = await walletSchema.findOne({ userID: req.session.user })
 
 
             if (!walletBalance) {
@@ -188,7 +188,7 @@ const postOrderPlaced = async (req, res) => {
                 return res.status(404).json({ error: 'You do not have enough balance in the Wallet, Please try to use another payment method ' })
             }
 
-            walletBalance.balance-=cart.payableAmount
+            walletBalance.balance -= cart.payableAmount
             await walletBalance.save()
         }
 
@@ -273,13 +273,28 @@ const applyCoupon = async (req, res) => {
 
         const { couponID } = req.body
 
+        //if there is no coupon then send error message
         if (!couponID) {
-            return res.status(404).json({ error: "Invalid coupon id" })
+            return res.status(404).json({ error: "Haven't chosen any coupons yet!" })
         }
 
-        const checkUsedCoupon= await orderSchema.findOne({userID:req.session.user, couponID:couponID})
-        if(checkUsedCoupon){
-            return res.status(400).json({usedCoupon:'Selected couopon has already been used by you'})
+        //checking of already coupon used or not 
+        const checkUsedCoupon = await orderSchema.findOne({ userID: req.session.user, couponID: couponID })
+        //then send error message to the user that the coupon is already used by them
+        if (checkUsedCoupon) {
+            return res.status(400).json({ usedCoupon: 'Selected coupon has already been used by you' })
+        }
+
+        //checking whether the coupon got expired 
+        const checkExpiredCoupon = await orderSchema.findOne({
+            userID: req.session.user,
+            couponID: couponID,
+            expiryDate: { $gt: new Date() },
+            isActive: true
+        })
+        //if it is expired or invalid then sending an error message to user
+        if (checkExpiredCoupon) {
+            return res.status(400).json({ expiredCoupon: 'Coupon is invalid, or expired' })
         }
 
         const couponDeatils = await couponSchema.findById(couponID);
@@ -290,19 +305,22 @@ const applyCoupon = async (req, res) => {
             return res.status(404).json({ minNotreached: "minimum amount not reached" })
         }
 
+        //checking whether is there any coupon have been applied in the cart
         if (cart.couponID != "") {
             const oldCoupon = await couponSchema.findById(cart.couponID)
+            //then counting the paybale money according to it
             cart.payableAmount += oldCoupon.discount
         }
 
+        // lessing the money from payable amount of the coupon from the cart
         cart.payableAmount -= couponDeatils.discount;
+        //replaced the coupon Id of old one with the new one which got applied in the checkout
         cart.couponID = couponID;
+        //adding new coupon's discount to the payable amount, now saving the cart
         cart.couponDiscount = couponDeatils.discount;
         await cart.save()
-
+        //sending response to the user
         return res.status(200).json({ success: "coupon applied", payableAmount: cart.payableAmount, discount: couponDeatils.discount })
-
-
 
     } catch (err) {
         console.log("error on applying coupon fetch", err)
@@ -314,8 +332,9 @@ const applyCoupon = async (req, res) => {
 const removeCoupon = async (req, res) => {
     try {
 
+        //finding cart of the user
         const cart = await cartSchema.findOne({ userID: req.session.user })
-
+        //checkig whether there is coupon already applied or not, if it is,
         if (cart.couponID) {
             const oldCoupon = await couponSchema.findById(cart.couponID)
             cart.payableAmount += oldCoupon.discount

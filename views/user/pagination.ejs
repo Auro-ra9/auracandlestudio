@@ -1,0 +1,39 @@
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        <li class="page-item">
+            <button class="page-link" onclick="previousPage('<%= parseInt(currentPage) %>')">Previous</button>
+        </li>
+        <% for(let i = 1; i <= totalPages; i++) { %> 
+            <li class="page-item">
+                <a class="page-link" href="?page=<%= i %>" ><%= i %></a>
+            </li>
+        <% } %>
+        <li class="page-item">
+            <button class="page-link" onclick="nextPage('<%= parseInt(currentPage) %>','<%= totalPages %>')">Next</button>
+        </li>
+    </ul>
+</nav>
+
+
+<script>
+
+   // Function to navigate to the next page
+function nextPage(currentPage, totalPage) {
+    // Check if the current page number is less than the total number of pages
+    if (Number(currentPage) < Number(totalPage)) {
+        // Redirect to the next page by incrementing the current page number
+        window.location.href = `?page=${Number(currentPage) + 1}`;
+    }
+}
+
+// Function to navigate to the previous page
+function previousPage(currentPage) {
+    // Check if the current page is greater than the first page
+    if ((Number(currentPage) - 1) != 0) {
+        // Redirect to the previous page by decrementing the current page number
+        window.location.href = `?page=${Number(currentPage) - 1}`;
+    }
+}
+
+
+</script>

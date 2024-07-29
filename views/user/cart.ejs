@@ -94,7 +94,7 @@
     <div class="row">
         <% if (!productInCart || !productInCart.items || productInCart.items.length === 0) { %>
             <div class="empty-cart">
-                <img src="../../images/cartcopy.png" alt="Empty Cart">
+                <img src="../../images/cartcopy.png"loading="lazy" alt="Empty Cart" >
                 <a href="/home" class="btn btn-secondary">
                     <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping
                 </a>
@@ -107,7 +107,7 @@
                             <div class="d-flex align-items-start border-bottom pb-3">
                                 <div class="me-4">
                                     <a href="/product-view/<%= product.productID.id %>">
-                                        <img src="../../<%= product.productID.image[0] %>" alt="" class="avatar-lg rounded">
+                                        <img src="../../<%= product.productID.image[0] %>" loading="lazy" alt="" class="avatar-lg rounded">
                                     </a>
                                 </div>
                                 <div class="flex-grow-1 align-self-center overflow-hidden">
@@ -212,6 +212,7 @@
             </div>
         <% } %>
     </div>
+    <%- include('pagination') %>
 </div>
 
 <%- include('footer') %>

@@ -10,7 +10,6 @@ const orderController = require('../controller/admincontroller/orderController')
 const couponController = require('../controller/admincontroller/couponController')
 const offerController = require('../controller/admincontroller/offerController')
 const upload = require('../middleware/multer')
-const testController=require('../controller/admincontroller/testController')
 
 //admin login 
 admin.get('/', loginController.admin)
@@ -77,9 +76,6 @@ admin.get('/edit-offer/:id',adminSession, offerController.editOfferGet)
 admin.post('/edit-offer/:id',adminSession, offerController.editOffer)
 
 
-
-//test before running
-admin.get('/test-run',testController.testRun)
 //logout admin
 admin.get('/logout', loginController.logout)
 

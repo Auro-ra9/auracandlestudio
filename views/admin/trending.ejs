@@ -100,7 +100,7 @@
                 <div class="card">
                     <% productsTopTrending.forEach((product, index) => { %>
                         <div class="product-card">
-                            <img src="../../<%= product.image[0] %>" alt="<%= product.productName %>" class="product-image">
+                            <img src="../../<%= product.image[0] %>" loading="lazy" alt="<%= product.productName %>" class="product-image">
                             <div class="product-info">
                                 <h6 class="product-name"><%= product.productName %></h6>
                                 <p class="product-brand">Brand: <%= product.brand %></p>

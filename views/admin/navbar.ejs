@@ -1,6 +1,80 @@
 <style>
+    /* Color palette based on #C3BAA9 */
+    :root {
+        /* --primary-color: #f6edbd; */
+        /* --secondary-color: #8C7A5B; */
+        --accent-color: #1d1c1c;
+        --text-color: #100f0f;
+        --light-color: #F0EBE1;
+    }
+    
+    .navbar-light {
+        background: var(--primary-color);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
     .navbar-light .navbar-nav .nav-link {
-        color: #000;
+        color: var(--text-color);
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        transition: color 0.3s ease;
+    }
+    
+    .navbar-light .navbar-nav .nav-link:hover {
+        color: var(--accent-color);
+    }
+    
+    .navbar-light .navbar-nav .nav-link i {
+        margin-right: 8px;
+        font-size: 1.1em;
+    }
+    
+    .navbar-brand img {
+        height: 60px;
+        transition: transform 0.3s ease;
+    }
+    
+    .navbar-brand img:hover {
+        transform: scale(1.05);
+    }
+    
+    .navbar-toggler {
+        border: none;
+        color: var(--accent-color);
+    }
+    
+    .navbar-toggler:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(91, 78, 59, 0.25);
+    }
+    
+    
+    .btn-dark {
+        background-color: var(--accent-color);
+        border-color: var(--accent-color);
+        transition: all 0.3s ease;
+    }
+    
+    .btn-dark:hover {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        color: #100f0f;
+    }
+    
+    
+    
+    .nav-item {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    
+    
+    .navbar-nav {
+        background-color: var(--light-color);
+        border-radius: 10px;
+        padding: 10px;
+        margin-top: 10px;
     }
 
     .offcanvas {
@@ -36,18 +110,24 @@
         font-size: 0.9rem;
     }
 
-    @media (max-width: 991.98px) {
-        .navbar-expand-lg .container {
-            padding-right: 15px;
-            padding-left: 15px;
-        }
 
+    @media (max-width: 992px) {
         .navbar-brand img {
-            height: auto;
+            height: 40px;
         }
 
-        .btn-logout {
-            margin-left: 10px;
+
+        .nav-item {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+
+        .navbar-nav {
+            background-color: var(--light-color);
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 10px;
         }
     }
 </style>
@@ -56,8 +136,8 @@
 <nav class="navbar navbar-expand-lg navbar-light py-3">
     <div class="container">
         <a class="navbar-brand" href="/admin/dashboard">
-            <img id="MDB-logo" src="../../images/AURA-removebg-preview.png" alt="AURA Logo" draggable="false"
-                height="50" class="rounded" />
+            <img id="MDB-logo" src="../../images/AURA-removebg-preview.png" loading="lazy" draggable="false"
+            class="rounded" />
         </a>
 
         <div class="ms-auto">
@@ -151,23 +231,23 @@
 
 <%- include('alert') %>
 
-<script>
-    // Wait for the DOM content to be fully loaded
-    document.addEventListener('DOMContentLoaded', function () {
-        // Select all elements with class 'nav-link' and data attribute 'data-bs-toggle="collapse"'
-        var dropdowns = document.querySelectorAll('.nav-link[data-bs-toggle="collapse"]');
-        
-        // Loop through each dropdown element
-        dropdowns.forEach(function (dropdown) {
-            // Add a click event listener to each dropdown
-            dropdown.addEventListener('click', function (e) {
-                // Prevent the default action of the click event
-                e.preventDefault();
-                // Find the chevron icon within the clicked dropdown
-                var chevron = this.querySelector('.fa-chevron-down');
-                // Toggle the chevron icon between down and up states
-                chevron.classList.toggle('fa-chevron-up');
+    <script>
+        // Wait for the DOM content to be fully loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            // Select all elements with class 'nav-link' and data attribute 'data-bs-toggle="collapse"'
+            var dropdowns = document.querySelectorAll('.nav-link[data-bs-toggle="collapse"]');
+
+            // Loop through each dropdown element
+            dropdowns.forEach(function (dropdown) {
+                // Add a click event listener to each dropdown
+                dropdown.addEventListener('click', function (e) {
+                    // Prevent the default action of the click event
+                    e.preventDefault();
+                    // Find the chevron icon within the clicked dropdown
+                    var chevron = this.querySelector('.fa-chevron-down');
+                    // Toggle the chevron icon between down and up states
+                    chevron.classList.toggle('fa-chevron-up');
+                });
             });
         });
-    });
-</script>
+    </script>

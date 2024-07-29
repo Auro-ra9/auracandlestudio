@@ -414,19 +414,8 @@
 
 
                 </div>
-                <!-- Pagination -->
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center">
-                        <% for(let i=1; i <=totalPages; i++) { %>
-                            <li class="page-item <%= currentPage == i ? 'active' : '' %>">
-                                <a class="page-link"
-                                    href="/home?page=<%= i %>&<%= new URLSearchParams(query).toString() %>">
-                                    <%= i %>
-                                </a>
-                            </li>
-                            <% } %>
-                    </ul>
-                </nav>
+                
+                <%- include('pagination') %>
 
         </div>
 

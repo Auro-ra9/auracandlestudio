@@ -91,7 +91,7 @@
                         <label class="col-md-4 col-form-label text-md-right" for="productPrice">PRODUCT PRICE</label>
                         <div class="col-md-6">
                             <input type="text" name="productPrice" class="form-control"
-                                value="<%= product.productPrice %>" required>
+                                value="<%= product.productPrice %>" >
                         </div>
                     </div>
 
@@ -101,7 +101,7 @@
                             Quantity</label>
                         <div class="col-md-6">
                             <input type="text" name="productQuantity" class="form-control"
-                                value="<%= product.productQuantity %>" required>
+                                value="<%= product.productQuantity %>" >
                         </div>
                     </div>
 
@@ -127,7 +127,7 @@
                         <label class="col-md-4 col-form-label text-md-right" for="productBrand">Product Brand</label>
                         <div class="col-md-6">
                             <input type="text" name="productBrand" class="form-control" value="<%= product.brand %>"
-                                required>
+                                >
                         </div>
                     </div>
 
@@ -137,7 +137,7 @@
                             Description</label>
                         <div class="col-md-6">
                             <textarea class="form-control" name="productDescription" id="product-description" rows="8"
-                                required><%= product.productDescription %></textarea>
+                                ><%= product.productDescription %></textarea>
                         </div>
                     </div>
 
@@ -146,7 +146,7 @@
                         <label class="col-md-4 col-form-label text-md-right" for="productDiscount">DISCOUNT</label>
                         <div class="col-md-6">
                             <input type="text" name="productDiscount" class="form-control"
-                                value="<%= product.discount %>" required>
+                                value="<%= product.discount %>" >
                         </div>
                     </div> -->
 
@@ -162,7 +162,7 @@
                                 <% if (product.image && product.image.length> 0) { %>
                                     <% product.image.forEach(function(img, index) { %>
                                         <div class="col-md-3 mb-3 image-container" data-image-path="<%= img %>">
-                                            <img src="../../<%= img %>" class="img-fluid img-thumbnail image-preview"
+                                            <img src="../../<%= img %>" loading="lazy" class="img-fluid img-thumbnail image-preview"
                                                 onclick="initCropper(this)">
                                             <button class="btn btn-danger mt-2 ms-2" type="button"
                                                 onclick="deleteImage(this)">Delete</button>

@@ -457,7 +457,7 @@
                                     <% productInCart.items.forEach((product,index)=>{ %>
                                         <tr>
                                             <th scope="row"><img src="../../<%= product.productID.image[0] %>"
-                                                    alt="product-img" title="product-img" class="avatar-lg rounded">
+                                                    loading="lazy" alt="product-img" title="product-img" class="avatar-lg rounded">
                                             </th>
                                             <td>
                                                 <h5 class="font-size-16 text-truncate" style="max-width: 200px;">
@@ -1003,6 +1003,12 @@
                             Swal.fire({
                                 icon: "error",
                                 title: "Already Coupon been used"
+                            })
+                        }
+                        if (data.expiredCoupon) {
+                            Swal.fire({
+                                icon: "warning",
+                                title: "Oops! The coupon got expired"
                             })
                         }
 

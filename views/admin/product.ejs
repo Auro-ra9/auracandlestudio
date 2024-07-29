@@ -12,6 +12,13 @@
         white-space: wrap;
         /* text-overflow: ellipsis; */
     }
+    .product-image {
+            width: 80px;
+            /* height: 80px; */
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 15px;
+        }
 </style>
 
 
@@ -26,6 +33,7 @@
                 <tr>
                     <th scope="col">Sl.no:</th>
                     <th scope="col">Product</th>
+                    <th scope="col">Product Name</th>
                     <th scope="col">Price</th>
                     <th scope="col">Stock</th>
                     <th scope="col">Category</th>
@@ -38,6 +46,10 @@
                         <th scope="row">
                             <%= (currentPage - 1) * 8 + index + 1 %>
                         </th>
+                        <td class="product-image">
+                            <img src="../../<%= product.image[0] %>" loading="lazy" alt="<%= product.productName %>"
+                                class="product-image">
+                        </td>
                         <td class="product-name">
                             <%= product.productName %>
                         </td>
@@ -73,29 +85,7 @@
             </tbody>
         </table>
         <!-- Pagination controls -->
-    <nav aria-label="Page navigation example">
-        <ul class="pagination justify-content-center">
-            <% if (currentPage > 1) { %>
-                <li class="page-item">
-                    <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
-            <% } %>
-            <% for (let i = 1; i <= totalPages; i++) { %>
-                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                </li>
-            <% } %>
-            <% if (currentPage < totalPages) { %>
-                <li class="page-item">
-                    <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-            <% } %>
-        </ul>
-    </nav>
+        <%- include('pagination') %>
     </div>
 
 

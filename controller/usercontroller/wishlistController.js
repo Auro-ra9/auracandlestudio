@@ -26,6 +26,7 @@ const viewWishlist = async (req, res) => {
                 title: 'Wishlist',
                 alertMessage: req.flash('errorMessage'),
                 productInWishlist,
+                pageNumber: Math.ceil(totalItems / wishlistPerPage),
                 currentPage,
                 totalPages,
                 query: req.query
@@ -36,6 +37,7 @@ const viewWishlist = async (req, res) => {
                 alertMessage: req.flash('errorMessage'),
                 productInWishlist: [],
                 currentPage,
+                pageNumber: 1,
                 totalPages: 1,
                 query: req.query
             })

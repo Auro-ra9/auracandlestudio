@@ -96,11 +96,12 @@
         <div class="row">
             <div class="col-xl-4">
                 <!-- Profile picture card-->
-                <div class="card mb-4 mb-xl-0">
+                <div class="card mb-4">
                     <div class="card-header">Profile</div>
                     <div class="card-body text-center">
                         <!-- Profile picture image-->
-                        <img class="img-account-profile rounded-circle mb-2" src="/images/Profile Avatar.jpg" alt="">
+                        <img class="img-account-profile rounded-circle mb-2" src="/images/Profile Avatar.jpg"
+                            loading="lazy" alt="">
                         <!-- Profile help block-->
                         <div class=" font-italic text-muted mb-3">
                             <i class="fa-solid fa-circle-user"></i>
@@ -112,14 +113,6 @@
                         <p><i class="fa-solid fa-phone"></i>
                             <%= profileDetails.phone %>
                         </p>
-                        <p>
-                            Invite a friend and earn &#8377; <b class="text-danger">100</b>
-                            <span id="referralCode">
-                                <%= profileDetails.referralCode %>
-                            </span>
-                            <button id="copyButton" class="btn btn-primary btn-sm">Copy</button>
-                        </p>
-
                         <!-- Profile picture upload button-->
 
                         <!-- <button type="button" class="btn btn-warning" data-bs-toggle="modal"
@@ -131,6 +124,18 @@
                             data-bs-target="#edit-category-modal">
                             Update details
                         </button>
+
+                        <% if(profileDetails.referralCode){ %>
+                            <p >Invite a friend and earn <b class="text-danger">&#8377;100</b>
+                            </p>
+                            <span id="referralCode" class="btn btn-dark">
+                                <%= profileDetails.referralCode %>
+                                    <i class="fa-regular fa-copy" id="copyButton" class="btn btn-primary btn-sm"></i>
+                            </span>
+
+                            <p class="text-success">Share this code with your friends to earn rewards!</p>
+                            <%} %>
+
 
                     </div>
                 </div>
@@ -450,7 +455,7 @@
                     form.submit()
                 }
             })
-            
+
             //copying the referral code
             document.getElementById("copyButton").addEventListener("click", async function () {
                 try {

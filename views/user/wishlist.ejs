@@ -364,7 +364,7 @@
                             <div class="body">
                                 <div class="cp_img">
                                     <a href="/product-view/<%= product.productID.id %>"><img
-                                            src="../../<%= product.productID.image[0] %>" alt="Product"
+                                            src="../../<%= product.productID.image[0] %>" loading="lazy" alt="Product"
                                             class="img-fluid"></a>
                                     <div class="hover">
                                         <button onclick="deleteWishlist('<%= product.productID._id %>')"
@@ -431,7 +431,7 @@
 
 
         </div>
-        <!-- Pagination -->
+        <!-- Pagination
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
                 <% for(let i=1; i <=totalPages; i++) { %>
@@ -442,7 +442,9 @@
                     </li>
                     <% } %>
             </ul>
-        </nav>
+        </nav> -->
+
+        <%- include('pagination') %>
 
     </div>
 

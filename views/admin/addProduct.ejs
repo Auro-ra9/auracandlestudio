@@ -205,45 +205,40 @@
             const description = document.getElementById('product_description');
             const discount = document.getElementById('percentage_discount');
             const productImage = document.getElementById('product-image-upload');
-            const validationMessages = document.getElementsByClassName('validate-add-product');
 
             addProductForm.addEventListener('submit', async (event) => {
                 event.preventDefault();
-
-                for (let i = 0; i < validationMessages.length; i++) {
-                    validationMessages[i].innerHTML = '';
-                }
 
                 let validate = true;
 
                 // Validation logic
                 if (productName.value.trim() === '' || productName.value.length > 150 || !isNaN(productName.value)) {
-                    validationMessages[0].innerHTML = 'Mention product name';
+                    document.getElementsByClassName('validate-add-product')[0].innerHTML = 'Mention product name';
                     validate = false;
                 }
                 if (price.value > 1000000 || isNaN(price.value) || price.value <= 0) {
-                    validationMessages[1].innerHTML = 'Add price';
+                     document.getElementsByClassName('validate-add-product')[1].innerHTML = 'Add price';
                     validate = false;
                 }
                 if (!category.value) {
-                    validationMessages[2].innerHTML = 'Select any category';
+                     document.getElementsByClassName('validate-add-product')[2].innerHTML = 'Select any category';
                     validate = false;
                 }
                 if (quantity.value > 100000 || isNaN(quantity.value) || quantity.value <= 0) {
-                    validationMessages[3].innerHTML = 'Must specify quantity';
+                     document.getElementsByClassName('validate-add-product')[3].innerHTML = 'Must specify quantity';
                     validate = false;
                 }
                 if (brand.value.trim() === '' || brand.value.length > 50 || !isNaN(brand.value)) {
-                    validationMessages[4].innerHTML = 'Specify the brand name';
+                     document.getElementsByClassName('validate-add-product')[4].innerHTML = 'Specify the brand name';
                     validate = false;
                 }
                 if (description.value.trim() === '' || description.value.length > 500 || !isNaN(description.value) || description.value.length < 5) {
-                    validationMessages[5].innerHTML = 'Description cannot be empty and must be at least 6 characters';
+                     document.getElementsByClassName('validate-add-product')[5].innerHTML = 'Description cannot be empty and must be at least 6 characters';
                     validate = false;
                 }
 
                 if (!productImage.files || productImage.files.length === 0) {
-                    validationMessages[7].innerHTML = 'Please select an image';
+                     document.getElementsByClassName('validate-add-product')[6].innerHTML = 'Please select an image';
                     validate = false;
                 }
                 // if (productImage.files.length > 4) {
