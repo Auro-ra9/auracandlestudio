@@ -4,6 +4,7 @@ const PDFDocument = require("pdfkit-table");
 const ExcelJS = require('exceljs');
 const path = require('path')
 
+// Render the dashboard
 const dashboardRender = async (req, res) => {
     try {
 
@@ -35,6 +36,7 @@ const dashboardRender = async (req, res) => {
             const dayEnd = new Date(dayIterator);
             dayEnd.setHours(23, 59, 59, 999);
 
+            // Calculate total sales for the day
             const dayTotal = orderDetailsProfit.reduce((acc, ele) => {
                 const eleDate = new Date(ele.createdAt);
                 if (eleDate >= dayStart && eleDate <= dayEnd) {
@@ -424,7 +426,7 @@ const trendingProducts = async (req, res) => {
         })
 
     } catch (err) {
-
+        console.log('error on trending products', err)
     }
 }
 

@@ -14,7 +14,7 @@ const productRender = async (req, res) => {
 
         // Counting the total number of product
         const productsCount = await productSchema.countDocuments()
-        
+
         const products = await productSchema.find().sort({ createdAt: -1 }).populate('category').skip(skip).limit(productsPerPage)
         res.render('admin/product', {
             title: 'product',
@@ -66,7 +66,7 @@ const addProductPost = async (req, res) => {
 
 
         //checkin the fields
-        if (!actualProduct && !actualPrice && !actualBrand && !actualCategory && !actualQuantity && !actualdescription ) {
+        if (!actualProduct && !actualPrice && !actualBrand && !actualCategory && !actualQuantity && !actualdescription) {
             req.flash('errorMessage', 'Product not found')
             return res.redirect('/admin/products')
         }
@@ -87,7 +87,7 @@ const addProductPost = async (req, res) => {
             category: actualCategory,
             productQuantity: actualQuantity,
             productDescription: actualdescription,
-         // discount: actualDiscount,
+            // discount: actualDiscount,
             image: imageArray
         })
 
@@ -111,7 +111,7 @@ const deleteProduct = async (req, res) => {
         if (!productID) {
             return res.status(404).json({ message: "Product id not found" })
         }
-
+        //deleting the product using the order id got from the params
         const deletedProduct = await productSchema.findByIdAndDelete(productID)
 
         if (deletedProduct) {
@@ -134,6 +134,7 @@ const blockProduct = async (req, res) => {
             return res.status(404).json({ message: "Product id not found" })
         }
 
+        //blocking the order using the order id got from the params
         const blockProduct = await productSchema.findByIdAndUpdate(productID, { isAvailable: false })
 
         if (blockProduct) {
@@ -155,6 +156,7 @@ const unblockProduct = async (req, res) => {
             return res.status(404).json({ message: "Product id not found" })
         }
 
+        //unblocking the order using the order id got from the params
         const unblockedProduct = await productSchema.findByIdAndUpdate(productID, { isAvailable: true })
 
         if (unblockedProduct) {
@@ -166,6 +168,7 @@ const unblockProduct = async (req, res) => {
     }
 }
 
+//render edit product page
 const getEditProduct = async (req, res) => {
     try {
         const productId = req.params.productId;
@@ -175,7 +178,7 @@ const getEditProduct = async (req, res) => {
         res.render('admin/editProduct', {
             title: 'Edit product',
             alertMessage: req.flash('errorMessage'),
-            product, 
+            product,
             category
         })
     } catch (err) {
@@ -184,10 +187,10 @@ const getEditProduct = async (req, res) => {
     }
 };
 
-
+//edit product 
 const editProductPost = async (req, res) => {
     try {
-        const { productPrice, productDescription, productQuantity, productName,productBrand } = req.body
+        const { productPrice, productDescription, productQuantity, productName, productBrand } = req.body
 
 
         // get the id of the product
@@ -213,11 +216,12 @@ const editProductPost = async (req, res) => {
         }
 
         // update the product using the values from form
-        productSchema.findByIdAndUpdate(productID, 
-            { productName:productName, 
-                brand:productBrand, 
-                productPrice: productPrice, 
-                productDescription: productDescription, 
+        productSchema.findByIdAndUpdate(productID,
+            {
+                productName: productName,
+                brand: productBrand,
+                productPrice: productPrice,
+                productDescription: productDescription,
                 productQuantity: productQuantity,
                 // discount:productDiscount
             })
@@ -246,7 +250,7 @@ module.exports = {
     unblockProduct,
     getEditProduct,
     editProductPost,
-   
+
 
 
 }

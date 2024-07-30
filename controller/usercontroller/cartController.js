@@ -2,7 +2,7 @@ const userSchema = require('../../model/userSchema')
 const productSchema = require('../../model/productSchema')
 const cartSchema = require('../../model/cartSchema')
 
-
+//render cart
 const viewCart = async (req, res) => {
     // Pagination parameters
     const cartPerPage = 8
@@ -10,7 +10,8 @@ const viewCart = async (req, res) => {
     const skip = (currentPage - 1) * cartPerPage
 
     try {
-        const productInCart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID').sort({'items.createdAt':-1})
+        // Find the cart for the user and populate product details
+        const productInCart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID').sort({ 'items.createdAt': -1 })
 
         if (productInCart) {
             productInCart.items.sort((productA, productB) => productB.createdAt - productA.createdAt)
@@ -23,12 +24,14 @@ const viewCart = async (req, res) => {
             let total = 0
             let totalDiscount = 0
 
+            // Calculate subTotal, total, and totalDiscount
             productInCart.items.forEach((product) => {
                 subTotal += product.productCount * (product.productID.productPrice)
                 total += (product.productID.productPrice * (1 - product.productID.discount / 100) * (product.productCount))
             })
             totalDiscount = subTotal - total
 
+            // Render the cart page with the calculated values
             res.render('user/cart', {
                 title: 'cart',
                 alertMessage: req.flash('errorMessage'),
@@ -41,6 +44,8 @@ const viewCart = async (req, res) => {
                 query: req.query
             })
         } else {
+
+            // Render the cart page with empty values if no products are found
             res.render('user/cart', {
                 title: 'cart',
                 alertMessage: req.flash('errorMessage'),
@@ -58,7 +63,7 @@ const viewCart = async (req, res) => {
         console.log(`error on cart ${err}`)
     }
 }
-
+//ADD PRODUCT TO THE CART
 const addToCart = async (req, res) => {
     try {
         const productID = req.params.productID
@@ -67,6 +72,7 @@ const addToCart = async (req, res) => {
             return res.status(404).json({ message: 'product could not find' })
         }
 
+        // Find the product details by productID
         const productDetails = await productSchema.findById(productID)
 
         if (!productDetails) {
@@ -77,10 +83,10 @@ const addToCart = async (req, res) => {
         }
 
         //checking whether the user already have the cart, if it yes then adding to the existing or creating new
-
         const cart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID')
 
         if (!cart) {
+            // Create a new cart if not found
             const newCart = new cartSchema({
                 userID: req.session.user,
                 items: [{
@@ -97,15 +103,16 @@ const addToCart = async (req, res) => {
             for (const checkProduct of cart.items) {
                 if (checkProduct.productID.id === productID) {
                     productInCart = true
-                    if(checkProduct.productCount<10){
+                    if (checkProduct.productCount < 10) {
                         checkProduct.productCount++
-                    }else{
+                    } else {
 
                         return res.status(404).json({ existInCart: 'product limit reached in cart' })
                     }
                 }
             }
 
+            // Add the product to the cart if not already present
             if (!productInCart) {
                 cart.items.push({
                     productID: productDetails._id,
@@ -135,6 +142,7 @@ const deleteFromCart = async (req, res) => {
             return res.status(404).json({ message: 'Cart not found' })
         }
 
+        // Filter out the product to be deleted
         const newProductList = cart.items.filter((cartProduct) => {
             if (cartProduct.productID.id != productID) {
                 return cartProduct
@@ -260,13 +268,15 @@ const decreaseQuantity = async (req, res) => {
     }
 }
 
-const validateCheckout=async(req,res)=>{
+//checkout
+const validateCheckout = async (req, res) => {
     try {
-        const cart=await cartSchema.findOne({userID:req.session.user}).populate('items.productID')
+        const cart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID')
 
-        for(const item of cart.items){
-            if(item.productCount>item.productID.productQuantity){
-                return res.status(404).json({error:"Product count unavailable",product:item.productID.productName})
+        // Check product availability and stock
+        for (const item of cart.items) {
+            if (item.productCount > item.productID.productQuantity) {
+                return res.status(404).json({ error: "Product count unavailable", product: item.productID.productName })
             }
         }
 
@@ -278,22 +288,22 @@ const validateCheckout=async(req,res)=>{
             total += (product.productID.productPrice * (1 - product.productID.discount / 100) * (product.productCount))
         })
 
-        cart.payableAmount=total
-        cart.totalPrice=subTotal
+        cart.payableAmount = total
+        cart.totalPrice = subTotal
 
-        if(cart.payableAmount<500){
-            cart.payableAmount+=50
+        if (cart.payableAmount < 500) {
+            cart.payableAmount += 50
         }
 
-        cart.couponID="";
-        cart.couponDiscount=0
+        cart.couponID = "";
+        cart.couponDiscount = 0
         await cart.save()
-       
 
-        return res.status(200).json({message:"Proceed to checkout"})
-        
+
+        return res.status(200).json({ message: "Proceed to checkout" })
+
     } catch (err) {
-        console.log("Error on checkout valiidation ",err);
+        console.log("Error on checkout valiidation ", err);
     }
 }
 

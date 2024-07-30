@@ -80,36 +80,42 @@ const editOrderPost = async (req, res) => {
 // editing order status
 const approveReturn = async (req, res) => {
     try {
+        //getting orderid from the params
         const orderID = req.params.orderID
+        //fetching the order from the db
         const currentOrder = await orderSchema.findById(orderID)
 
-        console.log(currentOrder)
-
+        //error message sending if order could not find
         if (!currentOrder) {
             return res.status(404).json({ message: 'could not find the order status' })
         }
 
+        //changing to new status as returned (becuase this is an approval for return)
         if (currentOrder.orderStatus === 'Pending-Returned') {
             const newStatus = 'Returned'
 
             // Update order status
             await orderSchema.findByIdAndUpdate(orderID, { orderStatus: newStatus })
 
-
+            //finding wallet for returning the money back
             const wallet = await walletSchema.findOne({ userID: currentOrder.userID })
 
-            const finalAmount=  currentOrder.totalPrice-currentOrder.couponDiscount
+            //calculating the final amount for returning after deducting of coupon discount
+            const finalAmount = currentOrder.totalPrice - currentOrder.couponDiscount
+            //returning to existing wallet
             if (wallet) {
-                wallet.balance +=finalAmount
+                wallet.balance += finalAmount
                 await wallet.save()
+
             } else {
+                //creating new wallet in case of no existence of wallet and returning money there
                 const newWallet = new walletSchema({
                     userID: currentOrder.userID,
                     balance: finalAmount,
                 })
+                //saving new wallet
                 await newWallet.save()
             }
-
 
             return res.status(200).json({ message: 'successfully updated the status' })
 
@@ -124,9 +130,12 @@ const approveReturn = async (req, res) => {
 
 const rejectReturn = async (req, res) => {
     try {
+        //getting id from the params
         const orderID = req.params.orderID
+        //finding current order using that id
         const currentOrder = await orderSchema.findById(orderID)
 
+        //sending error message if could not get the id
         if (!currentOrder) {
             req.flash('errorMessage', 'Order id could/t find')
             return res.redirect('/admin/orders')
@@ -136,6 +145,7 @@ const rejectReturn = async (req, res) => {
             req.flash('errorMessage', 'Cannot reject order that is not Pending-Returned')
             return res.redirect('/admin/edit-order')
         }
+        //updating the status to delivered because of rejected 
 
         const newStatus = 'Delivered'
         const reason = req.body.rejectingReturn

@@ -4,6 +4,7 @@ const productSchema = require('../../model/productSchema');
 const mongoose = require('mongoose')
 
 
+// Fetch and render the offers page
 const offers = async (req, res) => {
     try {
         // Pagination parameters
@@ -17,6 +18,7 @@ const offers = async (req, res) => {
         // Fetching the offer for the current page
         const offers = await offerSchema.find().sort({ createdAt: -1 }).skip(skip).limit(offerPerPage)
 
+        // Render the offers page with pagination
         res.render('admin/offers',
             {
                 title: 'offers',
@@ -30,13 +32,16 @@ const offers = async (req, res) => {
     }
 }
 
-//add offers page render
 
+//add offers page render
 const addOffersGet = async (req, res) => {
     try {
+
+        // Fetching active categories and available products
         const category = await categorySchema.find({ isBlocked: false })
         const product = await productSchema.find({ isAvailable: true })
 
+        // Render the add offers page with categories and products
         res.render('admin/addOffers',
             {
                 title: 'add-offers',
@@ -53,6 +58,7 @@ const addOffersPost = async (req, res) => {
     try {
         const { offerType, referenceIdCategory, referenceIdProduct, discountPercent } = req.body
 
+        // Determine referenceId based on offerType
 
         let referenceId;
         if (offerType === 'category') {
@@ -107,6 +113,7 @@ const addOffersPost = async (req, res) => {
                 { $set: { discount: discountPercent } }
             )
         }
+        // Save the new offer in the database
 
         const newoffer = new offerSchema({
             offerType,
@@ -129,6 +136,7 @@ const editOfferGet = async (req, res) => {
         const category = await categorySchema.find({ isBlocked: false })
         const product = await productSchema.find({ isAvailable: true })
 
+        // Render the edit offer page with the current offer, categories, and products
         res.render('admin/editOffer', {
             title: 'Edit Offer',
             offer,
@@ -152,8 +160,9 @@ const editOffer = async (req, res) => {
             return res.redirect(`/admin/edit-offer/${offerId}`)
         }
 
-        const offerDetails=await offerSchema.findById(offerId)
+        const offerDetails = await offerSchema.findById(offerId)
 
+        // Update products' discount based on offer type
         if (offerDetails.offerType === 'category') {
             const category = await categorySchema.findById(offerDetails.referenceId)
 
@@ -182,8 +191,8 @@ const editOffer = async (req, res) => {
             )
         }
 
-
-        await offerSchema.findByIdAndUpdate(offerId, {discountPercent:discountPercent})
+        // Update the offer in the database
+        await offerSchema.findByIdAndUpdate(offerId, { discountPercent: discountPercent })
         req.flash('errorMessage', 'Offer updated successfully')
 
         return res.redirect('/admin/offers')
@@ -243,6 +252,6 @@ module.exports = {
     deleteOffer,
     editOfferGet,
     editOffer,
- 
+
 
 }

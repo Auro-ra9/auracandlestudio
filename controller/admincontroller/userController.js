@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt')
 
 // Rendering users page
 const userRender = async (req, res) => {
-   try {
+    try {
         // Pagination parameters
         const usersPerPage = 8
         const currentPage = parseInt(req.query.page) || 1
@@ -36,11 +36,13 @@ const userRender = async (req, res) => {
 // Block user
 const blockUser = async (req, res) => {
     try {
+        //getting id of the user from the params
         const userID = req.params.userID
         if (!userID) {
             return res.status(404).json({ message: "User id not found" })
         }
 
+        //blocking the given id (changing the status of isblocked to true)
         const blockedUser = await userSchema.findByIdAndUpdate(userID, { isBlocked: true })
 
         if (blockedUser) {
@@ -57,11 +59,13 @@ const blockUser = async (req, res) => {
 // Unblock user
 const unblockUser = async (req, res) => {
     try {
+
         const userID = req.params.userID
         if (!userID) {
             return res.status(404).json({ message: "User id not found" })
         }
 
+        //unblocking the given id 
         const unblockedUser = await userSchema.findByIdAndUpdate(userID, { isBlocked: false })
 
         if (unblockedUser) {
