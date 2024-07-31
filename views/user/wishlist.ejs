@@ -386,37 +386,37 @@
                                             <%= product.productID.brand %>
                                         </a></h5>
 
-                                        <%if(product.productID.discount>0){%>
+                                    <%if(product.productID.discount>0){%>
                                         <span class="badge bg-danger">
                                             <%=product.productID.discount %> % OFF
-                                          </span>
-                                          <%}else{%>
-                                        <span class="badge bg-dark">
-                                            offer unavailable
-                                          </span>
-                                          <%}%>
-                                            <% if(product.productID.productQuantity===0){%>
-                                                <b class=" text-danger product-name-card">Product out of stock</b>
-                                                <%} else{%>
-                                                    <%if(product.productID.discount>0){%>
-                                                        <ul class="product_price list-unstyled">
-                                                            <li class="old_price">&#8377;<s>
-                                                                    <%= product.productID.productPrice %>
-                                                                </s></li>
-                                                            <li class="new_price">&#8377;<%=
-                                                                    (product.productID.productPrice*(1-product.productID.discount/100)).toLocaleString()
-                                                                    %>
-                                                            </li>
-                                                        </ul>
-                                                        <%}else{%>
+                                        </span>
+                                        <%}else{%>
+                                            <span class="badge bg-dark">
+                                                offer unavailable
+                                            </span>
+                                            <%}%>
+                                                <% if(product.productID.productQuantity===0){%>
+                                                    <b class=" text-danger product-name-card">Product out of stock</b>
+                                                    <%} else{%>
+                                                        <%if(product.productID.discount>0){%>
                                                             <ul class="product_price list-unstyled">
+                                                                <li class="old_price">&#8377;<s>
+                                                                        <%= product.productID.productPrice %>
+                                                                    </s></li>
                                                                 <li class="new_price">&#8377;<%=
-                                                                        product.productID.productPrice.toLocaleString()
+                                                                        (product.productID.productPrice*(1-product.productID.discount/100)).toLocaleString()
                                                                         %>
                                                                 </li>
                                                             </ul>
-                                                            <%}%>
+                                                            <%}else{%>
+                                                                <ul class="product_price list-unstyled">
+                                                                    <li class="new_price">&#8377;<%=
+                                                                            product.productID.productPrice.toLocaleString()
+                                                                            %>
+                                                                    </li>
+                                                                </ul>
                                                                 <%}%>
+                                                                    <%}%>
                                 </div>
                             </div>
                         </div>
@@ -506,6 +506,11 @@
                     if (data.message) {
                         iziToast.error({
                             message: 'Out of stock, we will notify when it is available'
+                        });
+                    }
+                    if (data.limitReached) {
+                        iziToast.error({
+                            message: 'not enough stock available'
                         });
                     }
                     if (data.success) {

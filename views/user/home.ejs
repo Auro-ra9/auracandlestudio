@@ -360,7 +360,8 @@
                                 <div class="body">
                                     <div class="cp_img">
                                         <a href="/product-view/<%= product._id %>"><img
-                                                src="../../<%= product.image[0] %>" alt="Product" class="img-fluid" loading="lazy"></a>
+                                                src="../../<%= product.image[0] %>" alt="Product" class="img-fluid"
+                                                loading="lazy"></a>
                                         <div class="hover">
                                             <button onclick="addToWishlist('<%= product._id%>')"
                                                 class="btn btn-dark btn-sm waves-effect"><i
@@ -380,30 +381,31 @@
                                                 title="<%= product.brand %>">
                                                 <%= product.brand %>
                                             </a></h5>
-                                            <%if(product.discount>0){%>
-                                                <span class="badge bg-danger">
-                                                    <%=product.discount %> % OFF
-                                                  </span>
-                                        <ul class="product_price list-unstyled">
-                                            <li class="old_price">&#8377;<s>
-                                                    <%= product.productPrice %>
-                                                </s></li>
-                                            <li class="new_price">&#8377;<%=
-                                                    (product.productPrice*(1-product.discount/100)).toLocaleString() %>
-                                            </li>
-                                        </ul>
-                                        <%}else{%>
-                                            <span class="badge bg-dark">
-                                                Offer unavailable
-                                              </span>
-                                            
-                                        <ul class="product_price list-unstyled">
-                                            <li class="old_price">&#8377;
-                                                    <%= product.productPrice.toLocaleString() %>
+                                        <%if(product.discount>0){%>
+                                            <span class="badge bg-danger">
+                                                <%=product.discount %> % OFF
+                                            </span>
+                                            <ul class="product_price list-unstyled">
+                                                <li class="old_price">&#8377;<s>
+                                                        <%= product.productPrice %>
+                                                    </s></li>
+                                                <li class="new_price">&#8377;<%=
+                                                        (product.productPrice*(1-product.discount/100)).toLocaleString()
+                                                        %>
                                                 </li>
-                                            
-                                        </ul>
-                                        <%}%>
+                                            </ul>
+                                            <%}else{%>
+                                                <span class="badge bg-dark">
+                                                    Offer unavailable
+                                                </span>
+
+                                                <ul class="product_price list-unstyled">
+                                                    <li class="old_price">&#8377;
+                                                        <%= product.productPrice.toLocaleString() %>
+                                                    </li>
+
+                                                </ul>
+                                                <%}%>
                                     </div>
                                 </div>
                             </div>
@@ -414,7 +416,7 @@
 
 
                 </div>
-                
+
                 <%- include('pagination') %>
 
         </div>
@@ -444,6 +446,11 @@
                         if (data.message) {
                             iziToast.error({
                                 message: 'Out of stock, we will notify when it is available'
+                            });
+                        }
+                        if (data.limitReached) {
+                            iziToast.error({
+                                message: 'not enough stock available'
                             });
                         }
                         if (data.success) {
@@ -477,7 +484,7 @@
                                 message: 'Product alreday in wishlist'
                             });
                         }
-                        
+
                         if (data.success) {
                             iziToast.success({
                                 message: 'Added'
