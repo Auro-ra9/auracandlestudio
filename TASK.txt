@@ -1,3 +1,15 @@
+hosting week pendings
+
+sort based on discounted price
+sort / pagination should work in combination
+option to clear the search
+//// stock management - bug
+pagination issues
+generate order ID
+///// unique coupon code
+//// add proper date validations
+
+
 fifth or 12th week(pendings only)
 
 //// Invoice for only delivered product

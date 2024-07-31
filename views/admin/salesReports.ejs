@@ -129,11 +129,16 @@
             isValid = false;
         }
 
-        if (!endDateInput.value) {
-            validate[1].innerHTML = 'Please select an end date.';
+        if (startDate > Date.now()) {
+            validate[0].innerHTML = 'Start date must be equal or before today.';
             isValid = false;
         }
 
+        
+        if (endDate> Date.now()) {
+            validate[1].innerHTML = 'Please select a valid end date.';
+            isValid = false;
+        }
         if (startDate > endDate) {
             validate[1].innerHTML = 'End date must be greater than or equal to the start date.';
             isValid = false;

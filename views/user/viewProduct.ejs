@@ -109,101 +109,106 @@
   </section>
   <!-- content -->
   <%- include('similarProducts') %>
-<!-- pagination -->
-  <%- include('pagination') %>
+    <!-- pagination -->
+    <%- include('pagination') %>
 
-    <!-- Footer -->
-    <%- include('footer') %>
+      <!-- Footer -->
+      <%- include('footer') %>
 
-      <script>
-        // image zoom effect
-        const imageContainer = document.getElementById('product-full-img-view')
-        const productImg = document.getElementById('product-image-img')
+        <script>
+          // image zoom effect
+          const imageContainer = document.getElementById('product-full-img-view')
+          const productImg = document.getElementById('product-image-img')
 
-        imageContainer.addEventListener("mousemove", (e) => {
-          const rect = e.target.getBoundingClientRect();
-          const x = (e.clientX - rect.left) / rect.width;
-          const y = (e.clientY - rect.top) / rect.height;
+          imageContainer.addEventListener("mousemove", (e) => {
+            const rect = e.target.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width;
+            const y = (e.clientY - rect.top) / rect.height;
 
-          productImg.style.transformOrigin = ` ${x * 100}% ${y * 100}%`;
-          productImg.style.transform = "scale(2)";
-        });
+            productImg.style.transformOrigin = ` ${x * 100}% ${y * 100}%`;
+            productImg.style.transform = "scale(2)";
+          });
 
-        imageContainer.addEventListener("mouseleave", () => {
-          productImg.style.transformOrigin = "center"
-          productImg.style.transform = "scale(1)"
-        })
-
-
-        // function to change the image 
-        function changeImage(src) {
-          productImg.src = `../../${src}`
-        }
-
-
-        //add to cart button
-
-        function addToCart(productID) {
-          console.log(productID);
-
-          const URL = `/addToCart/${productID}`
-          fetch(URL, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }).then((res) => {
-            return res.json()
-          }).then((data) => {
-            if (data.existInCart) {
-              iziToast.warning({
-                message: 'Product alreday in cart'
-              });
-            }
-            if (data.message) {
-              iziToast.error({
-                message: 'Out of stock, we will notify when it is available'
-              });
-            }
-            if (data.success) {
-              iziToast.success({
-                message: 'Added'
-              })
-            }
-          }).catch((err) => {
-            window.location.href = '/login'
-            console.log(`error while adding to cart${err}`)
-
+          imageContainer.addEventListener("mouseleave", () => {
+            productImg.style.transformOrigin = "center"
+            productImg.style.transform = "scale(1)"
           })
-        }
-        //add to wishlist button
 
-        function addToWishlist(productID) {
-          console.log(productID);
 
-          const URL = `/addToWishlist/${productID}`
-          fetch(URL, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }).then((res) => {
-            return res.json()
-          }).then((data) => {
-            if (data.existInWishlist) {
-              iziToast.warning({
-                message: 'Product alreday in wishlist'
-              });
-            }
-            if (data.success) {
-              iziToast.success({
-                message: 'Added'
-              })
-            }
-          }).catch((err) => {
-            window.location.href = '/login'
-            console.log(`error while adding to wishlist${err}`)
+          // function to change the image 
+          function changeImage(src) {
+            productImg.src = `../../${src}`
+          }
 
-          })
-        }
-      </script>
+
+          //add to cart button
+
+          function addToCart(productID) {
+            console.log(productID);
+
+            const URL = `/addToCart/${productID}`
+            fetch(URL, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            }).then((res) => {
+              return res.json()
+            }).then((data) => {
+              if (data.existInCart) {
+                iziToast.warning({
+                  message: 'Product alreday in cart'
+                });
+              }
+              if (data.message) {
+                iziToast.error({
+                  message: 'Out of stock, we will notify when it is available'
+                });
+              }
+              if (data.limitReached) {
+                iziToast.error({
+                  message: 'not enough stock available'
+                });
+              }
+              if (data.success) {
+                iziToast.success({
+                  message: 'Added'
+                })
+              }
+            }).catch((err) => {
+              window.location.href = '/login'
+              console.log(`error while adding to cart${err}`)
+
+            })
+          }
+          //add to wishlist button
+
+          function addToWishlist(productID) {
+            console.log(productID);
+
+            const URL = `/addToWishlist/${productID}`
+            fetch(URL, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            }).then((res) => {
+              return res.json()
+            }).then((data) => {
+              if (data.existInWishlist) {
+                iziToast.warning({
+                  message: 'Product alreday in wishlist'
+                });
+              }
+              if (data.success) {
+                iziToast.success({
+                  message: 'Added'
+                })
+              }
+            }).catch((err) => {
+              window.location.href = '/login'
+              console.log(`error while adding to wishlist${err}`)
+
+            })
+          }
+        </script>

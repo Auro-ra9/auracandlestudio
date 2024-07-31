@@ -97,16 +97,19 @@ const addToCart = async (req, res) => {
             })
             await newCart.save()
         } else {
-            // check product is therre in cart
+            // check product is there in cart
             let productInCart = false
 
             for (const checkProduct of cart.items) {
                 if (checkProduct.productID.id === productID) {
                     productInCart = true
+                    if (checkProduct.productCount >= productDetails.productQuantity) {
+                        return res.status(404).json({ limitReached: 'not enough stock available' })
+                    }
                     if (checkProduct.productCount < 10) {
                         checkProduct.productCount++
-                    } else {
 
+                    } else {
                         return res.status(404).json({ existInCart: 'product limit reached in cart' })
                     }
                 }

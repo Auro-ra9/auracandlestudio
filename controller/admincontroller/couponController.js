@@ -54,6 +54,13 @@ const addCouponsPost = async (req, res) => {
             minAmount,
             isActive } = req.body
 
+            //finding whether is there any coupon already existing with this similar name
+            const existingCoupon= await couponSchema.findOne({couponName:req.body.couponName})
+            if(existingCoupon){
+                req.flash('errorMessage','Coupon name already exist')
+                return res.redirect('/admin/coupons/add-coupons')
+            }
+
         //adding those details as a new coupon in schema
         const newCoupon = new couponSchema({
             couponName,
