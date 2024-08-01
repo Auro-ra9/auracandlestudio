@@ -44,8 +44,8 @@ const checkoutRender = async (req, res) => {
                 req.flash('errorMessage'),
             profileDetails,
             productInCart: productInCart,
-
-            coupons
+            coupons,
+            query: req.query
         })
 
     } catch (err) {

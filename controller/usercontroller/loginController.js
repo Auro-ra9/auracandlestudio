@@ -10,7 +10,13 @@ const walletSchema = require('../../model/walletSchema')
 //rendering lpgin page
 const loginRender = (req, res) => {
     try {
-        res.render('user/login', { title: 'login', alertMessage: req.flash('errorMessage'), user: req.session.user })
+        res.render('user/login',
+            {
+                title: 'login',
+                alertMessage: req.flash('errorMessage'),
+                user: req.session.user,
+                query: req.query
+            })
     } catch (err) {
         console.log(`Error on login render get ${err}`);
     }
@@ -110,7 +116,7 @@ const registerPost = async (req, res) => {
             req.session.email = email;
             req.session.password = userData.password; // Save the hashed password in the session
             req.session.phone = phone;
-            req.session.referralCode = referralCode; 
+            req.session.referralCode = referralCode;
             req.session.referredBy = referredBy;
 
             res.redirect('/otp'); // Redirect to OTP verification page
@@ -196,7 +202,7 @@ const otpPost = async (req, res) => {
             });
             await newUser.save();
 
-           
+
 
             // Add a bonus to the referring user's wallet if referredBy is present
             if (newUser.referredBy) {
@@ -204,10 +210,10 @@ const otpPost = async (req, res) => {
                 if (referringUserWallet) {
                     referringUserWallet.balance += 100;
                     await referringUserWallet.save();
-                }else{
-                    const newWallet =new walletSchema({
-                        userID:newUser.referredBy,
-                        balance:100
+                } else {
+                    const newWallet = new walletSchema({
+                        userID: newUser.referredBy,
+                        balance: 100
                     })
                     await newWallet.save()
                 }

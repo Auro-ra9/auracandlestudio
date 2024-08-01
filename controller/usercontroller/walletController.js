@@ -37,7 +37,8 @@ const walletGet = async (req, res) => {
                 orders:[...refundedItems,...walletOrders],
                 balance,
                 currentPage,
-                totalPages: Math.ceil(refundCount / refundPerPage)
+                totalPages: Math.ceil(refundCount / refundPerPage),
+                query: req.query
             })
     } catch (err) {
         console.log('error on getting wallet page', err)

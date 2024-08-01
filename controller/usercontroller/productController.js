@@ -39,6 +39,7 @@ const viewProductRender = async (req, res) => {
         pageNumber: Math.ceil(productsCount / productsPerPage),
         currentPage,
         totalPages: Math.ceil(productsCount / productsPerPage),
+        query: req.query
       });
 
     } catch (err) {

@@ -29,7 +29,8 @@ const getOrders = async (req, res) => {
                 orders,
                 currentPage,
                 totalPages: Math.ceil(ordersCount / ordersPerPage),
-                pageNumber: Math.ceil(ordersCount / ordersPerPage)
+                pageNumber: Math.ceil(ordersCount / ordersPerPage),
+                query: req.query
             })
     } catch (err) {
         console.log('error on getting orders page', err)
@@ -55,7 +56,8 @@ const getCancelledOrders = async (req, res) => {
                 orders,
                 currentPage,
                 totalPages: Math.ceil(ordersCount / ordersPerPage),
-                pageNumber: Math.ceil(ordersCount / ordersPerPage)
+                pageNumber: Math.ceil(ordersCount / ordersPerPage),
+                query: req.query
             })
     } catch (err) {
         console.log('error on getting orders page', err)
@@ -355,8 +357,8 @@ const downloadInvoice = async (req, res) => {
 
 module.exports = {
     getOrders,
-    cancelOrder,
     getCancelledOrders,
+    cancelOrder,
     returnOrder,
     discardOrder,
     proceedPayment,

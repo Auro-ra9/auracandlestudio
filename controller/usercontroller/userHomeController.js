@@ -92,7 +92,8 @@ const profileRender = async (req, res) => {
       title: 'profile',
       alertMessage: req.flash('errorMessage'),
       user: req.session.user,
-      profileDetails
+      profileDetails,
+      query: req.query
     })
   } catch (err) {
     console.log(`Error on user profile render get ${err}`);
@@ -242,13 +243,14 @@ const deleteAddress = async (req, res) => {
 }
 
 
-
+//security page render
 const security = (req, res) => {
   try {
     if (req.session.user) {
       res.render('user/security', {
         title: 'security',
         alertMessage: req.flash('errorMessage'),
+        query: req.query
       })
     }
   } catch (er) {
@@ -256,6 +258,7 @@ const security = (req, res) => {
   }
 }
 
+//change password
 const newSecurity = async (req, res) => {
   try {
 
