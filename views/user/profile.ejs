@@ -130,13 +130,11 @@
                             </p>
                             <span id="referralCode" class="btn btn-dark">
                                 <%= profileDetails.referralCode %>
-                                    <i class="fa-regular fa-copy" id="copyButton" class="btn btn-primary btn-sm"></i>
+                                    <i class="fa-regular fa-copy" id="copyButton" onclick="copyReferralCode()" class="btn btn-primary btn-sm"></i>
                             </span>
 
                             <p class="text-success">Share this code with your friends to earn rewards!</p>
                             <%} %>
-
-
                     </div>
                 </div>
             </div>
@@ -457,7 +455,7 @@
             })
 
             //copying the referral code
-            document.getElementById("copyButton").addEventListener("click", async function () {
+            async function copyReferralCode() {
                 try {
                     // Get the referral code text
                     const referralCodeText = document.getElementById("referralCode").innerText;
@@ -470,7 +468,7 @@
                 } catch (err) {
                     console.error("Failed to copy: ", err);
                 }
-            });
+            };
 
             function checkTextField(text) {
                 const check = text.trim().split('')

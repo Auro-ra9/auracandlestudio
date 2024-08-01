@@ -11,7 +11,7 @@ const viewCart = async (req, res) => {
 
     try {
         // Find the cart for the user and populate product details
-        const productInCart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID').sort({ 'items.createdAt': -1 })
+        const productInCart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID').sort({ 'items.createdAt': -1 }).skip(skip).limit(cartPerPage)
 
         if (productInCart) {
             productInCart.items.sort((productA, productB) => productB.createdAt - productA.createdAt)
@@ -19,6 +19,7 @@ const viewCart = async (req, res) => {
             // Calculate total number of items and pages
             const totalItems = productInCart.items.length
             const totalPages = Math.ceil(totalItems / cartPerPage)
+            const pageNumber = Math.ceil(totalItems / cartPerPage)
 
             let subTotal = 0
             let total = 0
@@ -41,6 +42,7 @@ const viewCart = async (req, res) => {
                 totalDiscount,
                 currentPage,
                 totalPages,
+                pageNumber,
                 query: req.query
             })
         } else {

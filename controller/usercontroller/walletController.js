@@ -4,6 +4,7 @@ const cartSchema = require('../../model/cartSchema');
 const orderSchema = require('../../model/orderSchema');
 const walletSchema = require('../../model/walletSchema');
 
+//render wallet page
 const walletGet = async (req, res) => {
     try {
         // Pagination parameters

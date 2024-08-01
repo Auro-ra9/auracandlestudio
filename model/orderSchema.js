@@ -1,6 +1,13 @@
 const mongoose = require("mongoose");
+const { v4: uuidv4 } = require("uuid")
 
 const schema = new mongoose.Schema({
+    orderID: {
+        type:String,
+        unique:true,
+        default:()=> `ORD-${uuidv4()}`
+
+    },
     userID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user"
@@ -22,9 +29,9 @@ const schema = new mongoose.Schema({
         price: {
             type: Number
         },
-        category:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:'category'
+        category: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'category'
         },
         discount: {
             type: Number
@@ -77,8 +84,8 @@ const schema = new mongoose.Schema({
     reasonForRejection: {
         type: String
     },
-    couponID:{
-        type:String
+    couponID: {
+        type: String
     }
 }, { timestamps: true })
 
