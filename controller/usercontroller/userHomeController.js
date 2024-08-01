@@ -23,7 +23,6 @@ const homeRender = async (req, res) => {
     // Pagination parameters
     const productsPerPage = 8;
     const currentPage = parseInt(req.query.page) || 1;
-    const skip = (currentPage - 1) * productsPerPage;
 
     // Query for products with filters
     const productQuery = {
@@ -33,20 +32,17 @@ const homeRender = async (req, res) => {
       productPrice: { $gte: minPrice, $lte: maxPrice },
     };
 
-    // Fetching products with applied filters
-    const products = await productSchema.find(productQuery)
-      .skip(skip)
-      .limit(productsPerPage)
-      .populate('category'); // Populate the category field
+    // Fetch all products with applied filters (no pagination here)
+    const allProducts = await productSchema.find(productQuery).populate('category');
 
-    // Counting the total number of products matching the query
-    const productsCount = await productSchema.countDocuments(productQuery);
-
-    // Compute discounted price and sort products
-    const sortedProducts = products.map(product => {
+    // Compute discounted price
+    const productsWithDiscount = allProducts.map(product => {
       const discountedPrice = product.productPrice - (product.productPrice * (product.discount / 100));
       return { ...product.toObject(), discountedPrice };
-    }).sort((a, b) => {
+    });
+
+    // Sort products
+    const sortedProducts = productsWithDiscount.sort((a, b) => {
       if (sortBy === 'priceLowToHigh') {
         return a.discountedPrice - b.discountedPrice;
       } else if (sortBy === 'priceHighToLow') {
@@ -62,11 +58,18 @@ const homeRender = async (req, res) => {
       }
     });
 
+    // Apply pagination in JavaScript
+    const skip = (currentPage - 1) * productsPerPage;
+    const paginatedProducts = sortedProducts.slice(skip, skip + productsPerPage);
+
+    // Counting the total number of products matching the query
+    const productsCount = sortedProducts.length;
+
     res.render('user/home', {
       title: 'Home',
       alertMessage: req.flash('errorMessage'),
       user: req.session.user,
-      products: sortedProducts,
+      products: paginatedProducts,
       categories,
       pageNumber: Math.ceil(productsCount / productsPerPage),
       currentPage,
@@ -78,6 +81,7 @@ const homeRender = async (req, res) => {
     res.status(500).send('An error occurred');
   }
 };
+
 
 
 //profileRender

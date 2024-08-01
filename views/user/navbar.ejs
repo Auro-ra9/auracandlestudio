@@ -130,13 +130,17 @@
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <i class="fas fa-bars"></i>
     </button>
-    <form class="d-flex search-bar">
-      <input type="search" placeholder="What are you looking for?" aria-label="Search" name="search">
+    <form class="d-flex search-bar" method="get" action="/home">
+      <input type="search" placeholder="Search products here" aria-label="Search" name="search"
+        value="<%= query.search || '' %>" />
       <button type="submit" class="btn p-0"><i class="fas fa-search"></i></button>
+      <% if (query.search) { %>
+        <a href="/home" class="btn p-0 ms-2" aria-label="Clear search"><i class="fas fa-times"></i></a>
+        <% } %>
     </form>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ms-auto align-items-center">
-        
+
         <!-- <li class="nav-item">
                     <a class="nav-link mx-2" href="/home">
                         <i class="fas fa-home"></i> Home
@@ -152,29 +156,29 @@
                         <i class="fas fa-envelope"></i> Contact
                     </a>
                 </li> -->
-                <% if(user) { %>
-        <li class="nav-item">
-          <a class="nav-link mx-2" href="/wishlist">
-            <i class="fas fa-heart"></i>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-2" href="/cart">
-            <i class="fas fa-shopping-bag"></i>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link mx-2" href="/profile">
-            <i class="fas fa-user"></i>
-          </a>
-        </li>
-        
+        <% if(user) { %>
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="/wishlist">
+              <i class="fas fa-heart"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="/cart">
+              <i class="fas fa-shopping-bag"></i>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link mx-2" href="/profile">
+              <i class="fas fa-user"></i>
+            </a>
+          </li>
+
           <li class="nav-item ms-3">
             <a class="btn btn-rounded" href="/logout"><i class="fas fa-power-off"></i></a>
           </li>
           <% } else { %>
             <li class="nav-item ms-3">
-             <a class="btn btn-rounded" href="/login"><i class="fas fa-power-off"></i></a>
+              <a class="btn btn-rounded" href="/login"><i class="fas fa-power-off"></i></a>
             </li>
             <% } %>
       </ul>
