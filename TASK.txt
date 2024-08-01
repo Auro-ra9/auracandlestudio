@@ -1,12 +1,12 @@
 hosting week pendings
 
 pagination issues
-////sort based on discounted price
-////sort / pagination should work in combination
-////option to clear the search
+//// sort based on discounted price
+//// sort / pagination should work in combination
+//// option to clear the search
 //// stock management - bug
-///// generate order ID
-///// unique coupon code
+//// generate order ID
+//// unique coupon code
 //// add proper date validations
 
 

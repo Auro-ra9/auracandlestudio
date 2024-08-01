@@ -5,48 +5,51 @@ const orderSchema=require('../../model/orderSchema')
 
 
 const viewWishlist = async (req, res) => {
-    // Pagination parameters
-    const wishlistPerPage = 8
-    const currentPage = parseInt(req.query.page) || 1
-    const skip = (currentPage - 1) * wishlistPerPage
-
     try {
-        const productInWishlist = await wishlistSchema.findOne({ userID: req.session.user }).populate('items.productID')
-
-        if (productInWishlist) {
-            productInWishlist.items.sort((productA, productB) => productB.createdAt - productA.createdAt)
-
-            // Calculate total number of items and pages
-            const totalItems = productInWishlist.items.length
-            const totalPages = Math.ceil(totalItems / wishlistPerPage)
-
-            
-
-            res.render('user/wishlist', {
-                title: 'Wishlist',
-                alertMessage: req.flash('errorMessage'),
-                productInWishlist,
-                pageNumber: Math.ceil(totalItems / wishlistPerPage),
-                currentPage,
-                totalPages,
-                query: req.query
-            })
-        } else {
-            res.render('user/wishlist', {
-                title: 'Wishlist',
-                alertMessage: req.flash('errorMessage'),
-                productInWishlist: [],
-                currentPage,
-                pageNumber: 1,
-                totalPages: 1,
-                query: req.query
-            })
-        }
-
+      // Pagination parameters
+      const wishlistPerPage = 8;
+      const currentPage = parseInt(req.query.page) || 1;
+      const skip = (currentPage - 1) * wishlistPerPage;
+  
+      // Find the wishlist for the user and populate product details
+      const productInWishlist = await wishlistSchema.findOne({ userID: req.session.user }).populate('items.productID').lean();
+  
+      if (productInWishlist) {
+        // Sort products by createdAt in descending order
+        productInWishlist.items.sort((productA, productB) => productB.createdAt - productA.createdAt);
+  
+        // Calculate total number of items and pages
+        const totalItems = productInWishlist.items.length;
+        const totalPages = Math.ceil(totalItems / wishlistPerPage);
+  
+        // Paginate the items
+        const paginatedItems = productInWishlist.items.slice(skip, skip + wishlistPerPage);
+  
+        // Render the wishlist page with the paginated items
+        res.render('user/wishlist', {
+          title: 'Wishlist',
+          alertMessage: req.flash('errorMessage'),
+          productInWishlist: { ...productInWishlist, items: paginatedItems },
+          currentPage,
+          totalPages,
+          query: req.query
+        });
+      } else {
+        res.render('user/wishlist', {
+          title: 'Wishlist',
+          alertMessage: req.flash('errorMessage'),
+          productInWishlist: { items: [] },
+          currentPage,
+          totalPages: 1,
+          query: req.query
+        });
+      }
     } catch (err) {
-        console.log(`error on wishlist ${err}`)
+      console.log(`error on wishlist ${err}`);
+      res.status(500).send('An error occurred');
     }
-}
+  };
+  
 
 const addToWishlist = async (req, res) => {
     try {

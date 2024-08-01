@@ -92,6 +92,8 @@ const dashboardRender = async (req, res) => {
         console.log(`Error on dashboard render: ${err}`);
     }
 }
+
+//render sales report page
 const salesRender = async (req, res) => {
     try {
 
@@ -159,7 +161,7 @@ function calculateReport(orderDetailsProfit, startDate) {
     }, 0);
 }
 
-
+//generate custom sales report
 const customSalesReport = async (req, res) => {
     try {
         const { startDate, endDate } = req.body;
@@ -343,7 +345,7 @@ const downloadExcelReport = async (req, res) => {
 };
 
 
-
+//trending products render
 const trendingProducts = async (req, res) => {
     try {
 
@@ -374,7 +376,7 @@ const trendingProducts = async (req, res) => {
                 }
             }
         ])
-        console.log(productsTopTrending);
+        
 
         //finding top selling brands
 

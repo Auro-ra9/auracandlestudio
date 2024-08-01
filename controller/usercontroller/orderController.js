@@ -12,57 +12,74 @@ const path = require('path')
 //orders page render
 const getOrders = async (req, res) => {
     try {
-        // Pagination parameters
-        const ordersPerPage = 8;
-        const currentPage = parseInt(req.query.page) || 1
-        const skip = (currentPage - 1) * ordersPerPage;
-
-        // Counting the total number of orders
-        const ordersCount = await orderSchema.countDocuments()
-        const orders = await orderSchema.find({ userID: req.session.user, orderStatus: { $in: ['Pending', 'Confirmed', 'Shipping', 'Delivered', 'Pending-Returned'] } }).populate('products.productID').sort({ createdAt: -1 }).skip(skip).limit(ordersPerPage)
-
-
-        res.render('user/orders',
-            {
-                title: 'orders',
-                alertMessage: req.flash('errorMessage'),
-                orders,
-                currentPage,
-                totalPages: Math.ceil(ordersCount / ordersPerPage),
-                pageNumber: Math.ceil(ordersCount / ordersPerPage),
-                query: req.query
-            })
+      // Pagination parameters
+      const ordersPerPage = 5;
+      const currentPage = parseInt(req.query.page) || 1;
+      const skip = (currentPage - 1) * ordersPerPage;
+  
+      // Counting the total number of orders
+      const ordersCount = await orderSchema.countDocuments({ userID: req.session.user, orderStatus: { $in: ['Pending', 'Confirmed', 'Shipping', 'Delivered', 'Pending-Returned'] } });
+  
+      // Fetching the orders with pagination
+      const orders = await orderSchema.find({ userID: req.session.user, orderStatus: { $in: ['Pending', 'Confirmed', 'Shipping', 'Delivered', 'Pending-Returned'] } })
+        .populate('products.productID')
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(ordersPerPage);
+  
+      // Calculating total pages
+      const totalPages = Math.ceil(ordersCount / ordersPerPage);
+  
+      res.render('user/orders', {
+        title: 'orders',
+        alertMessage: req.flash('errorMessage'),
+        orders,
+        currentPage,
+        totalPages,
+        query: req.query
+      });
     } catch (err) {
-        console.log('error on getting orders page', err)
+      console.log('error on getting orders page', err);
+      res.status(500).send('An error occurred');
     }
-}
+  }
+  
 
 //cancellled orders render
 const getCancelledOrders = async (req, res) => {
     try {
-        // Pagination parameters
-        const ordersPerPage = 8;
-        const currentPage = parseInt(req.query.page) || 1
-        const skip = (currentPage - 1) * ordersPerPage;
-
-        // Counting the total number of orders
-        const ordersCount = await orderSchema.countDocuments()
-        const orders = await orderSchema.find({ userID: req.session.user, orderStatus: { $in: ['Pending-Returned', 'Returned', 'Cancelled'] } }).populate('products.productID').sort({ updatedAt: -1 }).skip(skip).limit(ordersPerPage)
-        res.render('user/cancelledOrders',
-            {
-                title: 'orders',
-                alertMessage:
-                    req.flash('errorMessage'),
-                orders,
-                currentPage,
-                totalPages: Math.ceil(ordersCount / ordersPerPage),
-                pageNumber: Math.ceil(ordersCount / ordersPerPage),
-                query: req.query
-            })
+      // Pagination parameters
+      const ordersPerPage = 5;
+      const currentPage = parseInt(req.query.page) || 1;
+      const skip = (currentPage - 1) * ordersPerPage;
+  
+      // Counting the total number of cancelled orders
+      const ordersCount = await orderSchema.countDocuments({ userID: req.session.user, orderStatus: { $in: ['Pending-Returned', 'Returned', 'Cancelled'] } });
+  
+      // Fetching the cancelled orders with pagination
+      const orders = await orderSchema.find({ userID: req.session.user, orderStatus: { $in: ['Pending-Returned', 'Returned', 'Cancelled'] } })
+        .populate('products.productID')
+        .sort({ updatedAt: -1 })
+        .skip(skip)
+        .limit(ordersPerPage);
+  
+      // Calculating total pages
+      const totalPages = Math.ceil(ordersCount / ordersPerPage);
+  
+      res.render('user/cancelledOrders', {
+        title: 'Cancelled Orders',
+        alertMessage: req.flash('errorMessage'),
+        orders,
+        currentPage,
+        totalPages,
+        query: req.query
+      });
     } catch (err) {
-        console.log('error on getting orders page', err)
+      console.log('error on getting cancelled orders page', err);
+      res.status(500).send('An error occurred');
     }
-}
+  }
+  
 
 //cancel order
 const cancelOrder = async (req, res) => {

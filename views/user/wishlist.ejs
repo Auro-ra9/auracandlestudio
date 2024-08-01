@@ -357,7 +357,7 @@
             <h3>Wishlisted Products</h3>
         </div>
         <div class="row clearfix">
-            <% if(productInWishlist){ %>
+            <% if(productInWishlist.length!=0){ %>
                 <% productInWishlist.items.forEach((product,index)=>{ %>
                     <div class="col-lg-3 col-md-4 col-sm-12">
                         <div class="card product_item">

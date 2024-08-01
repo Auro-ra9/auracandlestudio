@@ -128,9 +128,7 @@
                                                         <p class="mb-0 mt-1">Quantity : <span class="fw-medium">
                                                                 <%= product.quantity %>
                                                             </span></p>
-                                                        <p class="mb-0 mt-1">Coupon Discount : <span class="fw-medium">
-                                                                &#8377; <%= order.couponDiscount %>
-                                                            </span></p>
+
                                                         <%if(product.discount>0){%>
                                                             <span class="badge bg-danger">
                                                                 <%=product.discount %> % OFF
@@ -238,6 +236,9 @@
                                                             <%=order.address.city %>,
                                                                 <%= order.address.state %>
                                         </p>
+                                        <p class="mb-0 mt-1">Coupon Discount : <span class="fw-medium">
+                                                &#8377; <%= order.couponDiscount %>
+                                            </span></p>
                                         <p> <b style="color: #ff6200;">Order placed on :</b>
                                             <%=order.createdAt.toLocaleString() %>
                                         </p>
@@ -245,7 +246,8 @@
                                             <button class="btn btn-warning"
                                                 onclick="returnOrder('<%= order.id%>')">Return order</button>
                                             <%} else if(order.reasonForRejection){%>
-                                                <h6>Response from the owner for the return request :<b class="text-secondary">
+                                                <h6>Response from the owner for the return request :<b
+                                                        class="text-secondary">
                                                         <%= order.reasonForRejection %>
                                                     </b>
                                                 </h6>
@@ -267,7 +269,7 @@
 
             </div>
         </div>
-       <!-- pagination -->
+        <!-- pagination -->
         <%- include('pagination') %>
     </div>
 

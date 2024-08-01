@@ -10,24 +10,31 @@ const walletSchema = require('../../model/walletSchema')
 //renter the checkout page
 const checkoutRender = async (req, res) => {
     try {
+        //fetching profile details from the db using session
         const profileDetails = await userSchema.findById(req.session.user)
+        //then finding cart of the user
         const productInCart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID')
 
         const currentDate = new Date()
+        //fetching coupons to show in the checkout page
         const coupons = await couponSchema.find({ expiryDate: { $gte: currentDate }, isActive: true })
+        //sending error message if the cart is empty
         if (!productInCart) {
             req.flash('errorMessage', 'cart is empty')
             return res.redirect('/cart')
         }
 
+        //finding products in the cart
         for (const item of productInCart.items) {
             if (item.productCount > item.productID.productQuantity) {
                 req.flash('errorMessage', 'product unavailable')
                 return res.redirect('/cart')
             }
         }
+        //sorting the items
         productInCart.items.sort((productA, productB) => productB.createdAt - productA.createdAt)
 
+        //adding delivery charge for above 550 orders
         let discountAmount = 0;
         if (productInCart.payableAmount < 550) {
             discountAmount = productInCart.totalPrice - (productInCart.payableAmount - 50)
@@ -35,7 +42,7 @@ const checkoutRender = async (req, res) => {
             discountAmount = productInCart.totalPrice - (productInCart.payableAmount)
 
         }
-
+        //render chekout page
         res.render('user/checkout', {
             title: "checkout",
             user: req.session.user,
@@ -53,15 +60,17 @@ const checkoutRender = async (req, res) => {
     }
 }
 
+//add address in the checkout page
 const addAddress = async (req, res) => {
     try {
+        //finding the profile details
         const profileID = req.session.user;
 
         if (!profileID) {
             req.flash('errorMessage', "Profile id not found");
             return res.redirect('/checkout');
         }
-
+        //fetching datas from the body
         const newCity = req.body.city.trim();
         const newHomeAddress = req.body.homeAddress.trim();
         const newAreaAddress = req.body.areaAddress.trim();
@@ -69,11 +78,13 @@ const addAddress = async (req, res) => {
         const newState = req.body.state.trim();
         const newLandmark = req.body.landmark.trim();
 
+        //showing error if there is no data in the body
         if (!newCity || !newAreaAddress || !newHomeAddress || !newPincode || !newState || !newLandmark) {
             req.flash('errorMessage', "All fields are required");
             return res.redirect('/checkout');
         }
 
+        //filling those gained details from the body in the db
         const addressDetails = {
             pincode: newPincode,
             homeAddress: newHomeAddress,
@@ -83,17 +94,18 @@ const addAddress = async (req, res) => {
             state: newState
         }
 
-        console.log(addressDetails);
         // push the data inside the user address
         const userDetails = await userSchema.findById(req.session.user);
 
+        //showing limit
         if (userDetails.address.length >= 4) {
             req.flash('errorMessage', "address limit reached")
             return res.redirect('/checkout')
         }
-
+        //else pushing new address into db as an additional address
         userDetails.address.push(addressDetails)
 
+        //saving the db
         await userDetails.save()
 
         req.flash('errorMessage', "Address added successfully");
@@ -104,20 +116,25 @@ const addAddress = async (req, res) => {
     }
 };
 
+//editing the address
 const editAddress = async (req, res) => {
     try {
+        //finding the index from the params as the addresses multiple and are shown there 
         const index = req.params.index
 
+        //if the index is not found from the params then show error 
         if (!index) {
             req.flash('errorMessage', " user details couldn't find")
             return res.redirect('/checkout')
         }
 
+        //take the details from the body
         const { homeAddress, areaAddress, pincode, state, landmark, city } = req.body
-        console.log(Number(pincode));
 
+        //finding user details from the db
         const userDetails = await userSchema.findById(req.session.user)
 
+        ///adding the new changes to the matching indexed addresses in the db
         userDetails.address[index].homeAddress = homeAddress
         userDetails.address[index].areaAddress = areaAddress
         userDetails.address[index].pincode = Number(pincode)
@@ -125,6 +142,7 @@ const editAddress = async (req, res) => {
         userDetails.address[index].city = city
         userDetails.address[index].landmark = landmark
 
+        //saving the new updated details
         await userDetails.save()
 
         req.flash('errorMessage', "Address edited successfully");
@@ -135,20 +153,24 @@ const editAddress = async (req, res) => {
 }
 
 
-
-
+//deleting the address
 const deleteAddress = async (req, res) => {
     try {
+        //taking the index from the params
         const index = req.params.index
 
+        //if the index is not found from the params then show error 
         if (!index) {
             return res.status(404).json({ message: 'Deletion failed, could not find the details ' })
         }
 
+        //finding the user details 
         const userDetails = await userSchema.findById(req.session.user)
-        console.log(userDetails)
+
+        //deleting the address using the given index
         const deletedAddress = userDetails.address.splice(index, 1)
 
+        //success message
         if (deletedAddress.length != 0) {
             await userDetails.save()
             return res.status(200).json({ message: 'address removed' })
@@ -158,6 +180,7 @@ const deleteAddress = async (req, res) => {
     }
 }
 
+//order placing function
 const postOrderPlaced = async (req, res) => {
     try {
         /*selected address option is the index of the selected address in the frontend,
@@ -176,22 +199,26 @@ const postOrderPlaced = async (req, res) => {
         })
 
 
+        //wallet  payment method
         if (selectedPaymentOption === 2) {
             const walletBalance = await walletSchema.findOne({ userID: req.session.user })
 
-
+            //no wallet
             if (!walletBalance) {
                 return res.status(404).json({ error: "You haven't created any wallet yet, Please try another payment method" })
             }
 
+            //not enough wallet balance
             if (walletBalance.balance < cart.payableAmount) {
                 return res.status(404).json({ error: 'You do not have enough balance in the Wallet, Please try to use another payment method ' })
             }
 
+            //deducting money from the wallet as it is the choosen payment method
             walletBalance.balance -= cart.payableAmount
             await walletBalance.save()
         }
 
+        //saving new order
         const neworder = new orderSchema({
             userID: user._id,
             products: cart.items.map(item => ({
@@ -219,6 +246,7 @@ const postOrderPlaced = async (req, res) => {
             orderStatus: "Confirmed",
 
         })
+        //saving the new order
         await neworder.save()
 
         //decrease the quantity as needed
@@ -237,6 +265,7 @@ const postOrderPlaced = async (req, res) => {
     }
 }
 
+//order confirmation animation render
 const orderConfirmed = (req, res) => {
     try {
         res.render('user/orderConfirmed',
@@ -250,9 +279,9 @@ const orderConfirmed = (req, res) => {
     }
 }
 
+//coupon render
 const getCoupon = async (req, res) => {
     try {
-
         const { coupon } = req.body
 
         if (!coupon) {
@@ -328,7 +357,7 @@ const applyCoupon = async (req, res) => {
 }
 
 
-
+//remove coupon 
 const removeCoupon = async (req, res) => {
     try {
 
@@ -354,10 +383,11 @@ const removeCoupon = async (req, res) => {
 }
 
 
-
+//razor pay render
 const renderRazorPay = async (req, res) => {
     try {
 
+        //fetching user and cart details
         const cart = await cartSchema.findOne({ userID: req.session.user })
         const userDetails = await userSchema.findById(req.session.user)
 
@@ -382,6 +412,7 @@ const renderRazorPay = async (req, res) => {
 }
 
 
+//payment pending razorpay re-render
 const pendingRazorPay = async (req, res) => {
     try {
         /*selected address option is the index of the selected address in the frontend,
@@ -436,6 +467,8 @@ const pendingRazorPay = async (req, res) => {
         console.log('error on order placing post', err)
     }
 }
+
+//failed payment animation render
 const paymentFailedMessage = async (req, res) => {
     try {
         res.render('user/paymentFailed', { title: "payment Failed" })
@@ -444,8 +477,6 @@ const paymentFailedMessage = async (req, res) => {
         console.log('error on order placing post', err)
     }
 }
-
-
 
 
 

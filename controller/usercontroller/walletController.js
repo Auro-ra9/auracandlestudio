@@ -8,42 +8,61 @@ const walletSchema = require('../../model/walletSchema');
 const walletGet = async (req, res) => {
     try {
         // Pagination parameters
-        const refundPerPage = 8;
-        const currentPage = parseInt(req.query.page) || 1
-        const skip = (currentPage - 1) * refundPerPage;
+        const itemsPerPage = 10;
+        const currentPage = parseInt(req.query.page) || 1;
+        const skip = (currentPage - 1) * itemsPerPage;
 
+        // Fetching refund orders
+        const refundOrders = await orderSchema.find({ userID: req.session.user, orderStatus: { $in: ['Returned', 'Cancelled'] } })
+            .populate('products.productID')
+            .sort({ createdAt: -1 });
 
-        // Counting the total number of refund
-        const refundCount = await orderSchema.countDocuments()
-        const orders = await orderSchema.find({ userID: req.session.user, orderStatus: {$in:['Returned', 'Cancelled']} }).populate('products.productID').sort({ createdAt: -1 }).skip(skip).limit(refundPerPage)
-        const walletOrders = await orderSchema.find({ userID: req.session.user,paymentMethod:'Wallet', orderStatus: {$nin:['Returned', 'Cancelled']} }).populate('products.productID').sort({ createdAt: -1 }).skip(skip).limit(refundPerPage)
-        const refundedItems= orders.filter((order)=>{
-            if(order.orderStatus==='Cancelled'&& order.paymentMethod==='Cash on delivery'){
-                console.log(order)
-            }else{
-                return order
+        // Fetching wallet orders
+        const walletOrders = await orderSchema.find({ userID: req.session.user, paymentMethod: 'Wallet', orderStatus: { $nin: ['Returned', 'Cancelled'] } })
+            .populate('products.productID')
+            .sort({ createdAt: -1 });
 
+        // Filtering refund items
+        const refundedItems = refundOrders.filter(order => {
+            if (order.orderStatus === 'Cancelled' && order.paymentMethod === 'Cash on delivery') {
+               
+                return false;
+            } else {
+                return true;
             }
-        })
-        const wallet= await walletSchema.findOne({userID:req.session.user})
-        let balance=0
-        if(wallet){
-            balance= wallet.balance
+        });
+
+        // Combining refundedItems and walletOrders
+        const combinedItems = [...refundedItems, ...walletOrders];
+
+        // Calculating total pages
+        const totalItems = combinedItems.length;
+        const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+        // Paginating the combinedItems array
+        const paginatedItems = combinedItems.slice(skip, skip + itemsPerPage);
+
+        // Fetching wallet balance
+        const wallet = await walletSchema.findOne({ userID: req.session.user });
+        let balance = 0;
+        if (wallet) {
+            balance = wallet.balance;
         }
-        res.render('user/wallet',
-            {
-                title: 'orders',
-                alertMessage: req.flash('errorMessage'),
-                orders:[...refundedItems,...walletOrders],
-                balance,
-                currentPage,
-                totalPages: Math.ceil(refundCount / refundPerPage),
-                query: req.query
-            })
+
+        res.render('user/wallet', {
+            title: 'Wallet',
+            alertMessage: req.flash('errorMessage'),
+            orders: paginatedItems,
+            balance,
+            currentPage,
+            totalPages,
+            query: req.query
+        });
     } catch (err) {
-        console.log('error on getting wallet page', err)
+        console.log('error on getting wallet page', err);
+        res.status(500).send('An error occurred');
     }
-}
+};
 
 
 

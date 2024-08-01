@@ -92,14 +92,8 @@
 
 <div class="container pt-5 cart-container">
     <div class="row">
-        <% if (!productInCart || !productInCart.items || productInCart.items.length === 0) { %>
-            <div class="empty-cart">
-                <img src="../../images/cartcopy.png"loading="lazy" alt="Empty Cart" >
-                <a href="/home" class="btn btn-secondary">
-                    <i class="mdi mdi-arrow-left me-1"></i> Continue Shopping
-                </a>
-            </div>
-        <% } else { %>
+        <% if (productInCart!= 0) { %>
+           
             <div class="col-xl-8">
                 <% productInCart.items.forEach((product, index) => { %>
                     <div class="card border shadow-none">
@@ -174,6 +168,7 @@
                         </div>
                     </div>
                 </div>
+                <%- include('pagination') %>
             </div>
             <div class="col-xl-4">
                 <div class="mt-5 mt-lg-0">
@@ -212,7 +207,6 @@
             </div>
         <% } %>
     </div>
-    <%- include('pagination') %>
 </div>
 
 <%- include('footer') %>

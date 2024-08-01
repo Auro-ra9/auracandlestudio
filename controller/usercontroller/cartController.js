@@ -4,67 +4,73 @@ const cartSchema = require('../../model/cartSchema')
 
 //render cart
 const viewCart = async (req, res) => {
-    // Pagination parameters
-    const cartPerPage = 8
-    const currentPage = parseInt(req.query.page) || 1
-    const skip = (currentPage - 1) * cartPerPage
-
     try {
-        // Find the cart for the user and populate product details
-        const productInCart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID').sort({ 'items.createdAt': -1 }).skip(skip).limit(cartPerPage)
-
-        if (productInCart) {
-            productInCart.items.sort((productA, productB) => productB.createdAt - productA.createdAt)
-
-            // Calculate total number of items and pages
-            const totalItems = productInCart.items.length
-            const totalPages = Math.ceil(totalItems / cartPerPage)
-            const pageNumber = Math.ceil(totalItems / cartPerPage)
-
-            let subTotal = 0
-            let total = 0
-            let totalDiscount = 0
-
-            // Calculate subTotal, total, and totalDiscount
-            productInCart.items.forEach((product) => {
-                subTotal += product.productCount * (product.productID.productPrice)
-                total += (product.productID.productPrice * (1 - product.productID.discount / 100) * (product.productCount))
-            })
-            totalDiscount = subTotal - total
-
-            // Render the cart page with the calculated values
-            res.render('user/cart', {
-                title: 'cart',
-                alertMessage: req.flash('errorMessage'),
-                productInCart,
-                subTotal,
-                total,
-                totalDiscount,
-                currentPage,
-                totalPages,
-                pageNumber,
-                query: req.query
-            })
-        } else {
-
-            // Render the cart page with empty values if no products are found
-            res.render('user/cart', {
-                title: 'cart',
-                alertMessage: req.flash('errorMessage'),
-                productInCart: [],
-                subTotal: 0,
-                total: 0,
-                totalDiscount: 0,
-                currentPage,
-                totalPages: 1,
-                query: req.query
-            })
-        }
-
+      // Pagination parameters
+      const cartPerPage = 5;
+      const currentPage = parseInt(req.query.page) || 1;
+      const skip = (currentPage - 1) * cartPerPage;
+  
+      // Find the cart for the user and populate product details
+      const productInCart = await cartSchema.findOne({ userID: req.session.user })
+        .populate('items.productID')
+        .lean(); // Use .lean() for better performance
+  
+      if (productInCart) {
+        // Sort products by createdAt in descending order
+        productInCart.items.sort((productA, productB) => productB.createdAt - productA.createdAt);
+  
+        // Calculate total number of items and pages
+        const totalItems = productInCart.items.length;
+        const totalPages = Math.ceil(totalItems / cartPerPage);
+        const pageNumber = Math.ceil(totalItems / cartPerPage);
+  
+        // Paginate the items
+        const paginatedItems = productInCart.items.slice(skip, skip + cartPerPage);
+  
+        let subTotal = 0;
+        let total = 0;
+        let totalDiscount = 0;
+  
+        // Calculate subTotal, total, and totalDiscount for paginated items
+        paginatedItems.forEach((product) => {
+          subTotal += product.productCount * (product.productID.productPrice);
+          total += (product.productID.productPrice * (1 - product.productID.discount / 100) * (product.productCount));
+        });
+        totalDiscount = subTotal - total;
+  
+        // Render the cart page with the calculated values
+        res.render('user/cart', {
+          title: 'cart',
+          alertMessage: req.flash('errorMessage'),
+          productInCart: { ...productInCart, items: paginatedItems },
+          subTotal,
+          total,
+          totalDiscount,
+          currentPage,
+          totalPages,
+          pageNumber,
+          query: req.query
+        });
+      } else {
+        // Render the cart page with empty values if no products are found
+        res.render('user/cart', {
+          title: 'cart',
+          alertMessage: req.flash('errorMessage'),
+          productInCart: { items: [] },
+          subTotal: 0,
+          total: 0,
+          totalDiscount: 0,
+          currentPage,
+          totalPages: 1,
+          query: req.query
+        });
+      }
     } catch (err) {
-        console.log(`error on cart ${err}`)
+      console.log(`error on cart ${err}`);
+      res.status(500).send('An error occurred');
     }
-}
+  };
+  
 //ADD PRODUCT TO THE CART
 const addToCart = async (req, res) => {
     try {
