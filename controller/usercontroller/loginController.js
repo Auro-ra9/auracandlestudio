@@ -59,7 +59,12 @@ const loginPost = async (req, res) => {
 
 const registerRender = (req, res) => {
     try {
-        res.render('user/register', { title: 'register', alertMessage: req.flash('errorMessage'), user: req.session.user })
+        res.render('user/register', {
+             title: 'register', 
+             alertMessage: req.flash('errorMessage'), 
+             user: req.session.user,
+             query: req.query
+            })
     } catch (err) {
         console.log(`Error on register render get ${err}`)
     }
@@ -174,7 +179,12 @@ const googleCallback = (req, res, next) => {
 
 const otpRender = (req, res) => {
     try {
-        res.render('user/otp', { title: 'otp', alertMessage: req.flash('errorMessage'), otpCreatedAt: req.session.otpCreatedAt })
+        res.render('user/otp', {
+             title: 'otp', 
+             alertMessage: req.flash('errorMessage'),
+              otpCreatedAt: req.session.otpCreatedAt,
+              query: req.query
+             })
     } catch (err) {
         console.log(`Error on otp render get ${err}`);
     }
@@ -239,7 +249,6 @@ const resendOTP = (req, res) => {
         emailSender(req.session.email, otp)
         req.session.otp = otp
         req.session.otpCreatedAt = Date.now()
-        console.log(otp)
         return res.status(200).json({ message: "OTP resend" })
 
     } catch (err) {
@@ -253,8 +262,7 @@ const registerConfirmed = (req, res) => {
         res.render('user/registeredSuccessful',
             {
                 title: 'register-confirmed',
-                alertMessage:
-                    req.flash('errorMessage')
+                alertMessage:req.flash('errorMessage')
             })
     } catch (err) {
         console.log('error on register confirm page rendering get:', err)
@@ -264,7 +272,11 @@ const registerConfirmed = (req, res) => {
 //password forgot setting up with otp
 const forgotPasswordRender = (req, res) => {
     try {
-        res.render('user/forgotPassword', { title: 'forgot-password', alertMessage: req.flash('errorMessage') })
+        res.render('user/forgotPassword', {
+             title: 'forgot-password', 
+             alertMessage: req.flash('errorMessage'),
+             query: req.query
+             })
     } catch (err) {
         console.log(`Error on forgot password render get ${err}`);
     }
@@ -309,7 +321,11 @@ const forgotPasswordPost = async (req, res) => {
 //password otp rendering 
 const passwordOtpRender = (req, res) => {
     try {
-        res.render('user/forgotOtp', { title: 'otp', alertMessage: req.flash('errorMessage'), otpCreatedAt: req.session.otpCreatedAt })
+        res.render('user/forgotOtp', {
+             title: 'otp', alertMessage: 
+             req.flash('errorMessage'), 
+             otpCreatedAt: req.session.otpCreatedAt,
+             query: req.query })
     } catch (err) {
         console.log(`Error on otp forgot render get ${err}`);
     }
@@ -367,6 +383,7 @@ const resetPasswordRender = (req, res) => {
         res.render('user/resetPassword', {
             title: 'reset-password',
             alertMessage: req.flash('errorMessage'),
+            query: req.query
         })
 
     } catch (er) {
