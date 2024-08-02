@@ -59,7 +59,6 @@ const addProductPost = async (req, res) => {
         // let actualDiscount = req.body.percentage_discount
 
         const imageArray = []
-        console.log(req.files);
         req.files.forEach((img) => {
             imageArray.push(img.path)
         })
