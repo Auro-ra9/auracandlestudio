@@ -2,6 +2,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const dotenv = require('dotenv').config();
 const userSchema = require('../model/userSchema');
+const { v4: uuidv4 } = require('uuid')
 
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
