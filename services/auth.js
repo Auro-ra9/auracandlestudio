@@ -13,12 +13,17 @@ passport.use(new GoogleStrategy({
     try {
       let user = await userSchema.findOne({ email: profile.email });
 
+      function createReferralCode() {
+        return uuidv4().slice(0, 8); // Generate a short referral code
+    }
+
       // If there is no user, create a new user
       if (!user) {
-        user = new user({
+        user = new userSchema({
           name: profile.displayName,
           email: profile.email,
-          googleID: profile.id
+          googleID: profile.id,
+          referralCode:createReferralCode()
         });
         await user.save();
       }
@@ -44,3 +49,5 @@ passport.deserializeUser(async function (id, done) {
     done(err, null);
   }
 });
+
+module.exports=passport
