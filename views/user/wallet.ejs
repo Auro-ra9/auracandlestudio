@@ -70,13 +70,24 @@
   }
 
   .coupon-card {
-    width: 330px;
+    width: 350px;
     padding: 10px;
     /* border-radius: 20px; */
     background: #f67134;
     border: none;
     color: #fff;
     height: 170px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .referal-card {
+    width: 300px;
+    padding: 10px;
+    border-radius: 20px;
+    background: #34d6f6;
+    border: none;
+    height: 140px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -100,8 +111,15 @@
       <div class="col-xl-4">
         <div class="card-body">
           <div class="d-flex card text-center coupon-card">
-            <h4 id="couponDiscount"><span id="coupon-value">&#8377; <%= balance.toLocaleString() %></span><br> Balance
+            <h4 id="couponDiscount"><span id="coupon-value">&#8377; <%= balance.toLocaleString() %></span><br>Total Balance
               in your wallet</h4>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-4">
+        <div class="card-body">
+          <div class="d-flex card text-center referal-card">
+            <h4 id="couponDiscount"><span id="coupon-value">&#8377; <%= referalEarnings *100 %></span><br>Total Referal Earnings</h4>
           </div>
         </div>
       </div>

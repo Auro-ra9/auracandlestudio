@@ -32,6 +32,9 @@ const walletGet = async (req, res) => {
             }
         });
 
+        //find referal details if any
+        const referalUsedUsers= await userSchema.find({referredBy:req.session.user}).countDocuments()
+
         // Combining refundedItems and walletOrders
         const combinedItems = [...refundedItems, ...walletOrders];
 
@@ -56,7 +59,8 @@ const walletGet = async (req, res) => {
             balance,
             currentPage,
             totalPages,
-            query: req.query
+            query: req.query,
+            referalEarnings: referalUsedUsers
         });
     } catch (err) {
         console.log('error on getting wallet page', err);
