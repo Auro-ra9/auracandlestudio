@@ -253,8 +253,13 @@
                                                 </h6>
                                                 <%}%>
 
-                                                    <button class="btn btn-dark"
-                                                        onclick="downloadInvoice('<%= order._id %>')">Invoice</button>
+                                                    <div style="display: flex; justify-content: space-around; align-items: center;">
+                                                        <button class="btn btn-dark"
+                                                            onclick="downloadInvoice('<%= order._id %>')">Invoice</button>
+                                                        <a href="/track-order/<%= order.id %>" class=" me-2 btn btn-outline-warning">
+                                                            <i class="fa-solid fa-truck"></i>Track order
+                                                        </a>
+                                                    </div>
 
                                     </div>
                                 </div>

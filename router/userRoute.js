@@ -85,6 +85,7 @@ user.get('/order-pending',checkUserSession,checkoutController.paymentFailedMessa
 
 //orders
 user.get('/orders',checkUserSession,orderController.getOrders)
+user.get('/track-order/:orderid',checkUserSession,orderController.getTrackOrders)
 user.post('/cancel-order/:orderid', checkUserSession,orderController.cancelOrder)
 user.get('/cancelled-orders',checkUserSession,orderController.getCancelledOrders)
 user.post('/return-request-order/:orderid', checkUserSession,orderController.returnOrder)
