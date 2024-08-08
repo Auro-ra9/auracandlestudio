@@ -377,14 +377,13 @@
                                     </div>
                                 </div>
                                 <div class="product_details">
-                                    <h5 class="product-name-card"><a href="/product-view/<%= product.productID.id  %>"
+                                    <h5 class="product-name-card"><a href="/product-view/<%= product.productID._id  %>"
                                             title="<%= product.productName %>">
                                             <%= product.productID.productName %>
                                         </a></h5>
-                                    <h5 class="product-name-card"><a href="/product-view/<%= product._id %>"
-                                            title="<%= product.brand %>">
+                                    <h6 class="product-name-card text-danger">
                                             <%= product.productID.brand %>
-                                        </a></h5>
+                                    </h6>
 
                                     <%if(product.productID.discount>0){%>
                                         <span class="badge bg-danger">
