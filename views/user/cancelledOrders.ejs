@@ -122,10 +122,6 @@
                                                                 <%= product.brand %>
                                                             </span></p>
 
-                                                        <p class="mb-0 mt-1">Coupon Discount: <span class="fw-medium">
-                                                                &#8377; <%= order.couponDiscount %>
-                                                            </span></p>
-
                                                         <p class="mb-0 mt-1">Quantity: <span class="fw-medium">
                                                                 <%= product.quantity %>
                                                             </span></p>
@@ -201,6 +197,9 @@
                                                             <%= order.address.city %>,<br>
                                                                 <%= order.address.state %>
                                         </p>
+                                        <p class="mb-2 mt-1">Coupon Discount: <span class="fw-medium">
+                                            &#8377; <%= order.couponDiscount %>
+                                        </span></p>
                                         <p><b style="color: #ff6200;">Order placed on:</b>
                                             <%= order.createdAt.toLocaleString() %>
                                         </p>
