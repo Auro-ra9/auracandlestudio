@@ -128,6 +128,10 @@
             validate[0].innerHTML = 'Please select a start date';
             isValid = false;
         }
+        if (!endDateInput.value) {
+            validate[1].innerHTML = 'Please select an end date';
+            isValid = false;
+        }
 
         if (startDate > Date.now()) {
             validate[0].innerHTML = 'Start date must be equal or before today.';
